@@ -9,14 +9,16 @@ export const MIN_HOST_PASSWORD_LENGTH = 16
 /** Throws unless `password` matches the HOST_PASSWORD environment variable. */
 export function requirePassword(password: string): void {
   const expected = env.HOST_PASSWORD
+  // Misconfiguration details go to the Convex logs only; the client gets a code.
   if (!expected) {
+    console.error('HOST_PASSWORD is not set on this deployment.')
     throw new ConvexError({ code: 'PASSWORD_NOT_CONFIGURED' })
   }
   if (expected.length < MIN_HOST_PASSWORD_LENGTH) {
-    throw new ConvexError({
-      code: 'PASSWORD_TOO_SHORT',
-      min: MIN_HOST_PASSWORD_LENGTH,
-    })
+    console.error(
+      `HOST_PASSWORD is shorter than ${MIN_HOST_PASSWORD_LENGTH} characters; refusing all logins.`,
+    )
+    throw new ConvexError({ code: 'PASSWORD_TOO_SHORT' })
   }
   if (!constantTimeEqual(password, expected)) {
     throw new ConvexError({ code: 'INVALID_PASSWORD' })

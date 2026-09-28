@@ -28,10 +28,10 @@ export function errorMessage(e: unknown): string {
       return 'Vul een geldig e-mailadres in.'
     case 'INVALID_PASSWORD':
       return 'Dit wachtwoord klopt niet. Probeer het opnieuw.'
+    // Server misconfiguration: the cause is in the Convex logs, not shown to users.
     case 'PASSWORD_NOT_CONFIGURED':
-      return 'Er is nog geen hostwachtwoord ingesteld. Zet HOST_PASSWORD in Convex (zie README).'
     case 'PASSWORD_TOO_SHORT':
-      return `Het ingestelde hostwachtwoord is te kort. Zet in Convex een HOST_PASSWORD van minstens ${String(typeof data.min === 'number' ? data.min : 16)} tekens.`
+      return 'Inloggen is nu niet mogelijk. Neem contact op met de beheerder.'
     case 'MISSING_CORRECT': {
       const qs = Array.isArray(data.questions)
         ? (data.questions as Array<number>).join(', ')
