@@ -29,6 +29,8 @@ permissions:
 jobs:
   checks:
     name: Checks
+    # Dependabot PRs don't get CI minutes; review and merge them deliberately.
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
