@@ -11,7 +11,7 @@ ISO-specifiek is staat alleen in de seed-data.
   en krijgt wie daarna aanmeldt de melding dat de quiz vol is.
 
 Stack: TanStack Start + TanStack Router, React Query via `@convex-dev/react-query`, Convex,
-Tailwind CSS v4 (thema uit de ROX-tokens), TypeScript strict.
+Tailwind CSS v4 (thema uit de ROX-tokens), TypeScript strict, Vite+ (oxlint, oxfmt).
 
 ## Installeren
 
@@ -108,6 +108,20 @@ Per sessie (`/admin` → **Bekijk resultaten en exporteer CSV**):
   - Voor de ISO 27001-training is dit het trainingsrecord voor de auditor.
 - **Verdeling (CSV):** per vraag en per optie de tekst, of die goed is en hoeveel spelers die kozen,
   plus het aantal spelers zonder antwoord.
+
+## Controleren
+
+De tooling loopt via [Vite+](https://viteplus.dev/) (`vp`), met oxlint en oxfmt, en de config
+staat in `vite.config.ts`.
+
+| Script           | Wat het doet                                               |
+| ---------------- | ---------------------------------------------------------- |
+| `npm run check`  | Formattering, lint en typecheck in één keer (`vp check`)   |
+| `npm run lint`   | Oxlint, inclusief de type-aware regels en de Convex-regels |
+| `npm run format` | Formatteren met oxfmt                                      |
+| `npm run build`  | Typecheck en productiebuild                                |
+
+Een pre-commit hook (`.vite-hooks`) draait `vp check --fix` op de gestagede bestanden.
 
 ## Ontwerp
 

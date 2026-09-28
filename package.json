@@ -4,15 +4,17 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "convex dev --start 'vite dev'",
+    "dev": "convex dev --start 'vp dev'",
     "typecheck": "tsc --noEmit",
-    "build": "npm run typecheck && vite build",
+    "build": "npm run typecheck && vp build",
     "start": "node .output/server/index.mjs",
-    "format": "oxfmt",
-    "lint": "npm run typecheck && oxlint --deny-warnings",
+    "format": "vp fmt",
+    "lint": "vp lint --deny-warnings",
     "tokens": "node scripts/generate-tokens.mjs",
-    "format:check": "oxfmt --check",
-    "lint:fix": "oxlint --fix"
+    "format:check": "vp fmt --check",
+    "lint:fix": "vp lint --fix",
+    "prepare": "vp config",
+    "check": "vp check"
   },
   "dependencies": {
     "@convex-dev/react-query": "^0.1.0",
@@ -34,12 +36,20 @@
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-react": "^6.0.5",
     "eslint": "9.39.5",
-    "oxfmt": "0.71.0",
-    "oxlint": "1.86.0",
-    "oxlint-tsgolint": "7.0.2003",
     "tailwindcss": "^4.3.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vite": "^8.2.0",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0",
+    "vite-plus": "1.0.0",
     "vite-tsconfig-paths": "^6.1.1"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": "11.19.0",
+      "onFail": "download"
+    }
   }
 }
