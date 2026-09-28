@@ -108,9 +108,25 @@ Per sessie (`/admin` → **Bekijk resultaten en exporteer CSV**):
 - **Verdeling (CSV):** per vraag en per optie de tekst, of die goed is en hoeveel spelers die kozen,
   plus het aantal spelers zonder antwoord.
 
+## Ontwerp
+
+`design/` bevat een referentie-snapshot van het ontwerp:
+- de artboards als `.dc.html`-bron;
+- de componenteninventaris;
+- de ROX `tokens.json`.
+
+De bron van waarheid blijft het canvas; zie `design/README.md` voor de link, de koppeling tussen
+ontwerp en code, en de bewuste afwijkingen. Na een wijziging in de ROX-tokens:
+
+```bash
+npm run tokens
+```
+
 ## Projectstructuur
 
 ```
+design/            snapshot van het ontwerp (zie design/README.md)
+scripts/           generate-tokens.mjs
 convex/
   schema.ts        tabellen en indexes
   sessions.ts      PIN, sessie aanmaken, joinen, speler- en hostweergave (gesanitized)

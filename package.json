@@ -9,7 +9,8 @@
     "build": "npm run typecheck && vite build",
     "start": "node .output/server/index.mjs",
     "format": "prettier --write .",
-    "lint": "npm run typecheck && eslint .  --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "npm run typecheck && eslint .  --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "tokens": "node scripts/generate-tokens.mjs"
   },
   "dependencies": {
     "@convex-dev/react-query": "^0.1.0",

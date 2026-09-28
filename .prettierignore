@@ -13,3 +13,5 @@ pnpm-lock.yaml
 routeTree.gen.ts
 .agents/skills/
 .claude/skills/
+design/screens
+design/tokens.json

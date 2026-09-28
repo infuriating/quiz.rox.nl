@@ -1,0 +1,408 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-09-28T11:59:27Z"
+ },
+ "title": "ROX Live Quiz",
+ "launch": {
+  "view": "canvas",
+  "page": "speler"
+ },
+ "pages": [
+  {
+   "id": "speler",
+   "name": "Speler"
+  },
+  {
+   "id": "host",
+   "name": "Host (beamer)"
+  },
+  {
+   "id": "admin",
+   "name": "Admin"
+  },
+  {
+   "id": "componenten",
+   "name": "Componenten"
+  }
+ ],
+ "boards": {
+  "Main.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Doe mee",
+   "page": "speler"
+  },
+  "player/Speler-Join-fout.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Doe mee, foute code",
+   "page": "speler"
+  },
+  "player/Speler-Lobby.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Lobby",
+   "page": "speler"
+  },
+  "player/Speler-Vraag-enkel.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Vraag, enkel",
+   "page": "speler"
+  },
+  "player/Speler-Vraag-meer.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Vraag, meerkeuze leeg",
+   "page": "speler"
+  },
+  "player/Speler-Vraag-meer-gekozen.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Vraag, meerkeuze gekozen",
+   "page": "speler"
+  },
+  "player/Speler-Ontvangen.dc.html": {
+   "x": 0,
+   "y": 964,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Antwoord ontvangen",
+   "page": "speler"
+  },
+  "player/Speler-Te-laat.dc.html": {
+   "x": 470,
+   "y": 964,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Te laat",
+   "page": "speler"
+  },
+  "player/Speler-Goed.dc.html": {
+   "x": 940,
+   "y": 964,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Goed",
+   "page": "speler"
+  },
+  "player/Speler-Helaas.dc.html": {
+   "x": 1410,
+   "y": 964,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Helaas",
+   "page": "speler"
+  },
+  "player/Speler-Einde.dc.html": {
+   "x": 1880,
+   "y": 964,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Einde",
+   "page": "speler"
+  },
+  "player/Speler-Herverbinden.dc.html": {
+   "x": 2350,
+   "y": 964,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Herverbinden",
+   "page": "speler"
+  },
+  "host/Host-Pin.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1920,
+   "h": 1080,
+   "title": "Host · PIN",
+   "page": "host"
+  },
+  "host/Host-Lobby.dc.html": {
+   "x": 2000,
+   "y": 0,
+   "w": 1920,
+   "h": 1080,
+   "title": "Host · Lobby",
+   "page": "host"
+  },
+  "host/Host-Vraag.dc.html": {
+   "x": 4000,
+   "y": 0,
+   "w": 1920,
+   "h": 1080,
+   "title": "Host · Vraag",
+   "page": "host"
+  },
+  "host/Host-Uitleg.dc.html": {
+   "x": 6000,
+   "y": 0,
+   "w": 1920,
+   "h": 1080,
+   "title": "Host · Resultaat met toelichting",
+   "page": "host"
+  },
+  "host/Host-Resultaat.dc.html": {
+   "x": 0,
+   "y": 1200,
+   "w": 1920,
+   "h": 1080,
+   "title": "Host · Resultaat zonder toelichting",
+   "page": "host"
+  },
+  "host/Host-Tussenstand.dc.html": {
+   "x": 0,
+   "y": 5580,
+   "w": 1920,
+   "h": 1080,
+   "title": "Host · Tussenstand",
+   "page": "host"
+  },
+  "host/Host-Podium.dc.html": {
+   "x": 2000,
+   "y": 5580,
+   "w": 1920,
+   "h": 1080,
+   "title": "Host · Podium",
+   "page": "host"
+  },
+  "host/Host-Bedankt.dc.html": {
+   "x": 2000,
+   "y": 1200,
+   "w": 1920,
+   "h": 1080,
+   "title": "Host · Iedereen bedankt",
+   "page": "host"
+  },
+  "host-dark/Donker-Lobby.dc.html": {
+   "x": 0,
+   "y": 2700,
+   "w": 1920,
+   "h": 1080,
+   "title": "Donker · Lobby",
+   "page": "host"
+  },
+  "host-dark/Donker-Vraag.dc.html": {
+   "x": 2000,
+   "y": 2700,
+   "w": 1920,
+   "h": 1080,
+   "title": "Donker · Vraag (lange opties)",
+   "page": "host"
+  },
+  "host-dark/Donker-Uitleg.dc.html": {
+   "x": 4000,
+   "y": 2700,
+   "w": 1920,
+   "h": 1080,
+   "title": "Donker · Resultaat met toelichting",
+   "page": "host"
+  },
+  "host-dark/Donker-Resultaat.dc.html": {
+   "x": 6000,
+   "y": 2700,
+   "w": 1920,
+   "h": 1080,
+   "title": "Donker · Resultaat zonder toelichting",
+   "page": "host"
+  },
+  "host-dark/Donker-Tussenstand.dc.html": {
+   "x": 4000,
+   "y": 5580,
+   "w": 1920,
+   "h": 1080,
+   "title": "Donker · Tussenstand",
+   "page": "host"
+  },
+  "host-dark/Donker-Podium.dc.html": {
+   "x": 6000,
+   "y": 5580,
+   "w": 1920,
+   "h": 1080,
+   "title": "Donker · Podium",
+   "page": "host"
+  },
+  "host-dark/Donker-Bedankt.dc.html": {
+   "x": 0,
+   "y": 3900,
+   "w": 1920,
+   "h": 1080,
+   "title": "Donker · Iedereen bedankt",
+   "page": "host"
+  },
+  "admin/Admin-Quizlijst.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "Admin · Quizlijst",
+   "page": "admin"
+  },
+  "admin/Admin-Vraageditor.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 1400,
+   "title": "Admin · Vraageditor",
+   "page": "admin"
+  },
+  "Componenten.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 4100,
+   "title": "Componenten",
+   "page": "componenten"
+  },
+  "player/Speler-Goed-score.dc.html": {
+   "x": 0,
+   "y": 2208,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Goed, met score",
+   "page": "speler"
+  },
+  "player/Speler-Helaas-score.dc.html": {
+   "x": 470,
+   "y": 2208,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Helaas, met score",
+   "page": "speler"
+  },
+  "player/Speler-Te-laat-score.dc.html": {
+   "x": 940,
+   "y": 2208,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Te laat, met score",
+   "page": "speler"
+  },
+  "player/Speler-Einde-score.dc.html": {
+   "x": 1410,
+   "y": 2208,
+   "w": 390,
+   "h": 844,
+   "title": "Speler · Einde, met score",
+   "page": "speler"
+  },
+  "admin/Admin-Sessieresultaten.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 1400,
+   "title": "Admin · Sessieresultaten",
+   "page": "admin"
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "player/Speler-Join-fout.dc.html",
+  "player/Speler-Lobby.dc.html",
+  "player/Speler-Vraag-enkel.dc.html",
+  "player/Speler-Vraag-meer.dc.html",
+  "player/Speler-Vraag-meer-gekozen.dc.html",
+  "player/Speler-Ontvangen.dc.html",
+  "player/Speler-Te-laat.dc.html",
+  "player/Speler-Goed.dc.html",
+  "player/Speler-Helaas.dc.html",
+  "player/Speler-Einde.dc.html",
+  "player/Speler-Herverbinden.dc.html",
+  "player/Speler-Goed-score.dc.html",
+  "player/Speler-Helaas-score.dc.html",
+  "player/Speler-Te-laat-score.dc.html",
+  "player/Speler-Einde-score.dc.html",
+  "host/Host-Pin.dc.html",
+  "host/Host-Lobby.dc.html",
+  "host/Host-Vraag.dc.html",
+  "host/Host-Uitleg.dc.html",
+  "host/Host-Resultaat.dc.html",
+  "host/Host-Tussenstand.dc.html",
+  "host/Host-Podium.dc.html",
+  "host/Host-Bedankt.dc.html",
+  "host-dark/Donker-Lobby.dc.html",
+  "host-dark/Donker-Vraag.dc.html",
+  "host-dark/Donker-Uitleg.dc.html",
+  "host-dark/Donker-Resultaat.dc.html",
+  "host-dark/Donker-Tussenstand.dc.html",
+  "host-dark/Donker-Podium.dc.html",
+  "host-dark/Donker-Bedankt.dc.html",
+  "admin/Admin-Quizlijst.dc.html",
+  "admin/Admin-Vraageditor.dc.html",
+  "admin/Admin-Sessieresultaten.dc.html",
+  "Componenten.dc.html"
+ ],
+ "notes": {
+  "t-speler": {
+   "x": 0,
+   "y": -300,
+   "text": "Speler · telefoon 390 × 844",
+   "kind": "title1",
+   "maxW": 2740,
+   "page": "speler"
+  },
+  "t-host": {
+   "x": 0,
+   "y": -300,
+   "text": "Host · beamer 1920 × 1080, licht",
+   "kind": "title1",
+   "maxW": 7920,
+   "page": "host"
+  },
+  "t-host-dark": {
+   "x": 0,
+   "y": 2400,
+   "text": "Host · beamer, donkere modus",
+   "kind": "title1",
+   "maxW": 7920,
+   "page": "host"
+  },
+  "t-admin": {
+   "x": 0,
+   "y": -300,
+   "text": "Admin · desktop 1440",
+   "kind": "title1",
+   "maxW": 4480,
+   "page": "admin"
+  },
+  "t-speler-score": {
+   "x": 0,
+   "y": 1908,
+   "text": "Optioneel · met score",
+   "kind": "title1",
+   "maxW": 1800,
+   "page": "speler"
+  },
+  "t-host-score": {
+   "x": 0,
+   "y": 5280,
+   "text": "Optioneel · alleen met score aan",
+   "kind": "title1",
+   "maxW": 7920,
+   "page": "host"
+  }
+ },
+ "designSystems": [
+  {
+   "title": "ROX Design System",
+   "namespace": "rox",
+   "artifact": "https://claude.ai/code/artifact/02693ff7-72ef-4780-ada3-321452e3d141",
+   "version": "1790200405-cb2f",
+   "copiedAt": "2026-09-28T11:59:27Z"
+  }
+ ]
+}
