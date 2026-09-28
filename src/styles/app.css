@@ -1,0 +1,301 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+/* ---------------------------------------------------------------------------
+   Quiz extensions to the ROX system. Everything here is built from ROX tokens;
+   the few values that are not are marked "derived" and listed in the README.
+   --------------------------------------------------------------------------- */
+:root {
+  /* derived: accent text on ink, lighter than rox-blue for 4.5:1 on --rox-ink */
+  --quiz-accent-on-dark: #7f9bff;
+  /* derived: success tints for the dark beamer theme */
+  --quiz-ok-surface-dark: rgba(31, 157, 107, 0.16);
+  --quiz-ok-text-dark: #4cd39b;
+
+  /* Beamer type scale (readable from the back of a room, 1920x1080) */
+  --text-beamer-hero: 168px;
+  --text-beamer-count: 120px;
+  --text-beamer-display: 96px;
+  --text-beamer-title: 88px;
+  --text-beamer-question: 72px;
+  --text-beamer-h2: 56px;
+  --text-beamer-h3: 44px;
+  --text-beamer-option: 36px;
+  --text-beamer-option-long: 30px;
+  --text-beamer-body: 26px;
+  --text-beamer-label: 22px;
+
+  /* Phone type scale additions */
+  --text-phone-title: 40px;
+  --text-phone-hero: 52px;
+  --text-phone-question: 20px;
+  --text-phone-option: 17px;
+  --text-phone-option-long: 15px;
+
+  /* Host theme: light (default). Switched with [data-theme="dark"] on the host root. */
+  --host-bg: var(--rox-white);
+  --host-raised: var(--rox-white);
+  --host-sunk: var(--rox-ink-05);
+  --host-line: var(--rox-ink-25);
+  --host-hair: var(--rox-ink-15);
+  --host-text: var(--rox-ink);
+  --host-soft: var(--rox-ink-70);
+  --host-muted: var(--rox-ink-55);
+  --host-marker-bg: var(--rox-ink);
+  --host-marker-fg: var(--rox-white);
+  --host-bar-track: var(--rox-ink-10);
+  --host-bar-fill: var(--rox-ink-25);
+  --host-ok-bg: var(--rox-mint-100);
+  --host-ok-text: var(--rox-mint-600);
+  --host-panel: var(--rox-blue-100);
+  --host-panel-line: var(--rox-blue-200);
+  --host-chip: var(--rox-ink-10);
+  --host-code-bg: var(--rox-blue-100);
+  --host-ctrl-bg: var(--rox-ink-10);
+  --host-ctrl-line: var(--rox-ink-15);
+  --host-ctrl-text: var(--rox-ink-70);
+  --host-ctrl-primary-bg: var(--rox-ink);
+  --host-ctrl-primary-fg: var(--rox-white);
+  --host-accent: var(--rox-blue);
+  --host-badge-fg: var(--rox-blue-600);
+  --host-pod-other: var(--rox-blue-100);
+  --host-pod-other-fg: var(--rox-ink);
+  --host-rank-bg: var(--rox-ink-10);
+  --host-dim: 0.38;
+}
+
+[data-theme='dark'] {
+  --host-bg: var(--rox-ink);
+  --host-raised: var(--rox-black-soft);
+  --host-sunk: var(--rox-black-soft);
+  --host-line: var(--rox-black-line);
+  --host-hair: var(--rox-black-line);
+  --host-text: var(--rox-white);
+  --host-soft: var(--rox-ink-25);
+  --host-muted: var(--text-inverse-muted);
+  --host-marker-bg: var(--rox-white);
+  --host-marker-fg: var(--rox-ink);
+  --host-bar-track: var(--rox-black-soft);
+  --host-bar-fill: var(--line-on-dark-strong);
+  --host-ok-bg: var(--quiz-ok-surface-dark);
+  --host-ok-text: var(--quiz-ok-text-dark);
+  --host-panel: var(--rox-black-soft);
+  --host-panel-line: var(--rox-black-line);
+  --host-chip: var(--rox-black-soft);
+  --host-code-bg: var(--rox-black-soft);
+  --host-ctrl-bg: var(--rox-black-soft);
+  --host-ctrl-line: var(--rox-black-line);
+  --host-ctrl-text: var(--text-inverse-muted);
+  --host-ctrl-primary-bg: var(--rox-white);
+  --host-ctrl-primary-fg: var(--rox-ink);
+  --host-accent: var(--quiz-accent-on-dark);
+  --host-badge-fg: var(--quiz-accent-on-dark);
+  --host-pod-other: var(--rox-black-soft);
+  --host-pod-other-fg: var(--rox-white);
+  --host-rank-bg: var(--rox-black-soft);
+  --host-dim: 0.34;
+}
+
+/* ---------------------------------------------------------------------------
+   Tailwind theme: every utility resolves to a token above.
+   --------------------------------------------------------------------------- */
+@theme inline {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-white: var(--rox-white);
+  --color-ink: var(--rox-ink);
+  --color-blue: var(--rox-blue);
+  --color-blue-50: var(--rox-blue-50);
+  --color-blue-100: var(--rox-blue-100);
+  --color-blue-200: var(--rox-blue-200);
+  --color-blue-300: var(--rox-blue-300);
+  --color-blue-600: var(--rox-blue-600);
+  --color-blue-hover: var(--rox-blue-hover);
+  --color-ink-05: var(--rox-ink-05);
+  --color-ink-10: var(--rox-ink-10);
+  --color-ink-15: var(--rox-ink-15);
+  --color-ink-25: var(--rox-ink-25);
+  --color-ink-40: var(--rox-ink-40);
+  --color-ink-55: var(--rox-ink-55);
+  --color-ink-70: var(--rox-ink-70);
+  --color-ink-85: var(--rox-ink-85);
+  --color-black-soft: var(--rox-black-soft);
+  --color-black-line: var(--rox-black-line);
+  --color-mint-100: var(--rox-mint-100);
+  --color-mint-600: var(--rox-mint-600);
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-error: var(--status-error);
+  --color-error-soft: var(--status-error-soft);
+  --color-inverse-muted: var(--text-inverse-muted);
+  --color-veil: var(--veil-white-strong);
+  --color-line-on-dark-strong: var(--line-on-dark-strong);
+
+  --color-host-bg: var(--host-bg);
+  --color-host-raised: var(--host-raised);
+  --color-host-sunk: var(--host-sunk);
+  --color-host-line: var(--host-line);
+  --color-host-hair: var(--host-hair);
+  --color-host-text: var(--host-text);
+  --color-host-soft: var(--host-soft);
+  --color-host-muted: var(--host-muted);
+  --color-host-marker-bg: var(--host-marker-bg);
+  --color-host-marker-fg: var(--host-marker-fg);
+  --color-host-bar-track: var(--host-bar-track);
+  --color-host-bar-fill: var(--host-bar-fill);
+  --color-host-ok-bg: var(--host-ok-bg);
+  --color-host-ok-text: var(--host-ok-text);
+  --color-host-panel: var(--host-panel);
+  --color-host-panel-line: var(--host-panel-line);
+  --color-host-chip: var(--host-chip);
+  --color-host-code-bg: var(--host-code-bg);
+  --color-host-ctrl-bg: var(--host-ctrl-bg);
+  --color-host-ctrl-line: var(--host-ctrl-line);
+  --color-host-ctrl-text: var(--host-ctrl-text);
+  --color-host-ctrl-primary-bg: var(--host-ctrl-primary-bg);
+  --color-host-ctrl-primary-fg: var(--host-ctrl-primary-fg);
+  --color-host-accent: var(--host-accent);
+  --color-host-badge-fg: var(--host-badge-fg);
+  --color-host-pod-other: var(--host-pod-other);
+  --color-host-pod-other-fg: var(--host-pod-other-fg);
+  --color-host-rank-bg: var(--host-rank-bg);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-sans: var(--font-body);
+
+  --text-xs: var(--text-xs);
+  --text-sm: var(--text-sm);
+  --text-base: var(--text-base);
+  --text-lead: var(--text-lead);
+  --text-h4: var(--text-h4);
+  --text-h3: var(--text-h3);
+  --text-card-title: var(--text-card-title);
+  --text-h2: var(--text-h2);
+  --text-h1: var(--text-h1);
+  --text-display: var(--text-display);
+  --text-beamer-hero: var(--text-beamer-hero);
+  --text-beamer-count: var(--text-beamer-count);
+  --text-beamer-display: var(--text-beamer-display);
+  --text-beamer-title: var(--text-beamer-title);
+  --text-beamer-question: var(--text-beamer-question);
+  --text-beamer-h2: var(--text-beamer-h2);
+  --text-beamer-h3: var(--text-beamer-h3);
+  --text-beamer-option: var(--text-beamer-option);
+  --text-beamer-option-long: var(--text-beamer-option-long);
+  --text-beamer-body: var(--text-beamer-body);
+  --text-beamer-label: var(--text-beamer-label);
+  --text-phone-title: var(--text-phone-title);
+  --text-phone-hero: var(--text-phone-hero);
+  --text-phone-question: var(--text-phone-question);
+  --text-phone-option: var(--text-phone-option);
+  --text-phone-option-long: var(--text-phone-option-long);
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-pop: var(--shadow-pop);
+  --shadow-float: var(--shadow-float);
+  --shadow-card-dark: var(--shadow-card-dark);
+
+  --tracking-label: var(--ls-label);
+  --tracking-display: var(--ls-display);
+  --tracking-heading: var(--ls-heading);
+  --tracking-hero: var(--ls-hero);
+
+  --leading-tight: var(--lh-tight);
+  --leading-snug: var(--lh-snug);
+  --leading-heading: var(--lh-heading);
+  --leading-body: var(--lh-body);
+
+  --ease-cut: var(--ease-cut);
+  --ease-out-expo: var(--ease-out-expo);
+  --ease-back-out: var(--ease-back-out);
+
+  --animate-ring: rq-ring 2.4s var(--ease-out-expo) infinite;
+  --animate-pop: rq-pop 0.5s var(--ease-back-out) both;
+  --animate-dot: rq-dot 1.4s ease-in-out infinite;
+  --animate-spin: rq-spin 1s linear infinite;
+}
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    background: var(--rox-white);
+    color: var(--text-strong);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  button {
+    font: inherit;
+  }
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--ring-focus);
+  }
+  [data-theme='dark'] :focus-visible {
+    box-shadow: var(--ring-focus-dark);
+  }
+}
+
+@layer utilities {
+  .bg-gradient-signal {
+    background: var(--gradient-signal);
+  }
+  .rox-label {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+  .shape-triangle {
+    clip-path: polygon(50% 4%, 100% 96%, 0% 96%);
+  }
+  .shape-diamond {
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
+  .shape-circle {
+    border-radius: 50%;
+  }
+  .shape-square {
+    border-radius: 12%;
+  }
+  .line-clamp-4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@keyframes rq-ring {
+  0% { transform: scale(0.6); opacity: 0.55; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+@keyframes rq-pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes rq-dot {
+  0%, 80%, 100% { opacity: 0.25; }
+  40% { opacity: 1; }
+}
+@keyframes rq-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-ring, .animate-pop, .animate-dot, .animate-spin { animation: none; }
+}
