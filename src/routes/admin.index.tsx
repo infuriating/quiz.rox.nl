@@ -11,6 +11,7 @@ import { Card } from '~/components/Card'
 import { Input } from '~/components/Field'
 import { Icon } from '~/components/Icon'
 import { DeleteSessionButton } from '~/features/admin/DeleteSessionButton'
+import { QuizActions } from '~/features/admin/QuizActions'
 import { useAdminPin } from '~/features/admin/pin'
 import { sessionStatus } from '~/features/admin/sessionStatus'
 import { errorMessage } from '~/lib/errors'
@@ -115,6 +116,9 @@ function QuizList() {
                   <span className="mr-0.5 font-display text-[20px] font-semibold tracking-heading">
                     {q.title}
                   </span>
+                  <Badge tone={q.active ? 'success' : 'neutral'} size="xs">
+                    {q.active ? 'Actief' : 'Inactief'}
+                  </Badge>
                   <Badge tone={q.scoringEnabled ? 'blue' : 'neutral'} size="xs">
                     {q.scoringEnabled ? 'Score aan' : 'Zonder score'}
                   </Badge>
@@ -135,6 +139,12 @@ function QuizList() {
                   )}
                 </span>
               </div>
+              <QuizActions
+                quizId={q.id}
+                title={q.title}
+                active={q.active}
+                sessionCount={q.sessions.length}
+              />
               <Link
                 to="/admin/quizzes/$quizId"
                 params={{ quizId: q.id }}
@@ -142,13 +152,15 @@ function QuizList() {
               >
                 Vragen bewerken
               </Link>
-              <Link
-                to="/host"
-                className="inline-flex h-10 items-center gap-2 rounded-pill border border-ink-25 bg-white px-[18px] text-sm font-semibold text-ink no-underline"
-              >
-                Start sessie
-                <Icon name="arrow-right" size={15} />
-              </Link>
+              {q.active && (
+                <Link
+                  to="/host"
+                  className="inline-flex h-10 items-center gap-2 rounded-pill border border-ink-25 bg-white px-[18px] text-sm font-semibold text-ink no-underline"
+                >
+                  Start sessie
+                  <Icon name="arrow-right" size={15} />
+                </Link>
+              )}
             </div>
             {isOpen && <Sessions sessions={q.sessions} />}
           </Card>

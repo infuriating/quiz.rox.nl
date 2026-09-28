@@ -74,6 +74,8 @@ the ISO training:
     exports (participation and distribution).
   - The quiz settings have "Sessie verloopt na" (1 to 4 hours) instead of the "Toelichting na elke
     vraag" switch.
+  - Each quiz shows "Actief" or "Inactief" and has "Zet inactief" / "Activeer" and "Verwijderen".
+    The design's "Concept" status does not exist; an inactive quiz covers that case.
 
 ## Refreshing the snapshot
 

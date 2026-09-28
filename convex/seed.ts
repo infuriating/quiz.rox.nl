@@ -174,7 +174,8 @@ export const seed = internalMutation({
       .query('quizzes')
       .withIndex('by_title', (q) => q.eq('title', ISO_TITLE))
       .first()
-    if (existing) return { created: false, warnings }
+    if (existing && existing.deletedAt === undefined)
+      return { created: false, warnings }
 
     const quizId = await ctx.db.insert('quizzes', {
       title: ISO_TITLE,

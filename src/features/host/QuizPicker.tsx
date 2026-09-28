@@ -19,6 +19,8 @@ export function QuizPicker({
   const { data: quizzes } = useQuery(
     convexQuery(api.admin.listQuizzes, { pin }),
   )
+  // Inactive quizzes stay in /admin but cannot start a session.
+  const active = (quizzes ?? []).filter((q) => q.active)
   const create = useConvexMutation(api.sessions.createSession)
   const [error, setError] = useState<{ id: string; message: string } | null>(
     null,
@@ -44,7 +46,7 @@ export function QuizPicker({
         Kies een quiz
       </h1>
       <ul className="m-0 flex list-none flex-col gap-4 overflow-hidden p-0">
-        {(quizzes ?? []).map((q) => (
+        {active.map((q) => (
           <li
             key={q.id}
             className="flex items-center gap-8 rounded-lg border-2 border-host-hair bg-host-raised px-10 py-7"
@@ -78,7 +80,7 @@ export function QuizPicker({
             </Button>
           </li>
         ))}
-        {quizzes?.length === 0 && (
+        {active.length === 0 && (
           <li className="text-beamer-body text-host-muted">
             Nog geen quizzen. Maak er een aan in het beheer.
           </li>

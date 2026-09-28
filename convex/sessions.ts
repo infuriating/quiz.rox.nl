@@ -42,7 +42,9 @@ export const createSession = mutation({
   handler: async (ctx, { pin, quizId }) => {
     requirePin(pin)
     const quiz = await ctx.db.get('quizzes', quizId)
-    if (!quiz) throw new ConvexError({ code: 'NO_QUIZ' })
+    if (!quiz || quiz.deletedAt !== undefined)
+      throw new ConvexError({ code: 'NO_QUIZ' })
+    if (quiz.inactive) throw new ConvexError({ code: 'QUIZ_INACTIVE' })
     const questions = await getQuestions(ctx, quizId)
     if (questions.length === 0) throw new ConvexError({ code: 'NO_QUESTIONS' })
     const missing = questionsMissingCorrect(questions)

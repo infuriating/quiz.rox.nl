@@ -1,7 +1,7 @@
 import { ConvexError, v } from 'convex/values'
 import { internalMutation, mutation, query } from './_generated/server'
 import type { MutationCtx } from './_generated/server'
-import type { Id } from './_generated/dataModel'
+import type { Doc, Id } from './_generated/dataModel'
 import { internal } from './_generated/api'
 import { requirePin } from './lib/auth'
 import { cancelSessionJobs } from './lib/flow'
@@ -28,7 +28,9 @@ export const listQuizzes = query({
   args: pinArg,
   handler: async (ctx, { pin }) => {
     requirePin(pin)
-    const quizzes = await ctx.db.query('quizzes').take(MAX_QUIZZES)
+    const quizzes = (await ctx.db.query('quizzes').take(MAX_QUIZZES)).filter(
+      (q) => q.deletedAt === undefined,
+    )
     return await Promise.all(
       quizzes.map(async (quiz) => {
         const questions = await getQuestions(ctx, quiz._id)
@@ -62,6 +64,7 @@ export const listQuizzes = query({
           title: quiz.title,
           description: quiz.description ?? null,
           scoringEnabled: quiz.scoringEnabled,
+          active: quiz.inactive !== true,
           maxPlayers: quiz.maxPlayers ?? null,
           questionCount: questions.length,
           missingCorrect: questions
@@ -81,7 +84,7 @@ export const getQuiz = query({
   handler: async (ctx, { pin, quizId }) => {
     requirePin(pin)
     const quiz = await ctx.db.get('quizzes', quizId)
-    if (!quiz) return null
+    if (!quiz || quiz.deletedAt !== undefined) return null
     return { quiz, questions: await getQuestions(ctx, quizId) }
   },
 })
@@ -96,6 +99,21 @@ export const createQuiz = mutation({
       title: clean,
       scoringEnabled: false,
     })
+  },
+})
+
+/** Inactive: hidden from the host's quiz picker and no new sessions; results stay. */
+export const setQuizActive = mutation({
+  args: { ...pinArg, quizId: v.id('quizzes'), active: v.boolean() },
+  handler: async (ctx, { pin, quizId, active }) => {
+    requirePin(pin)
+    const quiz = await ctx.db.get('quizzes', quizId)
+    if (!quiz || quiz.deletedAt !== undefined)
+      throw new ConvexError({ code: 'NO_QUIZ' })
+    await ctx.db.patch('quizzes', quizId, {
+      inactive: active ? undefined : true,
+    })
+    return null
   },
 })
 
@@ -345,22 +363,29 @@ export const sessionResults = query({
 // Deleting a session: hide it at once, purge its players and answers in batches
 // ---------------------------------------------------------------------------
 
+/** Hides a session at once and schedules the purge of its players and answers. */
+async function markSessionDeleted(ctx: MutationCtx, session: Doc<'sessions'>) {
+  await cancelSessionJobs(ctx, session)
+  // Finished + deletedAt: the join code is free and every view treats it as gone.
+  await ctx.db.patch('sessions', session._id, {
+    phase: 'finished',
+    deletedAt: Date.now(),
+    finishedAt: session.finishedAt ?? Date.now(),
+    scheduledRevealId: undefined,
+    scheduledExpiryId: undefined,
+  })
+  await ctx.scheduler.runAfter(0, internal.admin.purgeSession, {
+    sessionId: session._id,
+  })
+}
+
 export const deleteSession = mutation({
   args: { ...pinArg, sessionId: v.id('sessions') },
   handler: async (ctx, { pin, sessionId }) => {
     requirePin(pin)
     const session = await ctx.db.get('sessions', sessionId)
     if (!session || session.deletedAt !== undefined) return null
-    await cancelSessionJobs(ctx, session)
-    // Finished + deletedAt: the join code is free and every view treats it as gone.
-    await ctx.db.patch('sessions', sessionId, {
-      phase: 'finished',
-      deletedAt: Date.now(),
-      finishedAt: session.finishedAt ?? Date.now(),
-      scheduledRevealId: undefined,
-      scheduledExpiryId: undefined,
-    })
-    await ctx.scheduler.runAfter(0, internal.admin.purgeSession, { sessionId })
+    await markSessionDeleted(ctx, session)
     return null
   },
 })
@@ -392,6 +417,62 @@ export const purgeSession = internalMutation({
       })
     } else {
       await ctx.db.delete('sessions', sessionId)
+    }
+    return null
+  },
+})
+
+// ---------------------------------------------------------------------------
+// Deleting a quiz: refuses while a session is in progress; otherwise deletes the
+// quiz with all its sessions (players, answers) and questions.
+// ---------------------------------------------------------------------------
+
+export const deleteQuiz = mutation({
+  args: { ...pinArg, quizId: v.id('quizzes') },
+  handler: async (ctx, { pin, quizId }) => {
+    requirePin(pin)
+    const quiz = await ctx.db.get('quizzes', quizId)
+    if (!quiz || quiz.deletedAt !== undefined) return null
+    const sessions = (
+      await ctx.db
+        .query('sessions')
+        .withIndex('by_quizId', (q) => q.eq('quizId', quizId))
+        .take(MAX_SESSIONS_PER_QUIZ)
+    ).filter((s) => s.deletedAt === undefined)
+    if (sessions.some((s) => s.phase !== 'finished')) {
+      throw new ConvexError({ code: 'QUIZ_HAS_ACTIVE_SESSION' })
+    }
+    await ctx.db.patch('quizzes', quizId, { deletedAt: Date.now() })
+    for (const session of sessions) await markSessionDeleted(ctx, session)
+    await ctx.scheduler.runAfter(0, internal.admin.purgeQuiz, { quizId })
+    return null
+  },
+})
+
+/** Deletes a deleted quiz's questions, waits for its sessions to be purged, then deletes the quiz. */
+export const purgeQuiz = internalMutation({
+  args: { quizId: v.id('quizzes') },
+  handler: async (ctx, { quizId }) => {
+    const quiz = await ctx.db.get('quizzes', quizId)
+    if (!quiz || quiz.deletedAt === undefined) return null
+    const questions = await ctx.db
+      .query('questions')
+      .withIndex('by_quizId_and_order', (q) => q.eq('quizId', quizId))
+      .take(PURGE_BATCH_SIZE)
+    for (const q of questions) await ctx.db.delete('questions', q._id)
+    const sessionLeft = await ctx.db
+      .query('sessions')
+      .withIndex('by_quizId', (q) => q.eq('quizId', quizId))
+      .first()
+    if (questions.length > 0 || sessionLeft) {
+      // Sessions purge in their own jobs; check back shortly.
+      await ctx.scheduler.runAfter(
+        questions.length > 0 ? 0 : 1000,
+        internal.admin.purgeQuiz,
+        { quizId },
+      )
+    } else {
+      await ctx.db.delete('quizzes', quizId)
     }
     return null
   },

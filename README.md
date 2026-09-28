@@ -11,6 +11,8 @@ ISO-specific lives in the seed data only. The UI is in Dutch.
   and anyone joining after that is told the quiz is full.
 - **Sessions expire** after 1 hour without a host action (configurable per quiz up to 4 hours),
   and can be deleted from `/admin`.
+- **Quizzes can be set inactive or deleted.** Inactive quizzes keep their results but cannot start
+  new sessions.
 
 Stack: TanStack Start + TanStack Router, React Query via `@convex-dev/react-query`, Convex,
 Tailwind CSS v4 (themed from the ROX tokens), strict TypeScript, Vite+ (oxlint, oxfmt).
@@ -107,6 +109,15 @@ With scoring on:
 - **Deletion:** **"Verwijderen"** on a session in `/admin` (or on its results page) removes the
   session with all its players and answers. It disappears immediately; the data is purged in the
   background in batches.
+
+## Inactive and deleted quizzes
+
+- **"Zet inactief"** on a quiz in `/admin` hides it from the host's quiz picker and blocks new
+  sessions. A session that is already running continues. Its sessions, results and exports stay.
+  **"Activeer"** makes it available again.
+- **"Verwijderen"** removes the quiz with all its questions and sessions (players, answers,
+  results). It is refused while one of its sessions is in progress. To keep the results, e.g. as
+  training records, set the quiz inactive instead.
 
 ## Exports
 
@@ -210,7 +221,7 @@ convex/
   sessions.ts      PIN, session creation, joining, player and host views (sanitized)
   game.ts          phase transitions, scheduled auto-reveal and expiry
   answers.ts       answer submission and evaluation (only here, on server time)
-  admin.ts         quizzes, questions, settings, results, session deletion
+  admin.ts         quizzes, questions, settings, results, inactive/delete
   seed.ts          ISO 27001 seed
   lib/             auth, scoring, data helpers, flow, join codes, limits
 src/

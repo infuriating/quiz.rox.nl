@@ -42,6 +42,10 @@ export function errorMessage(e: unknown): string {
       return `Vul een aantal tussen 1 en ${typeof data.max === 'number' ? data.max : 500} in, of laat het veld leeg.`
     case 'INVALID_IDLE_TIMEOUT':
       return 'Kies een verlooptijd van maximaal 4 uur.'
+    case 'QUIZ_INACTIVE':
+      return 'Deze quiz staat op inactief. Activeer hem in het beheer om een sessie te starten.'
+    case 'QUIZ_HAS_ACTIVE_SESSION':
+      return 'Deze quiz heeft een sessie die nog bezig is. Beëindig die sessie eerst.'
     case 'OUTRO_TOO_LONG':
       return 'Maak de afsluitende boodschap korter dan 120 tekens.'
     case 'INVALID_QUESTION_TEXT':

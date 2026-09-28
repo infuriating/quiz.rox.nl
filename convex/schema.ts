@@ -18,6 +18,10 @@ export default defineSchema({
     maxPlayers: v.optional(v.number()),
     // Minutes without a host action before a session expires. Absent = 60, max 240.
     idleTimeoutMinutes: v.optional(v.number()),
+    // Inactive quizzes stay in /admin with their results, but cannot start new sessions.
+    inactive: v.optional(v.boolean()),
+    // Set when an admin deletes the quiz; its sessions and questions are then purged.
+    deletedAt: v.optional(v.number()),
   }).index('by_title', ['title']),
 
   questions: defineTable({
