@@ -97,7 +97,6 @@ const ISO_QUESTIONS: Array<SeedQuestion> = [
       'Gebruik te maken van rechtenvrije beelden.',
     ],
     correct: [1],
-    _todo: 'VERIFY correct set',
   },
   {
     order: 7,
@@ -110,8 +109,7 @@ const ISO_QUESTIONS: Array<SeedQuestion> = [
       'Teamwork Projects',
       'Confluence',
     ],
-    correct: [],
-    _todo: 'FILL IN correct answer',
+    correct: [3],
   },
   {
     order: 8,

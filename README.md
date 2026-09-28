@@ -47,9 +47,7 @@ npx convex run seed:seed
 Dit maakt de quiz "ISO 27001 Training" aan (score uit). Het script is idempotent op titel: nog een
 keer draaien doet niets. De seed logt waarschuwingen voor vragen met een `_todo` of zonder goed antwoord.
 
-> **Let op:** vraag 7 ("Toegestane software") heeft nog geen goed antwoord. Een sessie kan pas starten
-> als elke niet-poll-vraag een goed antwoord heeft. Vul het in via `/admin`. Controleer daar ook
-> vraag 6 (nu alleen B goed).
+> Een sessie kan alleen starten als elke niet-poll-vraag een goed antwoord heeft.
 
 ## Starten
 
