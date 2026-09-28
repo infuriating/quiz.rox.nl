@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
 <meta charset="utf-8">
-<title>Host · PIN</title>
+<title>Host · Wachtwoord</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -28,15 +28,14 @@ button{font:inherit}
 </helmet>
 <div style="width: 1920px; height: 1080px; box-sizing: border-box; position: relative; overflow: hidden; background: #ffffff; font-family: 'Instrument Sans', system-ui, sans-serif; color: #0d1220">
 <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 56px; text-align: center">
-<span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 500; font-size: 22px; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.2; color: #5d6575; ">ISO 27001 awareness · host</span>
-<h1 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; font-size: 88px; line-height: 1.04; letter-spacing: -0.04em; color: #0d1220">Voer je host-PIN in</h1>
-<div style="position: relative; display: flex; gap: 20px">
-<label for="pin" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Host-PIN</label>
-<input id="pin" type="password" inputmode="numeric" maxlength="6" value="1234" style="position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; border: 0">
-<span style="width: 104px; height: 128px; border-radius: 16px; border: 2px solid #d3d9e8; background: #ffffff; display: flex; align-items: center; justify-content: center; box-sizing: border-box"><span style="width: 22px; height: 22px; border-radius: 50%; background: #0d1220"></span></span><span style="width: 104px; height: 128px; border-radius: 16px; border: 2px solid #d3d9e8; background: #ffffff; display: flex; align-items: center; justify-content: center; box-sizing: border-box"><span style="width: 22px; height: 22px; border-radius: 50%; background: #0d1220"></span></span><span style="width: 104px; height: 128px; border-radius: 16px; border: 2px solid #d3d9e8; background: #ffffff; display: flex; align-items: center; justify-content: center; box-sizing: border-box"><span style="width: 22px; height: 22px; border-radius: 50%; background: #0d1220"></span></span><span style="width: 104px; height: 128px; border-radius: 16px; border: 2px solid #d3d9e8; background: #ffffff; display: flex; align-items: center; justify-content: center; box-sizing: border-box"><span style="width: 22px; height: 22px; border-radius: 50%; background: #0d1220"></span></span><span style="width: 104px; height: 128px; border-radius: 16px; border: 3px solid #0037ff; background: #ffffff; display: flex; align-items: center; justify-content: center; box-sizing: border-box"></span><span style="width: 104px; height: 128px; border-radius: 16px; border: 2px solid #d3d9e8; background: #ffffff; display: flex; align-items: center; justify-content: center; box-sizing: border-box"></span>
+<span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 500; font-size: 22px; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.2; color: #5d6575">Host</span>
+<h1 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; font-size: 88px; line-height: 1.04; letter-spacing: -0.04em; color: #0d1220">Voer het hostwachtwoord in</h1>
+<div style="width: 720px; display: flex; flex-direction: column; gap: 12px">
+<label for="host-password" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Hostwachtwoord</label>
+<input id="host-password" type="password" autocomplete="current-password" value="0123456789abcdef0123456789abcdef" style="box-sizing: border-box; width: 100%; height: 88px; padding: 0 28px; border-radius: 16px; border: 2px solid #0037ff; background: #ffffff; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 32px; letter-spacing: 0.12em; color: #0d1220">
+<p style="margin: 0; font-size: 22px; color: #5d6575">Het wachtwoord staat in de Convex-omgeving als HOST_PASSWORD.</p>
 </div>
-<button type="button" style=" height: 72px; padding: 0 40px; border-radius: 999px; background: #0037ff; color: #ffffff; border: 0; font-family: 'Instrument Sans', system-ui, sans-serif; font-weight: 600; font-size: 24px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; flex-shrink: 0; ">Open de lobby<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
-<p style="margin: 0; font-size: 22px; color: #5d6575">De PIN staat in je sessie-uitnodiging in het beheer.</p>
+<button type="submit" style="height: 72px; padding: 0 40px; border-radius: 999px; background: #0037ff; color: #ffffff; border: 0; font-family: 'Instrument Sans', system-ui, sans-serif; font-weight: 600; font-size: 24px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; flex-shrink: 0">Verder<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
 </div>
 </div>
 </x-dc>

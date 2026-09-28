@@ -4,7 +4,7 @@ import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 import { Button } from '~/components/Button'
 import { errorMessage } from '~/lib/errors'
-import { useAdminPin } from './pin'
+import { useAdminPassword } from './password'
 
 /** Deletes a session with all its players and answers, after a confirm. */
 export function DeleteSessionButton({
@@ -16,7 +16,7 @@ export function DeleteSessionButton({
   size?: 'sm' | 'lg'
   onDeleted?: () => void
 }) {
-  const pin = useAdminPin()
+  const password = useAdminPassword()
   const remove = useConvexMutation(api.admin.deleteSession)
   const [busy, setBusy] = useState(false)
   return (
@@ -34,7 +34,7 @@ export function DeleteSessionButton({
           return
         setBusy(true)
         try {
-          await remove({ pin, sessionId })
+          await remove({ password, sessionId })
           onDeleted?.()
         } catch (e) {
           window.alert(errorMessage(e))

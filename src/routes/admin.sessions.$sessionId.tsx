@@ -14,7 +14,7 @@ import {
   exportParticipation,
 } from '~/features/admin/exports'
 import { DeleteSessionButton } from '~/features/admin/DeleteSessionButton'
-import { useAdminPin } from '~/features/admin/pin'
+import { useAdminPassword } from '~/features/admin/password'
 import { sessionStatus } from '~/features/admin/sessionStatus'
 
 export const Route = createFileRoute('/admin/sessions/$sessionId')({
@@ -28,12 +28,12 @@ const TYPE_LABEL = {
 } as const
 
 function SessionResults() {
-  const pin = useAdminPin()
+  const password = useAdminPassword()
   const navigate = useNavigate()
   const { sessionId } = Route.useParams()
   const { data: r } = useQuery(
     convexQuery(api.admin.sessionResults, {
-      pin,
+      password,
       sessionId: sessionId as Id<'sessions'>,
     }),
   )

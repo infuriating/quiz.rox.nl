@@ -26,10 +26,12 @@ export function errorMessage(e: unknown): string {
       return 'Vul je naam in.'
     case 'INVALID_EMAIL':
       return 'Vul een geldig e-mailadres in.'
-    case 'INVALID_PIN':
-      return 'Deze PIN klopt niet. Probeer het opnieuw.'
-    case 'PIN_NOT_CONFIGURED':
-      return 'Er is nog geen host-PIN ingesteld. Zet HOST_PIN in Convex (zie README).'
+    case 'INVALID_PASSWORD':
+      return 'Dit wachtwoord klopt niet. Probeer het opnieuw.'
+    case 'PASSWORD_NOT_CONFIGURED':
+      return 'Er is nog geen hostwachtwoord ingesteld. Zet HOST_PASSWORD in Convex (zie README).'
+    case 'PASSWORD_TOO_SHORT':
+      return `Het ingestelde hostwachtwoord is te kort. Zet in Convex een HOST_PASSWORD van minstens ${String(typeof data.min === 'number' ? data.min : 16)} tekens.`
     case 'MISSING_CORRECT': {
       const qs = Array.isArray(data.questions)
         ? (data.questions as Array<number>).join(', ')

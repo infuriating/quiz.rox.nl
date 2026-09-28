@@ -7,7 +7,7 @@ import type { Id } from '../../convex/_generated/dataModel'
 import { Button } from '~/components/Button'
 import { Icon } from '~/components/Icon'
 import { Label } from '~/components/Label'
-import { useAdminPin } from '~/features/admin/pin'
+import { useAdminPassword } from '~/features/admin/password'
 import { QuestionForm } from '~/features/admin/QuestionForm'
 import { QuizSettings } from '~/features/admin/QuizSettings'
 import { cn } from '~/lib/cn'
@@ -19,10 +19,13 @@ export const Route = createFileRoute('/admin/quizzes/$quizId')({
 const TYPE_LABEL = { single: 'Enkel', multi: 'Meerdere', poll: 'Poll' } as const
 
 function QuestionEditor() {
-  const pin = useAdminPin()
+  const password = useAdminPassword()
   const { quizId } = Route.useParams()
   const { data } = useQuery(
-    convexQuery(api.admin.getQuiz, { pin, quizId: quizId as Id<'quizzes'> }),
+    convexQuery(api.admin.getQuiz, {
+      password,
+      quizId: quizId as Id<'quizzes'>,
+    }),
   )
   const move = useConvexMutation(api.admin.moveQuestion)
   const [selected, setSelected] = useState<Id<'questions'> | 'new' | null>(null)
@@ -72,7 +75,11 @@ function QuestionEditor() {
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={() => {
                   if (dragId && dragId !== q._id)
-                    void move({ pin, questionId: dragId, toOrder: q.order })
+                    void move({
+                      password,
+                      questionId: dragId,
+                      toOrder: q.order,
+                    })
                   setDragId(null)
                 }}
                 className={cn(

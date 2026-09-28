@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { PinScreen } from '~/features/host/PinScreen'
+import { PasswordScreen } from '~/features/host/PasswordScreen'
 import { QuizPicker } from '~/features/host/QuizPicker'
 import { Stage } from '~/features/host/Stage'
-import { hostStore, pinStore, themeStore } from '~/lib/storage'
+import { hostStore, passwordStore, themeStore } from '~/lib/storage'
 
 export const Route = createFileRoute('/host/')({
   ssr: false,
@@ -12,22 +12,24 @@ export const Route = createFileRoute('/host/')({
 
 function HostStart() {
   const navigate = useNavigate()
-  const [pin, setPin] = useState<string | null>(() => pinStore.get())
+  const [password, setPassword] = useState<string | null>(() =>
+    passwordStore.get(),
+  )
   return (
     <Stage theme={themeStore.get()}>
-      {pin ? (
+      {password ? (
         <QuizPicker
-          pin={pin}
+          password={password}
           onCreated={(sessionId, hostToken) => {
             hostStore.set(sessionId, hostToken)
             void navigate({ to: '/host/$sessionId', params: { sessionId } })
           }}
         />
       ) : (
-        <PinScreen
+        <PasswordScreen
           onOk={(p) => {
-            pinStore.set(p)
-            setPin(p)
+            passwordStore.set(p)
+            setPassword(p)
           }}
         />
       )}

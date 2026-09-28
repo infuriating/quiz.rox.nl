@@ -3,7 +3,7 @@ import { internalMutation, mutation, query } from './_generated/server'
 import type { MutationCtx } from './_generated/server'
 import type { Doc, Id } from './_generated/dataModel'
 import { internal } from './_generated/api'
-import { requirePin } from './lib/auth'
+import { requirePassword } from './lib/auth'
 import { cancelSessionJobs } from './lib/flow'
 import { distribution, getAnswers, getPlayers, getQuestions } from './lib/data'
 import {
@@ -18,16 +18,16 @@ import {
 } from './lib/limits'
 import { optionValidator, questionTypeValidator } from './lib/validators'
 
-const pinArg = { pin: v.string() }
+const passwordArg = { password: v.string() }
 
 // ---------------------------------------------------------------------------
 // Quizzes
 // ---------------------------------------------------------------------------
 
 export const listQuizzes = query({
-  args: pinArg,
-  handler: async (ctx, { pin }) => {
-    requirePin(pin)
+  args: passwordArg,
+  handler: async (ctx, { password }) => {
+    requirePassword(password)
     const quizzes = (await ctx.db.query('quizzes').take(MAX_QUIZZES)).filter(
       (q) => q.deletedAt === undefined,
     )
@@ -80,9 +80,9 @@ export const listQuizzes = query({
 })
 
 export const getQuiz = query({
-  args: { ...pinArg, quizId: v.id('quizzes') },
-  handler: async (ctx, { pin, quizId }) => {
-    requirePin(pin)
+  args: { ...passwordArg, quizId: v.id('quizzes') },
+  handler: async (ctx, { password, quizId }) => {
+    requirePassword(password)
     const quiz = await ctx.db.get('quizzes', quizId)
     if (!quiz || quiz.deletedAt !== undefined) return null
     return { quiz, questions: await getQuestions(ctx, quizId) }
@@ -90,9 +90,9 @@ export const getQuiz = query({
 })
 
 export const createQuiz = mutation({
-  args: { ...pinArg, title: v.string() },
-  handler: async (ctx, { pin, title }) => {
-    requirePin(pin)
+  args: { ...passwordArg, title: v.string() },
+  handler: async (ctx, { password, title }) => {
+    requirePassword(password)
     const clean = title.trim()
     if (!clean) throw new ConvexError({ code: 'TITLE_REQUIRED' })
     return await ctx.db.insert('quizzes', {
@@ -104,9 +104,9 @@ export const createQuiz = mutation({
 
 /** Inactive: hidden from the host's quiz picker and no new sessions; results stay. */
 export const setQuizActive = mutation({
-  args: { ...pinArg, quizId: v.id('quizzes'), active: v.boolean() },
-  handler: async (ctx, { pin, quizId, active }) => {
-    requirePin(pin)
+  args: { ...passwordArg, quizId: v.id('quizzes'), active: v.boolean() },
+  handler: async (ctx, { password, quizId, active }) => {
+    requirePassword(password)
     const quiz = await ctx.db.get('quizzes', quizId)
     if (!quiz || quiz.deletedAt !== undefined)
       throw new ConvexError({ code: 'NO_QUIZ' })
@@ -119,7 +119,7 @@ export const setQuizActive = mutation({
 
 export const updateQuizSettings = mutation({
   args: {
-    ...pinArg,
+    ...passwordArg,
     quizId: v.id('quizzes'),
     title: v.string(),
     description: v.optional(v.string()),
@@ -131,7 +131,7 @@ export const updateQuizSettings = mutation({
   handler: async (
     ctx,
     {
-      pin,
+      password,
       quizId,
       title,
       description,
@@ -141,7 +141,7 @@ export const updateQuizSettings = mutation({
       idleTimeoutMinutes,
     },
   ) => {
-    requirePin(pin)
+    requirePassword(password)
     const clean = title.trim()
     if (!clean) throw new ConvexError({ code: 'TITLE_REQUIRED' })
     if (
@@ -230,13 +230,13 @@ function validateQuestion(q: {
 
 export const saveQuestion = mutation({
   args: {
-    ...pinArg,
+    ...passwordArg,
     quizId: v.id('quizzes'),
     questionId: v.optional(v.id('questions')),
     ...questionFields,
   },
-  handler: async (ctx, { pin, quizId, questionId, ...fields }) => {
-    requirePin(pin)
+  handler: async (ctx, { password, quizId, questionId, ...fields }) => {
+    requirePassword(password)
     validateQuestion(fields)
     const options =
       fields.type === 'poll'
@@ -266,9 +266,9 @@ export const saveQuestion = mutation({
 })
 
 export const deleteQuestion = mutation({
-  args: { ...pinArg, questionId: v.id('questions') },
-  handler: async (ctx, { pin, questionId }) => {
-    requirePin(pin)
+  args: { ...passwordArg, questionId: v.id('questions') },
+  handler: async (ctx, { password, questionId }) => {
+    requirePassword(password)
     const q = await ctx.db.get('questions', questionId)
     if (!q) return null
     await ctx.db.delete('questions', questionId)
@@ -279,9 +279,9 @@ export const deleteQuestion = mutation({
 
 /** Moves a question to a new 1-based position (drag-and-drop and the up/down buttons). */
 export const moveQuestion = mutation({
-  args: { ...pinArg, questionId: v.id('questions'), toOrder: v.number() },
-  handler: async (ctx, { pin, questionId, toOrder }) => {
-    requirePin(pin)
+  args: { ...passwordArg, questionId: v.id('questions'), toOrder: v.number() },
+  handler: async (ctx, { password, questionId, toOrder }) => {
+    requirePassword(password)
     const q = await ctx.db.get('questions', questionId)
     if (!q) throw new ConvexError({ code: 'NO_QUESTION' })
     const questions = (await getQuestions(ctx, q.quizId)).filter(
@@ -302,9 +302,9 @@ export const moveQuestion = mutation({
 // ---------------------------------------------------------------------------
 
 export const sessionResults = query({
-  args: { ...pinArg, sessionId: v.id('sessions') },
-  handler: async (ctx, { pin, sessionId }) => {
-    requirePin(pin)
+  args: { ...passwordArg, sessionId: v.id('sessions') },
+  handler: async (ctx, { password, sessionId }) => {
+    requirePassword(password)
     const session = await ctx.db.get('sessions', sessionId)
     if (!session || session.deletedAt !== undefined) return null
     const quiz = await ctx.db.get('quizzes', session.quizId)
@@ -380,9 +380,9 @@ async function markSessionDeleted(ctx: MutationCtx, session: Doc<'sessions'>) {
 }
 
 export const deleteSession = mutation({
-  args: { ...pinArg, sessionId: v.id('sessions') },
-  handler: async (ctx, { pin, sessionId }) => {
-    requirePin(pin)
+  args: { ...passwordArg, sessionId: v.id('sessions') },
+  handler: async (ctx, { password, sessionId }) => {
+    requirePassword(password)
     const session = await ctx.db.get('sessions', sessionId)
     if (!session || session.deletedAt !== undefined) return null
     await markSessionDeleted(ctx, session)
@@ -428,9 +428,9 @@ export const purgeSession = internalMutation({
 // ---------------------------------------------------------------------------
 
 export const deleteQuiz = mutation({
-  args: { ...pinArg, quizId: v.id('quizzes') },
-  handler: async (ctx, { pin, quizId }) => {
-    requirePin(pin)
+  args: { ...passwordArg, quizId: v.id('quizzes') },
+  handler: async (ctx, { password, quizId }) => {
+    requirePassword(password)
     const quiz = await ctx.db.get('quizzes', quizId)
     if (!quiz || quiz.deletedAt !== undefined) return null
     const sessions = (

@@ -2,7 +2,7 @@ import { ConvexError, v } from 'convex/values'
 import { mutation, query } from './_generated/server'
 import type { QueryCtx } from './_generated/server'
 import type { Doc, Id } from './_generated/dataModel'
-import { requireHost, requirePin } from './lib/auth'
+import { requireHost, requirePassword } from './lib/auth'
 import { keepAlive } from './lib/flow'
 import { normalizeJoinCode, randomJoinCode, randomToken } from './lib/codes'
 import {
@@ -24,23 +24,23 @@ import {
 import { rankBy } from './lib/scoring'
 
 // ---------------------------------------------------------------------------
-// Host: PIN + session creation
+// Host: password + session creation
 // ---------------------------------------------------------------------------
 
-/** Checks the host PIN. Used by /host and /admin before storing the PIN client-side. */
-export const verifyPin = mutation({
-  args: { pin: v.string() },
-  handler: (_ctx, { pin }) => {
-    requirePin(pin)
+/** Checks the host password. Used by /host and /admin before keeping it in sessionStorage. */
+export const verifyPassword = mutation({
+  args: { password: v.string() },
+  handler: (_ctx, { password }) => {
+    requirePassword(password)
     return true
   },
 })
 
 /** Creates a session in the lobby phase and returns the host token that guards host mutations. */
 export const createSession = mutation({
-  args: { pin: v.string(), quizId: v.id('quizzes') },
-  handler: async (ctx, { pin, quizId }) => {
-    requirePin(pin)
+  args: { password: v.string(), quizId: v.id('quizzes') },
+  handler: async (ctx, { password, quizId }) => {
+    requirePassword(password)
     const quiz = await ctx.db.get('quizzes', quizId)
     if (!quiz || quiz.deletedAt !== undefined)
       throw new ConvexError({ code: 'NO_QUIZ' })

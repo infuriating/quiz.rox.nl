@@ -33,13 +33,18 @@ To run locally without a Convex account:
 CONVEX_AGENT_MODE=anonymous npx convex dev
 ```
 
-## Host PIN
+## Host password
 
-The host screens and `/admin` are protected by a single PIN (4 to 6 digits), checked server-side:
+The host screens and `/admin` are protected by a single password, checked server-side. Use a long
+random value: the server refuses a configured password shorter than 16 characters, and 32 is
+recommended. For example:
 
 ```bash
-npx convex env set HOST_PIN 123456
+npx convex env set HOST_PASSWORD "$(openssl rand -base64 48 | tr -dc 'A-Za-z0-9' | head -c 32)"
 ```
+
+Store it in your password manager: the host enters it on `/host` and `/admin` (the field supports
+autofill). It is kept in the browser's `sessionStorage` for that tab only.
 
 ## Seed data
 
@@ -66,13 +71,13 @@ This starts `convex dev` and the web app on <http://localhost:3000>.
 | `/`                 | Players: enter code, name and email                       |
 | `/join/<code>`      | Players via the QR code; the code is prefilled            |
 | `/play/<sessionId>` | Players during the game                                   |
-| `/host`             | Host: PIN, pick a quiz, open the lobby                    |
+| `/host`             | Host: password, pick a quiz, open the lobby               |
 | `/host/<sessionId>` | Projector (1920×1080, scales to any screen)               |
 | `/admin`            | Admin: quizzes, questions, settings, results, CSV exports |
 
 ## Running a session
 
-1. Open `/host` on the laptop connected to the projector and enter the PIN.
+1. Open `/host` on the laptop connected to the projector and enter the host password.
 2. Pick a quiz and click **"Open de lobby"**. The join code, URL and a QR code appear.
 3. Players scan the QR code, or go to the URL and enter the code. Their names appear live.
    Players can join from a phone or a laptop; on a laptop the answers can also be picked with the
@@ -147,10 +152,10 @@ One-time setup:
 
 1. Log in to Convex and create a production deployment (`npx convex login`, then
    `npx convex deploy`).
-2. Set the host PIN on production:
+2. Set the host password on production (a different one than locally):
 
    ```bash
-   npx convex env set HOST_PIN 123456 --prod
+   npx convex env set HOST_PASSWORD "<32 random characters>" --prod
    ```
 
 3. Seed the quiz on production:
@@ -208,7 +213,7 @@ ends up in the public JS bundle anyway):
 
 Both workflows fail with a clear message when it is not set.
 
-The first deploy needs `HOST_PIN` and the seed on the production Convex deployment (steps 2 and 3
+The first deploy needs `HOST_PASSWORD` and the seed on the production Convex deployment (steps 2 and 3
 above). CI builds need no secrets.
 
 To try the production build locally:
@@ -256,7 +261,7 @@ design/            design snapshot (see design/README.md)
 scripts/           generate-tokens.mjs
 convex/
   schema.ts        tables and indexes
-  sessions.ts      PIN, session creation, joining, player and host views (sanitized)
+  sessions.ts      password check, session creation, joining, player and host views (sanitized)
   game.ts          phase transitions, scheduled auto-reveal and expiry
   answers.ts       answer submission and evaluation (only here, on server time)
   admin.ts         quizzes, questions, settings, results, inactive/delete

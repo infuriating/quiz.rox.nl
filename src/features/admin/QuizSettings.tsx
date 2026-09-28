@@ -7,11 +7,11 @@ import { Input, Select, Textarea } from '~/components/Field'
 import { Label } from '~/components/Label'
 import { Switch } from '~/components/Switch'
 import { errorMessage } from '~/lib/errors'
-import { useAdminPin } from './pin'
+import { useAdminPassword } from './password'
 
 /** Quiz-level settings: scoring toggle (off by default), optional participant cap, closing message. */
 export function QuizSettings({ quiz }: { quiz: Doc<'quizzes'> }) {
-  const pin = useAdminPin()
+  const password = useAdminPassword()
   const save = useConvexMutation(api.admin.updateQuizSettings)
   const [title, setTitle] = useState(quiz.title)
   const [scoring, setScoring] = useState(quiz.scoringEnabled)
@@ -27,7 +27,7 @@ export function QuizSettings({ quiz }: { quiz: Doc<'quizzes'> }) {
     setStatus(null)
     try {
       await save({
-        pin,
+        password,
         quizId: quiz._id,
         title,
         description: quiz.description,

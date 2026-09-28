@@ -9,7 +9,7 @@ import { Input, Select, Textarea } from '~/components/Field'
 import { Icon } from '~/components/Icon'
 import { errorMessage } from '~/lib/errors'
 import { cn } from '~/lib/cn'
-import { useAdminPin } from './pin'
+import { useAdminPassword } from './password'
 
 type Option = { id: string; text: string; correct: boolean }
 type QType = Doc<'questions'>['type']
@@ -49,7 +49,7 @@ export function QuestionForm({
   onSaved: (id: Id<'questions'>) => void
   onDeleted: () => void
 }) {
-  const pin = useAdminPin()
+  const password = useAdminPassword()
   const save = useConvexMutation(api.admin.saveQuestion)
   const remove = useConvexMutation(api.admin.deleteQuestion)
   const move = useConvexMutation(api.admin.moveQuestion)
@@ -80,7 +80,7 @@ export function QuestionForm({
     setStatus(null)
     try {
       const id = await save({
-        pin,
+        password,
         quizId,
         questionId: question?._id,
         topic,
@@ -114,7 +114,7 @@ export function QuestionForm({
                 disabled={order <= 1}
                 onClick={() =>
                   void move({
-                    pin,
+                    password,
                     questionId: question._id,
                     toOrder: order - 1,
                   })
@@ -129,7 +129,7 @@ export function QuestionForm({
                 disabled={order >= count}
                 onClick={() =>
                   void move({
-                    pin,
+                    password,
                     questionId: question._id,
                     toOrder: order + 1,
                   })
@@ -149,7 +149,9 @@ export function QuestionForm({
               icon="trash"
               onClick={() => {
                 if (window.confirm('Deze vraag verwijderen?'))
-                  void remove({ pin, questionId: question._id }).then(onDeleted)
+                  void remove({ password, questionId: question._id }).then(
+                    onDeleted,
+                  )
               }}
             >
               Vraag verwijderen

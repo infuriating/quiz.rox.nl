@@ -12,7 +12,7 @@ import { Input } from '~/components/Field'
 import { Icon } from '~/components/Icon'
 import { DeleteSessionButton } from '~/features/admin/DeleteSessionButton'
 import { QuizActions } from '~/features/admin/QuizActions'
-import { useAdminPin } from '~/features/admin/pin'
+import { useAdminPassword } from '~/features/admin/password'
 import { sessionStatus } from '~/features/admin/sessionStatus'
 import { errorMessage } from '~/lib/errors'
 import { cn } from '~/lib/cn'
@@ -28,10 +28,10 @@ const dateFmt = new Intl.DateTimeFormat('nl-NL', {
 })
 
 function QuizList() {
-  const pin = useAdminPin()
+  const password = useAdminPassword()
   const navigate = useNavigate()
   const { data: quizzes } = useQuery(
-    convexQuery(api.admin.listQuizzes, { pin }),
+    convexQuery(api.admin.listQuizzes, { password }),
   )
   const createQuiz = useConvexMutation(api.admin.createQuiz)
   const [open, setOpen] = useState<Record<string, boolean>>({})
@@ -45,7 +45,7 @@ function QuizList() {
   async function create(e: FormEvent) {
     e.preventDefault()
     try {
-      const quizId = await createQuiz({ pin, title: newTitle ?? '' })
+      const quizId = await createQuiz({ password, title: newTitle ?? '' })
       await navigate({ to: '/admin/quizzes/$quizId', params: { quizId } })
     } catch (err) {
       setError(errorMessage(err))

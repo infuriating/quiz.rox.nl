@@ -1,8 +1,8 @@
 import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { AdminPinContext } from '~/features/admin/pin'
-import { PinScreen } from '~/features/host/PinScreen'
-import { pinStore } from '~/lib/storage'
+import { AdminPasswordContext } from '~/features/admin/password'
+import { PasswordScreen } from '~/features/host/PasswordScreen'
+import { passwordStore } from '~/lib/storage'
 
 export const Route = createFileRoute('/admin')({
   ssr: false,
@@ -10,20 +10,22 @@ export const Route = createFileRoute('/admin')({
 })
 
 function AdminLayout() {
-  const [pin, setPin] = useState<string | null>(() => pinStore.get())
-  if (!pin) {
+  const [password, setPassword] = useState<string | null>(() =>
+    passwordStore.get(),
+  )
+  if (!password) {
     return (
-      <PinScreen
+      <PasswordScreen
         compact
         onOk={(p) => {
-          pinStore.set(p)
-          setPin(p)
+          passwordStore.set(p)
+          setPassword(p)
         }}
       />
     )
   }
   return (
-    <AdminPinContext.Provider value={pin}>
+    <AdminPasswordContext.Provider value={password}>
       <div className="min-h-dvh bg-ink-05">
         <header className="flex h-16 items-center gap-12 border-b border-ink-15 bg-white px-10">
           <span className="font-display text-lg font-bold tracking-heading">
@@ -48,8 +50,8 @@ function AdminLayout() {
             type="button"
             className="cursor-pointer border-0 bg-transparent text-sm text-ink-70 hover:text-ink"
             onClick={() => {
-              pinStore.clear()
-              setPin(null)
+              passwordStore.clear()
+              setPassword(null)
             }}
           >
             Uitloggen
@@ -57,6 +59,6 @@ function AdminLayout() {
         </header>
         <Outlet />
       </div>
-    </AdminPinContext.Provider>
+    </AdminPasswordContext.Provider>
   )
 }

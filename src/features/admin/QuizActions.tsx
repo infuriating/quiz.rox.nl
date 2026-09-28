@@ -4,7 +4,7 @@ import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 import { Button } from '~/components/Button'
 import { errorMessage } from '~/lib/errors'
-import { useAdminPin } from './pin'
+import { useAdminPassword } from './password'
 
 /** "Zet inactief" / "Activeer" and "Verwijderen" for one quiz. */
 export function QuizActions({
@@ -20,7 +20,7 @@ export function QuizActions({
   sessionCount: number
   onDeleted?: () => void
 }) {
-  const pin = useAdminPin()
+  const password = useAdminPassword()
   const setActive = useConvexMutation(api.admin.setQuizActive)
   const remove = useConvexMutation(api.admin.deleteQuiz)
   const [busy, setBusy] = useState(false)
@@ -48,7 +48,7 @@ export function QuizActions({
         size="sm"
         disabled={busy}
         onClick={() =>
-          void run(() => setActive({ pin, quizId, active: !active }))
+          void run(() => setActive({ password, quizId, active: !active }))
         }
       >
         {active ? 'Zet inactief' : 'Activeer'}
@@ -66,7 +66,7 @@ export function QuizActions({
           )
             return
           void run(async () => {
-            await remove({ pin, quizId })
+            await remove({ password, quizId })
             onDeleted?.()
           })
         }}

@@ -26,11 +26,11 @@ export const hostStore = {
     safe(() => localStorage.setItem(`rq:host:${sessionId}`, token), undefined),
 }
 
-export const pinStore = {
-  get: () => safe(() => sessionStorage.getItem('rq:pin'), null),
-  set: (pin: string) =>
-    safe(() => sessionStorage.setItem('rq:pin', pin), undefined),
-  clear: () => safe(() => sessionStorage.removeItem('rq:pin'), undefined),
+export const passwordStore = {
+  get: () => safe(() => sessionStorage.getItem('rq:password'), null),
+  set: (password: string) =>
+    safe(() => sessionStorage.setItem('rq:password', password), undefined),
+  clear: () => safe(() => sessionStorage.removeItem('rq:password'), undefined),
 }
 
 export const themeStore = {

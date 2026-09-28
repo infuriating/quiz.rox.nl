@@ -8,7 +8,7 @@ the code.
 
 |               |                                              |
 | ------------- | -------------------------------------------- |
-| Snapshot      | 28 September 2026, canvas version 7          |
+| Snapshot      | 28 September 2026, canvas version 8          |
 | Design system | ROX Design System, version `1790200405-cb2f` |
 
 ## Contents
@@ -35,7 +35,7 @@ The copy in the artboards is Dutch, like the app's UI.
 | `player/Speler-Einde` (+ `-score`)                    | same                         | `FinalScreen`                                                 |
 | `player/Speler-Herverbinden`                          | all player routes            | `ConnectionBanner`                                            |
 | `player-desktop/*` (1440 × 900)                       | same, from 768 px wide       | the same player screens: `PhoneFrame` card, 2×2 answer grid   |
-| `host/Host-Pin`                                       | `/host`                      | `features/host/PinScreen`                                     |
+| `host/Host-Pin` (host password)                       | `/host`                      | `features/host/PasswordScreen`                                |
 | `host/Host-Lobby`                                     | `/host/$sessionId`           | `HostLobby` + `JoinCodeDisplay`                               |
 | `host/Host-Vraag`                                     | same                         | `HostQuestion` + `AnswerTile`, `CountdownBar`                 |
 | `host/Host-Uitleg`, `host/Host-Resultaat`             | same                         | `HostReveal` (with / without explanation) + `DistributionBar` |

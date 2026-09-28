@@ -8,16 +8,16 @@ import { Button } from '~/components/Button'
 import { Label } from '~/components/Label'
 import { errorMessage } from '~/lib/errors'
 
-/** After the PIN: pick a quiz and open its lobby. Beamer style, one button per quiz. */
+/** After the password: pick a quiz and open its lobby. Beamer style, one button per quiz. */
 export function QuizPicker({
-  pin,
+  password,
   onCreated,
 }: {
-  pin: string
+  password: string
   onCreated: (sessionId: Id<'sessions'>, hostToken: string) => void
 }) {
   const { data: quizzes } = useQuery(
-    convexQuery(api.admin.listQuizzes, { pin }),
+    convexQuery(api.admin.listQuizzes, { password }),
   )
   // Inactive quizzes stay in /admin but cannot start a session.
   const active = (quizzes ?? []).filter((q) => q.active)
@@ -31,7 +31,7 @@ export function QuizPicker({
     setBusy(quizId)
     setError(null)
     try {
-      const { sessionId, hostToken } = await create({ pin, quizId })
+      const { sessionId, hostToken } = await create({ password, quizId })
       onCreated(sessionId, hostToken)
     } catch (e) {
       setError({ id: quizId, message: errorMessage(e) })

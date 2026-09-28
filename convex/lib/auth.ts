@@ -3,14 +3,23 @@ import { env } from '../_generated/server'
 import type { MutationCtx, QueryCtx } from '../_generated/server'
 import type { Doc, Id } from '../_generated/dataModel'
 
-/** Throws unless `pin` matches the HOST_PIN environment variable. */
-export function requirePin(pin: string): void {
-  const expected = env.HOST_PIN
+/** A configured password shorter than this is refused, so a weak one cannot slip into production. */
+export const MIN_HOST_PASSWORD_LENGTH = 16
+
+/** Throws unless `password` matches the HOST_PASSWORD environment variable. */
+export function requirePassword(password: string): void {
+  const expected = env.HOST_PASSWORD
   if (!expected) {
-    throw new ConvexError({ code: 'PIN_NOT_CONFIGURED' })
+    throw new ConvexError({ code: 'PASSWORD_NOT_CONFIGURED' })
   }
-  if (!constantTimeEqual(pin, expected)) {
-    throw new ConvexError({ code: 'INVALID_PIN' })
+  if (expected.length < MIN_HOST_PASSWORD_LENGTH) {
+    throw new ConvexError({
+      code: 'PASSWORD_TOO_SHORT',
+      min: MIN_HOST_PASSWORD_LENGTH,
+    })
+  }
+  if (!constantTimeEqual(password, expected)) {
+    throw new ConvexError({ code: 'INVALID_PASSWORD' })
   }
 }
 
