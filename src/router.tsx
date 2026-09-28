@@ -32,10 +32,12 @@ export function getRouter() {
       defaultPreloadStaleTime: 0, // Let React Query handle all caching
       defaultErrorComponent: () => (
         <main className="flex min-h-dvh items-center justify-center p-6 text-center">
-          <p className="text-lg text-ink-70">Er ging iets mis. Ververs de pagina.</p>
+          <p className="text-lg text-ink-70">
+            Er ging iets mis. Ververs de pagina.
+          </p>
         </main>
       ),
-      
+
       Wrap: ({ children }) => (
         <ConvexProvider client={convexQueryClient.convexClient}>
           {children}

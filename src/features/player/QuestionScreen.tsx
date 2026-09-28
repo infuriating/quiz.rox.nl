@@ -33,10 +33,16 @@ export function QuestionScreen({
   async function send(optionIds: string[]) {
     setPending(optionIds[0])
     try {
-      await submit({ sessionId: view.session.id, playerId: view.player.id, questionId: q.id, optionIds })
+      await submit({
+        sessionId: view.session.id,
+        playerId: view.player.id,
+        questionId: q.id,
+        optionIds,
+      })
     } catch (e) {
       setPending(null)
-      if (errorCode(e) === 'TOO_LATE' || errorCode(e) === 'WRONG_PHASE') onLate()
+      if (errorCode(e) === 'TOO_LATE' || errorCode(e) === 'WRONG_PHASE')
+        onLate()
     }
   }
 
@@ -50,10 +56,23 @@ export function QuestionScreen({
           </Label>
           <Badge>{q.topic}</Badge>
         </div>
-        <CountdownBar remainingMs={remainingMs} totalMs={q.timeLimitSec * 1000} />
-        <p className="m-0 font-display text-phone-question leading-[1.25] font-semibold tracking-heading">{q.text}</p>
+        <CountdownBar
+          remainingMs={remainingMs}
+          totalMs={q.timeLimitSec * 1000}
+        />
+        <p className="m-0 font-display text-phone-question leading-[1.25] font-semibold tracking-heading">
+          {q.text}
+        </p>
       </div>
-      <div role={multi ? 'group' : undefined} aria-label={multi ? 'Antwoorden' : undefined} className={multi ? 'flex min-h-0 flex-1 flex-col gap-2.5 px-4 py-3' : 'flex min-h-0 flex-1 flex-col gap-3 px-4 py-5'}>
+      <div
+        role={multi ? 'group' : undefined}
+        aria-label={multi ? 'Antwoorden' : undefined}
+        className={
+          multi
+            ? 'flex min-h-0 flex-1 flex-col gap-2.5 px-4 py-3'
+            : 'flex min-h-0 flex-1 flex-col gap-3 px-4 py-5'
+        }
+      >
         {multi && (
           <p className="m-0 mb-0.5 flex items-center gap-2 text-sm font-semibold text-blue-600">
             <Icon name="check" size={15} strokeWidth={2.4} />
@@ -70,7 +89,11 @@ export function QuestionScreen({
                 text={o.text}
                 multi
                 state={disabled ? 'disabled' : on ? 'selected' : 'idle'}
-                onClick={() => setSelected((s) => (on ? s.filter((x) => x !== o.id) : [...s, o.id]))}
+                onClick={() =>
+                  setSelected((s) =>
+                    on ? s.filter((x) => x !== o.id) : [...s, o.id],
+                  )
+                }
               />
             )
           }
@@ -79,7 +102,9 @@ export function QuestionScreen({
               key={o.id}
               index={i}
               text={o.text}
-              state={pending === o.id ? 'pressed' : disabled ? 'disabled' : 'idle'}
+              state={
+                pending === o.id ? 'pressed' : disabled ? 'disabled' : 'idle'
+              }
               onClick={() => void send([o.id])}
             />
           )
@@ -87,7 +112,12 @@ export function QuestionScreen({
       </div>
       {multi && (
         <div className="px-4 pt-1 pb-5">
-          <Button size="lg" full disabled={selected.length === 0 || disabled} onClick={() => void send(selected)}>
+          <Button
+            size="lg"
+            full
+            disabled={selected.length === 0 || disabled}
+            onClick={() => void send(selected)}
+          >
             {selected.length ? `Verstuur (${selected.length})` : 'Verstuur'}
           </Button>
         </div>

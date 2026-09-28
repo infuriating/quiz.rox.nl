@@ -1,9 +1,9 @@
-import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
-import type { MutationCtx } from "./_generated/server";
-import type { Id } from "./_generated/dataModel";
-import { requirePin } from "./lib/auth";
-import { distribution, getAnswers, getPlayers, getQuestions } from "./lib/data";
+import { ConvexError, v } from 'convex/values'
+import { mutation, query } from './_generated/server'
+import type { MutationCtx } from './_generated/server'
+import type { Id } from './_generated/dataModel'
+import { requirePin } from './lib/auth'
+import { distribution, getAnswers, getPlayers, getQuestions } from './lib/data'
 import {
   MAX_OPTION_LENGTH,
   MAX_OUTRO_LENGTH,
@@ -11,10 +11,10 @@ import {
   MAX_QUESTION_LENGTH,
   MAX_QUIZZES,
   MAX_SESSIONS_PER_QUIZ,
-} from "./lib/limits";
-import { optionValidator, questionTypeValidator } from "./lib/validators";
+} from './lib/limits'
+import { optionValidator, questionTypeValidator } from './lib/validators'
 
-const pinArg = { pin: v.string() };
+const pinArg = { pin: v.string() }
 
 // ---------------------------------------------------------------------------
 // Quizzes
@@ -23,21 +23,22 @@ const pinArg = { pin: v.string() };
 export const listQuizzes = query({
   args: pinArg,
   handler: async (ctx, { pin }) => {
-    requirePin(pin);
-    const quizzes = await ctx.db.query("quizzes").take(MAX_QUIZZES);
+    requirePin(pin)
+    const quizzes = await ctx.db.query('quizzes').take(MAX_QUIZZES)
     return await Promise.all(
       quizzes.map(async (quiz) => {
-        const questions = await getQuestions(ctx, quiz._id);
+        const questions = await getQuestions(ctx, quiz._id)
         const sessions = await ctx.db
-          .query("sessions")
-          .withIndex("by_quizId", (q) => q.eq("quizId", quiz._id))
-          .order("desc")
-          .take(MAX_SESSIONS_PER_QUIZ);
+          .query('sessions')
+          .withIndex('by_quizId', (q) => q.eq('quizId', quiz._id))
+          .order('desc')
+          .take(MAX_SESSIONS_PER_QUIZ)
         const sessionRows = await Promise.all(
           sessions.map(async (s) => {
-            const players = await getPlayers(ctx, s._id);
-            let answerCount = 0;
-            for (const q of questions) answerCount += (await getAnswers(ctx, s._id, q._id)).length;
+            const players = await getPlayers(ctx, s._id)
+            let answerCount = 0
+            for (const q of questions)
+              answerCount += (await getAnswers(ctx, s._id, q._id)).length
             return {
               id: s._id,
               createdAt: s.createdAt,
@@ -46,9 +47,9 @@ export const listQuizzes = query({
               scoringEnabled: s.scoringEnabled,
               playerCount: players.length,
               answerCount,
-            };
+            }
           }),
-        );
+        )
         return {
           id: quiz._id,
           title: quiz.title,
@@ -56,72 +57,100 @@ export const listQuizzes = query({
           scoringEnabled: quiz.scoringEnabled,
           maxPlayers: quiz.maxPlayers ?? null,
           questionCount: questions.length,
-          missingCorrect: questions.filter((q) => q.type !== "poll" && !q.options.some((o) => o.correct)).map((q) => q.order),
+          missingCorrect: questions
+            .filter(
+              (q) => q.type !== 'poll' && !q.options.some((o) => o.correct),
+            )
+            .map((q) => q.order),
           sessions: sessionRows,
-        };
+        }
       }),
-    );
+    )
   },
-});
+})
 
 export const getQuiz = query({
-  args: { ...pinArg, quizId: v.id("quizzes") },
+  args: { ...pinArg, quizId: v.id('quizzes') },
   handler: async (ctx, { pin, quizId }) => {
-    requirePin(pin);
-    const quiz = await ctx.db.get("quizzes", quizId);
-    if (!quiz) return null;
-    return { quiz, questions: await getQuestions(ctx, quizId) };
+    requirePin(pin)
+    const quiz = await ctx.db.get('quizzes', quizId)
+    if (!quiz) return null
+    return { quiz, questions: await getQuestions(ctx, quizId) }
   },
-});
+})
 
 export const createQuiz = mutation({
   args: { ...pinArg, title: v.string() },
   handler: async (ctx, { pin, title }) => {
-    requirePin(pin);
-    const clean = title.trim();
-    if (!clean) throw new ConvexError({ code: "TITLE_REQUIRED" });
-    return await ctx.db.insert("quizzes", { title: clean, scoringEnabled: false });
+    requirePin(pin)
+    const clean = title.trim()
+    if (!clean) throw new ConvexError({ code: 'TITLE_REQUIRED' })
+    return await ctx.db.insert('quizzes', {
+      title: clean,
+      scoringEnabled: false,
+    })
   },
-});
+})
 
 export const updateQuizSettings = mutation({
   args: {
     ...pinArg,
-    quizId: v.id("quizzes"),
+    quizId: v.id('quizzes'),
     title: v.string(),
     description: v.optional(v.string()),
     scoringEnabled: v.boolean(),
     outroMessage: v.optional(v.string()),
     maxPlayers: v.optional(v.number()),
   },
-  handler: async (ctx, { pin, quizId, title, description, scoringEnabled, outroMessage, maxPlayers }) => {
-    requirePin(pin);
-    const clean = title.trim();
-    if (!clean) throw new ConvexError({ code: "TITLE_REQUIRED" });
-    if (maxPlayers !== undefined && (!Number.isInteger(maxPlayers) || maxPlayers < 1 || maxPlayers > MAX_PLAYERS_PER_SESSION)) {
-      throw new ConvexError({ code: "INVALID_MAX_PLAYERS", max: MAX_PLAYERS_PER_SESSION });
+  handler: async (
+    ctx,
+    {
+      pin,
+      quizId,
+      title,
+      description,
+      scoringEnabled,
+      outroMessage,
+      maxPlayers,
+    },
+  ) => {
+    requirePin(pin)
+    const clean = title.trim()
+    if (!clean) throw new ConvexError({ code: 'TITLE_REQUIRED' })
+    if (
+      maxPlayers !== undefined &&
+      (!Number.isInteger(maxPlayers) ||
+        maxPlayers < 1 ||
+        maxPlayers > MAX_PLAYERS_PER_SESSION)
+    ) {
+      throw new ConvexError({
+        code: 'INVALID_MAX_PLAYERS',
+        max: MAX_PLAYERS_PER_SESSION,
+      })
     }
-    const outro = outroMessage?.trim();
-    if (outro && outro.length > MAX_OUTRO_LENGTH) throw new ConvexError({ code: "OUTRO_TOO_LONG" });
-    await ctx.db.patch("quizzes", quizId, {
+    const outro = outroMessage?.trim()
+    if (outro && outro.length > MAX_OUTRO_LENGTH)
+      throw new ConvexError({ code: 'OUTRO_TOO_LONG' })
+    await ctx.db.patch('quizzes', quizId, {
       title: clean,
       description: description?.trim() || undefined,
       scoringEnabled,
       outroMessage: outro || undefined,
       maxPlayers,
-    });
-    return null;
+    })
+    return null
   },
-});
+})
 
 // ---------------------------------------------------------------------------
 // Questions
 // ---------------------------------------------------------------------------
 
-async function renumber(ctx: MutationCtx, quizId: Id<"quizzes">) {
-  const questions = await getQuestions(ctx, quizId);
+async function renumber(ctx: MutationCtx, quizId: Id<'quizzes'>) {
+  const questions = await getQuestions(ctx, quizId)
   for (const [i, q] of questions.entries()) {
-    if (q.order !== i + 1) await ctx.db.patch("questions", q._id, { order: i + 1 });
+    if (q.order !== i + 1)
+      await ctx.db.patch('questions', q._id, { order: i + 1 })
   }
 }
 
@@ -132,80 +161,122 @@ const questionFields = {
   options: v.array(optionValidator),
   explanation: v.optional(v.string()),
   timeLimitSec: v.number(),
-};
+}
 
-function validateQuestion(q: { text: string; type: "single" | "multi" | "poll"; options: { id: string; text: string; correct: boolean }[]; timeLimitSec: number }) {
-  if (!q.text.trim() || q.text.length > MAX_QUESTION_LENGTH) throw new ConvexError({ code: "INVALID_QUESTION_TEXT" });
-  if (q.options.length < 2 || q.options.length > 4) throw new ConvexError({ code: "INVALID_OPTION_COUNT" });
-  if (q.options.some((o) => !o.text.trim() || o.text.length > MAX_OPTION_LENGTH)) throw new ConvexError({ code: "INVALID_OPTION_TEXT" });
-  if (new Set(q.options.map((o) => o.id)).size !== q.options.length) throw new ConvexError({ code: "DUPLICATE_OPTION_ID" });
-  if (q.type === "single" && q.options.filter((o) => o.correct).length > 1) throw new ConvexError({ code: "SINGLE_HAS_MULTIPLE_CORRECT" });
-  if (!Number.isInteger(q.timeLimitSec) || q.timeLimitSec < 5 || q.timeLimitSec > 300) throw new ConvexError({ code: "INVALID_TIME_LIMIT" });
+function validateQuestion(q: {
+  text: string
+  type: 'single' | 'multi' | 'poll'
+  options: { id: string; text: string; correct: boolean }[]
+  timeLimitSec: number
+}) {
+  if (!q.text.trim() || q.text.length > MAX_QUESTION_LENGTH)
+    throw new ConvexError({ code: 'INVALID_QUESTION_TEXT' })
+  if (q.options.length < 2 || q.options.length > 4)
+    throw new ConvexError({ code: 'INVALID_OPTION_COUNT' })
+  if (
+    q.options.some((o) => !o.text.trim() || o.text.length > MAX_OPTION_LENGTH)
+  )
+    throw new ConvexError({ code: 'INVALID_OPTION_TEXT' })
+  if (new Set(q.options.map((o) => o.id)).size !== q.options.length)
+    throw new ConvexError({ code: 'DUPLICATE_OPTION_ID' })
+  if (q.type === 'single' && q.options.filter((o) => o.correct).length > 1)
+    throw new ConvexError({ code: 'SINGLE_HAS_MULTIPLE_CORRECT' })
+  if (
+    !Number.isInteger(q.timeLimitSec) ||
+    q.timeLimitSec < 5 ||
+    q.timeLimitSec > 300
+  )
+    throw new ConvexError({ code: 'INVALID_TIME_LIMIT' })
 }
 
 export const saveQuestion = mutation({
-  args: { ...pinArg, quizId: v.id("quizzes"), questionId: v.optional(v.id("questions")), ...questionFields },
-  handler: async (ctx, { pin, quizId, questionId, ...fields }) => {
-    requirePin(pin);
-    validateQuestion(fields);
-    const options = fields.type === "poll" ? fields.options.map((o) => ({ ...o, correct: false })) : fields.options;
-    const doc = { ...fields, options, topic: fields.topic.trim(), text: fields.text.trim(), explanation: fields.explanation?.trim() || undefined };
-    if (questionId) {
-      const existing = await ctx.db.get("questions", questionId);
-      if (!existing || existing.quizId !== quizId) throw new ConvexError({ code: "NO_QUESTION" });
-      await ctx.db.patch("questions", questionId, doc);
-      return questionId;
-    }
-    const count = (await getQuestions(ctx, quizId)).length;
-    return await ctx.db.insert("questions", { quizId, order: count + 1, ...doc });
+  args: {
+    ...pinArg,
+    quizId: v.id('quizzes'),
+    questionId: v.optional(v.id('questions')),
+    ...questionFields,
   },
-});
+  handler: async (ctx, { pin, quizId, questionId, ...fields }) => {
+    requirePin(pin)
+    validateQuestion(fields)
+    const options =
+      fields.type === 'poll'
+        ? fields.options.map((o) => ({ ...o, correct: false }))
+        : fields.options
+    const doc = {
+      ...fields,
+      options,
+      topic: fields.topic.trim(),
+      text: fields.text.trim(),
+      explanation: fields.explanation?.trim() || undefined,
+    }
+    if (questionId) {
+      const existing = await ctx.db.get('questions', questionId)
+      if (!existing || existing.quizId !== quizId)
+        throw new ConvexError({ code: 'NO_QUESTION' })
+      await ctx.db.patch('questions', questionId, doc)
+      return questionId
+    }
+    const count = (await getQuestions(ctx, quizId)).length
+    return await ctx.db.insert('questions', {
+      quizId,
+      order: count + 1,
+      ...doc,
+    })
+  },
+})
 
 export const deleteQuestion = mutation({
-  args: { ...pinArg, questionId: v.id("questions") },
+  args: { ...pinArg, questionId: v.id('questions') },
   handler: async (ctx, { pin, questionId }) => {
-    requirePin(pin);
-    const q = await ctx.db.get("questions", questionId);
-    if (!q) return null;
-    await ctx.db.delete("questions", questionId);
-    await renumber(ctx, q.quizId);
-    return null;
+    requirePin(pin)
+    const q = await ctx.db.get('questions', questionId)
+    if (!q) return null
+    await ctx.db.delete('questions', questionId)
+    await renumber(ctx, q.quizId)
+    return null
   },
-});
+})
 
 /** Moves a question to a new 1-based position (drag-and-drop and the up/down buttons). */
 export const moveQuestion = mutation({
-  args: { ...pinArg, questionId: v.id("questions"), toOrder: v.number() },
+  args: { ...pinArg, questionId: v.id('questions'), toOrder: v.number() },
   handler: async (ctx, { pin, questionId, toOrder }) => {
-    requirePin(pin);
-    const q = await ctx.db.get("questions", questionId);
-    if (!q) throw new ConvexError({ code: "NO_QUESTION" });
-    const questions = (await getQuestions(ctx, q.quizId)).filter((x) => x._id !== questionId);
-    const target = Math.max(0, Math.min(questions.length, toOrder - 1));
-    questions.splice(target, 0, q);
+    requirePin(pin)
+    const q = await ctx.db.get('questions', questionId)
+    if (!q) throw new ConvexError({ code: 'NO_QUESTION' })
+    const questions = (await getQuestions(ctx, q.quizId)).filter(
+      (x) => x._id !== questionId,
+    )
+    const target = Math.max(0, Math.min(questions.length, toOrder - 1))
+    questions.splice(target, 0, q)
     for (const [i, item] of questions.entries()) {
-      if (item.order !== i + 1) await ctx.db.patch("questions", item._id, { order: i + 1 });
+      if (item.order !== i + 1)
+        await ctx.db.patch('questions', item._id, { order: i + 1 })
     }
-    return null;
+    return null
   },
-});
+})
 
 // ---------------------------------------------------------------------------
 // Session results + exports (CSV is built client-side from these rows)
 // ---------------------------------------------------------------------------
 
 export const sessionResults = query({
-  args: { ...pinArg, sessionId: v.id("sessions") },
+  args: { ...pinArg, sessionId: v.id('sessions') },
   handler: async (ctx, { pin, sessionId }) => {
-    requirePin(pin);
-    const session = await ctx.db.get("sessions", sessionId);
-    if (!session) return null;
-    const quiz = await ctx.db.get("quizzes", session.quizId);
-    const [questions, players] = await Promise.all([getQuestions(ctx, session.quizId), getPlayers(ctx, sessionId)]);
+    requirePin(pin)
+    const session = await ctx.db.get('sessions', sessionId)
+    if (!session) return null
+    const quiz = await ctx.db.get('quizzes', session.quizId)
+    const [questions, players] = await Promise.all([
+      getQuestions(ctx, session.quizId),
+      getPlayers(ctx, sessionId),
+    ])
     const perQuestion = await Promise.all(
       questions.map(async (q) => {
-        const answers = await getAnswers(ctx, sessionId, q._id);
-        const counts = distribution(q, answers);
+        const answers = await getAnswers(ctx, sessionId, q._id)
+        const counts = distribution(q, answers)
         return {
           id: q._id,
           order: q.order,
@@ -215,15 +286,18 @@ export const sessionResults = query({
           options: q.options.map((o) => ({
             id: o.id,
             text: o.text,
-            correct: q.type === "poll" ? null : o.correct,
+            correct: q.type === 'poll' ? null : o.correct,
             count: counts.find((c) => c.optionId === o.id)?.count ?? 0,
           })),
           answeredCount: answers.length,
           noAnswerCount: Math.max(0, players.length - answers.length),
-          answers: answers.map((a) => ({ playerId: a.playerId, correct: a.correct ?? null })),
-        };
+          answers: answers.map((a) => ({
+            playerId: a.playerId,
+            correct: a.correct ?? null,
+          })),
+        }
       }),
-    );
+    )
     return {
       session: {
         id: session._id,
@@ -232,7 +306,7 @@ export const sessionResults = query({
         phase: session.phase,
         scoringEnabled: session.scoringEnabled,
       },
-      quizTitle: quiz?.title ?? "",
+      quizTitle: quiz?.title ?? '',
       players: players.map((p) => ({
         id: p._id,
         name: p.name,
@@ -241,6 +315,6 @@ export const sessionResults = query({
         score: session.scoringEnabled ? p.score : null,
       })),
       questions: perQuestion,
-    };
+    }
   },
-});
+})

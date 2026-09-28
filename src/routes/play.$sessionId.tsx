@@ -22,11 +22,24 @@ function PlayRoute() {
   const { sessionId } = Route.useParams()
   const playerId = playerStore.get(sessionId)
   if (!playerId) return <Navigate to="/" replace />
-  return <Play sessionId={sessionId as Id<'sessions'>} playerId={playerId as Id<'players'>} />
+  return (
+    <Play
+      sessionId={sessionId as Id<'sessions'>}
+      playerId={playerId as Id<'players'>}
+    />
+  )
 }
 
-function Play({ sessionId, playerId }: { sessionId: Id<'sessions'>; playerId: Id<'players'> }) {
-  const { data: view, isPending } = useQuery(convexQuery(api.sessions.getPlayerView, { sessionId, playerId }))
+function Play({
+  sessionId,
+  playerId,
+}: {
+  sessionId: Id<'sessions'>
+  playerId: Id<'players'>
+}) {
+  const { data: view, isPending } = useQuery(
+    convexQuery(api.sessions.getPlayerView, { sessionId, playerId }),
+  )
   const { banner, offline } = useConnectionBanner()
   const offset = useServerOffset()
   const remaining = useRemaining(view?.session.questionEndsAt ?? null, offset)
@@ -47,7 +60,10 @@ function Play({ sessionId, playerId }: { sessionId: Id<'sessions'>; playerId: Id
     case 'question': {
       if (view.myAnswer) return <ReceivedScreen view={view} banner={banner} />
       // Cosmetic: the local countdown hit zero or the server rejected the answer as late.
-      if (lateFor === questionId || (view.session.questionEndsAt !== null && remaining === 0)) {
+      if (
+        lateFor === questionId ||
+        (view.session.questionEndsAt !== null && remaining === 0)
+      ) {
         return <LateScreen view={view} banner={banner} />
       }
       return (

@@ -16,7 +16,13 @@ function JoinRoute() {
   // Already joined on this device: go straight back into the game.
   const known = lookup.data ? playerStore.get(lookup.data.sessionId) : null
   if (lookup.data && known) {
-    return <Navigate to="/play/$sessionId" params={{ sessionId: lookup.data.sessionId }} replace />
+    return (
+      <Navigate
+        to="/play/$sessionId"
+        params={{ sessionId: lookup.data.sessionId }}
+        replace
+      />
+    )
   }
   if (lookup.isPending) return null
   return <JoinScreen initialCode={code} />

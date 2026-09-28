@@ -9,22 +9,41 @@ import { Button } from '~/components/Button'
 import { Card } from '~/components/Card'
 import { DistributionBar } from '~/components/DistributionBar'
 import { Label } from '~/components/Label'
-import { exportDistribution, exportParticipation } from '~/features/admin/exports'
+import {
+  exportDistribution,
+  exportParticipation,
+} from '~/features/admin/exports'
 import { useAdminPin } from '~/features/admin/pin'
 
 export const Route = createFileRoute('/admin/sessions/$sessionId')({
   component: SessionResults,
 })
 
-const TYPE_LABEL = { single: 'Enkel antwoord', multi: 'Meerdere antwoorden', poll: 'Poll' } as const
+const TYPE_LABEL = {
+  single: 'Enkel antwoord',
+  multi: 'Meerdere antwoorden',
+  poll: 'Poll',
+} as const
 
 function SessionResults() {
   const pin = useAdminPin()
   const { sessionId } = Route.useParams()
-  const { data: r } = useQuery(convexQuery(api.admin.sessionResults, { pin, sessionId: sessionId as Id<'sessions'> }))
+  const { data: r } = useQuery(
+    convexQuery(api.admin.sessionResults, {
+      pin,
+      sessionId: sessionId as Id<'sessions'>,
+    }),
+  )
   if (r === undefined) return null
-  if (r === null) return <main className="px-10 py-12 text-ink-70">Deze sessie bestaat niet.</main>
-  const date = new Date(r.session.createdAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })
+  if (r === null)
+    return (
+      <main className="px-10 py-12 text-ink-70">Deze sessie bestaat niet.</main>
+    )
+  const date = new Date(r.session.createdAt).toLocaleDateString('nl-NL', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
   return (
     <main className="mx-auto flex max-w-[1440px] flex-col gap-6 px-10 py-10">
       <Link to="/admin" className="text-sm no-underline text-blue">
@@ -32,17 +51,29 @@ function SessionResults() {
       </Link>
       <div className="flex items-end justify-between">
         <div className="flex flex-col gap-2">
-          <h1 className="m-0 font-display text-[40px] leading-[1.1] font-bold tracking-display">Sessie {date}</h1>
+          <h1 className="m-0 font-display text-[40px] leading-[1.1] font-bold tracking-display">
+            Sessie {date}
+          </h1>
           <p className="m-0 text-base text-ink-70">
-            {r.players.length} deelnemers · {r.questions.length} vragen · {r.session.scoringEnabled ? 'met score' : 'zonder score'}
+            {r.players.length} deelnemers · {r.questions.length} vragen ·{' '}
+            {r.session.scoringEnabled ? 'met score' : 'zonder score'}
             {r.session.phase !== 'finished' && ' · nog bezig'}
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" size="lg" icon="download" onClick={() => exportParticipation(r)}>
+          <Button
+            variant="outline"
+            size="lg"
+            icon="download"
+            onClick={() => exportParticipation(r)}
+          >
             Deelname (CSV)
           </Button>
-          <Button size="lg" icon="download" onClick={() => exportDistribution(r)}>
+          <Button
+            size="lg"
+            icon="download"
+            onClick={() => exportDistribution(r)}
+          >
             Verdeling (CSV)
           </Button>
         </div>
@@ -50,18 +81,26 @@ function SessionResults() {
       {r.questions.map((q) => (
         <Card key={q.id} className="flex flex-col gap-3 px-7 py-6">
           <div className="flex items-center gap-3">
-            <Label className="text-xs text-blue-600">Vraag {String(q.order).padStart(2, '0')}</Label>
+            <Label className="text-xs text-blue-600">
+              Vraag {String(q.order).padStart(2, '0')}
+            </Label>
             <Badge tone="neutral" size="xs">
               {q.topic}
             </Badge>
             <span className="flex-1" />
             <span className="text-sm text-ink-55">
-              {TYPE_LABEL[q.type]} · {q.answeredCount} van {r.players.length} beantwoord
+              {TYPE_LABEL[q.type]} · {q.answeredCount} van {r.players.length}{' '}
+              beantwoord
             </span>
           </div>
-          <h2 className="m-0 mb-1 font-display text-[20px] leading-[1.3] font-semibold tracking-heading">{q.text}</h2>
+          <h2 className="m-0 mb-1 font-display text-[20px] leading-[1.3] font-semibold tracking-heading">
+            {q.text}
+          </h2>
           {q.options.map((o, i) => (
-            <div key={o.id} className="grid grid-cols-[40px_minmax(0,1fr)_280px_64px] items-center gap-4 border-t border-ink-15 py-2.5">
+            <div
+              key={o.id}
+              className="grid grid-cols-[40px_minmax(0,1fr)_280px_64px] items-center gap-4 border-t border-ink-15 py-2.5"
+            >
               <AnswerMarker index={i} size="admin" />
               <span className="flex items-center gap-2.5 text-[15px] leading-[1.4]">
                 {o.text}
@@ -71,15 +110,24 @@ function SessionResults() {
                   </Badge>
                 )}
               </span>
-              <DistributionBar size="admin" count={o.count} total={r.players.length} correct={o.correct === true} />
-              <span className="tabular text-right font-display text-base font-semibold">{o.count}</span>
+              <DistributionBar
+                size="admin"
+                count={o.count}
+                total={r.players.length}
+                correct={o.correct === true}
+              />
+              <span className="tabular text-right font-display text-base font-semibold">
+                {o.count}
+              </span>
             </div>
           ))}
           <div className="grid grid-cols-[40px_minmax(0,1fr)_280px_64px] items-center gap-4 border-t border-ink-15 py-2.5 text-ink-55">
             <span />
             <span className="text-[15px]">Geen antwoord</span>
             <span />
-            <span className="tabular text-right font-display text-base font-semibold">{q.noAnswerCount}</span>
+            <span className="tabular text-right font-display text-base font-semibold">
+              {q.noAnswerCount}
+            </span>
           </div>
         </Card>
       ))}

@@ -26,7 +26,9 @@ function AdminLayout() {
     <AdminPinContext.Provider value={pin}>
       <div className="min-h-dvh bg-ink-05">
         <header className="flex h-16 items-center gap-12 border-b border-ink-15 bg-white px-10">
-          <span className="font-display text-lg font-bold tracking-heading">ROX Live Quiz</span>
+          <span className="font-display text-lg font-bold tracking-heading">
+            ROX Live Quiz
+          </span>
           <nav aria-label="Beheer" className="flex flex-1 gap-7">
             <Link
               to="/admin"
@@ -36,7 +38,10 @@ function AdminLayout() {
               Quizzen
             </Link>
           </nav>
-          <Link to="/host" className="text-sm text-ink-70 no-underline hover:text-ink">
+          <Link
+            to="/host"
+            className="text-sm text-ink-70 no-underline hover:text-ink"
+          >
             Naar de host
           </Link>
           <button

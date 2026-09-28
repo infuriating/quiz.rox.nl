@@ -17,7 +17,9 @@ function WithExplanation({ view }: { view: HostView }) {
     <>
       <div className="absolute top-0 bottom-0 left-0 flex w-[1200px] flex-col gap-8 pt-16 pr-16 pb-28 pl-20">
         <HostHeader question={q} />
-        <h1 className="m-0 font-display text-[52px] leading-[1.1] font-bold tracking-display text-host-text">{q.text}</h1>
+        <h1 className="m-0 font-display text-[52px] leading-[1.1] font-bold tracking-display text-host-text">
+          {q.text}
+        </h1>
         <div className="flex min-h-0 flex-1 flex-col gap-4">
           {q.options.map((o, i) => {
             const correct = r.correctOptionIds.includes(o.id)
@@ -37,14 +39,18 @@ function WithExplanation({ view }: { view: HostView }) {
       </div>
       <aside className="absolute top-0 right-0 bottom-0 flex w-[720px] flex-col gap-9 bg-host-panel pt-24 pr-20 pb-[120px] pl-[72px]">
         <Label className="text-[24px] text-host-accent">Toelichting</Label>
-        <p className="m-0 font-display text-beamer-h2 leading-[1.16] font-semibold tracking-heading text-host-text">{r.explanation}</p>
+        <p className="m-0 font-display text-beamer-h2 leading-[1.16] font-semibold tracking-heading text-host-text">
+          {r.explanation}
+        </p>
         <div className="flex-1" />
         {r.correctCount !== null && (
           <div className="flex items-baseline gap-4 border-t border-host-panel-line pt-7">
             <span className="font-display text-beamer-question leading-none font-bold tracking-display text-host-text">
               {r.correctCount} / {total}
             </span>
-            <span className="text-beamer-body text-host-soft">deelnemers hadden het goed</span>
+            <span className="text-beamer-body text-host-soft">
+              deelnemers hadden het goed
+            </span>
           </div>
         )}
       </aside>
@@ -59,7 +65,9 @@ function Columns({ view }: { view: HostView }) {
   const total = Math.max(view.session.playerCount, 1)
   const poll = q.type === 'poll'
   const multiCorrect = r.correctOptionIds.length > 1
-  const label = r.distribution.map((d, i) => `${String.fromCharCode(65 + i)} ${d.count}`).join(', ')
+  const label = r.distribution
+    .map((d, i) => `${String.fromCharCode(65 + i)} ${d.count}`)
+    .join(', ')
   return (
     <div className="flex h-full flex-col gap-7 px-20 pt-16 pb-28">
       <HostHeader
@@ -70,17 +78,33 @@ function Columns({ view }: { view: HostView }) {
               Poll
             </Badge>
           ) : multiCorrect ? (
-            <span className="rox-label rounded-pill bg-host-ok-bg px-5 py-2.5 text-[18px] text-host-ok-text">Meerdere antwoorden goed</span>
+            <span className="rox-label rounded-pill bg-host-ok-bg px-5 py-2.5 text-[18px] text-host-ok-text">
+              Meerdere antwoorden goed
+            </span>
           ) : null
         }
       />
-      <h1 className="m-0 font-display text-beamer-h2 leading-[1.08] font-bold tracking-display text-host-text">{q.text}</h1>
-      <div role="img" aria-label={`Verdeling: ${label}`} className="flex h-[330px] gap-[72px] border-b-2 border-host-line px-[120px] pb-5">
+      <h1 className="m-0 font-display text-beamer-h2 leading-[1.08] font-bold tracking-display text-host-text">
+        {q.text}
+      </h1>
+      <div
+        role="img"
+        aria-label={`Verdeling: ${label}`}
+        className="flex h-[330px] gap-[72px] border-b-2 border-host-line px-[120px] pb-5"
+      >
         {q.options.map((o, i) => {
           const correct = r.correctOptionIds.includes(o.id)
           return (
-            <div key={o.id} className="flex h-full flex-1 basis-0 flex-col items-center gap-3.5">
-              <DistributionBar variant="column" count={r.distribution[i].count} total={total} correct={correct} />
+            <div
+              key={o.id}
+              className="flex h-full flex-1 basis-0 flex-col items-center gap-3.5"
+            >
+              <DistributionBar
+                variant="column"
+                count={r.distribution[i].count}
+                total={total}
+                correct={correct}
+              />
               <div className="flex items-center gap-4">
                 <AnswerMarker index={i} size="column" tone="host" />
                 {correct ? (
@@ -98,7 +122,19 @@ function Columns({ view }: { view: HostView }) {
       </div>
       <div className="grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-4">
         {q.options.map((o, i) => (
-          <AnswerTile key={o.id} index={i} text={o.text} textSize="compact" state={poll ? 'idle' : r.correctOptionIds.includes(o.id) ? 'correct' : 'dimmed'} />
+          <AnswerTile
+            key={o.id}
+            index={i}
+            text={o.text}
+            textSize="compact"
+            state={
+              poll
+                ? 'idle'
+                : r.correctOptionIds.includes(o.id)
+                  ? 'correct'
+                  : 'dimmed'
+            }
+          />
         ))}
       </div>
     </div>
@@ -106,5 +142,9 @@ function Columns({ view }: { view: HostView }) {
 }
 
 export function HostReveal({ view }: { view: HostView }) {
-  return view.reveal?.explanation ? <WithExplanation view={view} /> : <Columns view={view} />
+  return view.reveal?.explanation ? (
+    <WithExplanation view={view} />
+  ) : (
+    <Columns view={view} />
+  )
 }

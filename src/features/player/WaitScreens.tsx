@@ -5,10 +5,20 @@ import { StatusDisc } from '~/components/StatusDisc'
 import type { PlayerView } from './types'
 import { CenterMessage, PhoneFrame } from './PhoneFrame'
 
-export function ReceivedScreen({ view, banner }: { view: PlayerView; banner: React.ReactNode }) {
+export function ReceivedScreen({
+  view,
+  banner,
+}: {
+  view: PlayerView
+  banner: React.ReactNode
+}) {
   const q = view.question!
-  const picked = q.options.map((o, i) => ({ ...o, i })).filter((o) => view.myAnswer?.optionIds.includes(o.id))
-  const pct = view.session.playerCount ? (view.answeredCount / view.session.playerCount) * 100 : 0
+  const picked = q.options
+    .map((o, i) => ({ ...o, i }))
+    .filter((o) => view.myAnswer?.optionIds.includes(o.id))
+  const pct = view.session.playerCount
+    ? (view.answeredCount / view.session.playerCount) * 100
+    : 0
   return (
     <PhoneFrame banner={banner}>
       <CenterMessage
@@ -22,7 +32,9 @@ export function ReceivedScreen({ view, banner }: { view: PlayerView; banner: Rea
       >
         <div className="mt-3 flex w-full flex-col gap-6">
           <div className="flex w-full flex-col gap-2 rounded-md bg-blue-100 py-3 pr-4 pl-3 text-left">
-            <Label className="text-[11px] text-blue-600">{picked.length > 1 ? 'Jouw antwoorden' : 'Jouw antwoord'}</Label>
+            <Label className="text-[11px] text-blue-600">
+              {picked.length > 1 ? 'Jouw antwoorden' : 'Jouw antwoord'}
+            </Label>
             {picked.map((o) => (
               <div key={o.id} className="flex items-center gap-3">
                 <AnswerMarker index={o.i} tone="accent" />
@@ -38,7 +50,10 @@ export function ReceivedScreen({ view, banner }: { view: PlayerView; banner: Rea
               </span>
             </div>
             <div className="h-2 overflow-hidden rounded-pill bg-ink-15">
-              <div className="h-full rounded-pill bg-ink transition-[width] duration-300" style={{ width: `${pct}%` }} />
+              <div
+                className="h-full rounded-pill bg-ink transition-[width] duration-300"
+                style={{ width: `${pct}%` }}
+              />
             </div>
           </div>
         </div>
@@ -47,7 +62,13 @@ export function ReceivedScreen({ view, banner }: { view: PlayerView; banner: Rea
   )
 }
 
-export function LateScreen({ view, banner }: { view: PlayerView; banner: React.ReactNode }) {
+export function LateScreen({
+  view,
+  banner,
+}: {
+  view: PlayerView
+  banner: React.ReactNode
+}) {
   const score = view.reveal?.score
   return (
     <PhoneFrame banner={banner}>
@@ -69,7 +90,9 @@ export function LateScreen({ view, banner }: { view: PlayerView; banner: React.R
             </span>
           </div>
         ) : (
-          <p className="m-0 mt-2 text-[15px] text-ink-55">Kijk mee op het scherm voor het antwoord.</p>
+          <p className="m-0 mt-2 text-[15px] text-ink-55">
+            Kijk mee op het scherm voor het antwoord.
+          </p>
         )}
       </CenterMessage>
     </PhoneFrame>

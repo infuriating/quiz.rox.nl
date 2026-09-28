@@ -5,18 +5,30 @@ export function formatScore(n: number): string {
   return n.toLocaleString('nl-NL')
 }
 
-function Movement({ rank, previousRank }: { rank: number; previousRank: number }) {
+function Movement({
+  rank,
+  previousRank,
+}: {
+  rank: number
+  previousRank: number
+}) {
   const delta = previousRank - rank
   if (delta > 0)
     return (
-      <span aria-label={`${delta} omhoog`} className="inline-flex items-center gap-1.5 font-display text-[28px] font-semibold text-host-ok-text">
+      <span
+        aria-label={`${delta} omhoog`}
+        className="inline-flex items-center gap-1.5 font-display text-[28px] font-semibold text-host-ok-text"
+      >
         <Icon name="arrow-up" size={28} strokeWidth={2.6} />
         {delta}
       </span>
     )
   if (delta < 0)
     return (
-      <span aria-label={`${-delta} omlaag`} className="inline-flex items-center gap-1.5 font-display text-[28px] font-semibold text-host-muted">
+      <span
+        aria-label={`${-delta} omlaag`}
+        className="inline-flex items-center gap-1.5 font-display text-[28px] font-semibold text-host-muted"
+      >
         <Icon name="arrow-down" size={28} strokeWidth={2.6} />
         {-delta}
       </span>
@@ -29,7 +41,17 @@ function Movement({ rank, previousRank }: { rank: number; previousRank: number }
 }
 
 /** Scoring only. Rank block, name, subtle movement (never red), score. #1 on light blue. */
-export function LeaderboardRow({ rank, previousRank, name, score }: { rank: number; previousRank: number; name: string; score: number }) {
+export function LeaderboardRow({
+  rank,
+  previousRank,
+  name,
+  score,
+}: {
+  rank: number
+  previousRank: number
+  name: string
+  score: number
+}) {
   const first = rank === 1
   return (
     <li
@@ -46,11 +68,15 @@ export function LeaderboardRow({ rank, previousRank, name, score }: { rank: numb
       >
         {rank}
       </span>
-      <span className="flex-1 font-display text-[48px] font-semibold tracking-heading text-host-text">{name}</span>
+      <span className="flex-1 font-display text-[48px] font-semibold tracking-heading text-host-text">
+        {name}
+      </span>
       <span className="flex w-24">
         <Movement rank={rank} previousRank={previousRank} />
       </span>
-      <span className="tabular w-[220px] text-right font-display text-[48px] font-bold text-host-text">{formatScore(score)}</span>
+      <span className="tabular w-[220px] text-right font-display text-[48px] font-bold text-host-text">
+        {formatScore(score)}
+      </span>
     </li>
   )
 }

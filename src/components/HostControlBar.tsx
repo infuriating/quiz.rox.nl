@@ -1,7 +1,19 @@
 import type { ReactNode } from 'react'
 import { Icon, type IconName } from './Icon'
 
-function Ghost({ label, icon, onClick, disabled, iconRight }: { label: string; icon: IconName; onClick?: () => void; disabled?: boolean; iconRight?: boolean }) {
+function Ghost({
+  label,
+  icon,
+  onClick,
+  disabled,
+  iconRight,
+}: {
+  label: string
+  icon: IconName
+  onClick?: () => void
+  disabled?: boolean
+  iconRight?: boolean
+}) {
   return (
     <button
       type="button"
@@ -48,14 +60,33 @@ export function HostControlBar({
       {joinCode ? (
         <span className="text-base text-host-muted">
           {typeof window !== 'undefined' ? window.location.host : ''} ·{' '}
-          <span className="font-display font-semibold tracking-label text-host-soft">{joinCode}</span>
+          <span className="font-display font-semibold tracking-label text-host-soft">
+            {joinCode}
+          </span>
         </span>
       ) : (
         <span />
       )}
-      <nav aria-label="Hostbediening" className="flex items-center gap-0.5 rounded-pill border border-host-ctrl-line bg-host-ctrl-bg p-1">
-        {onPrevious && <Ghost label="Vorige" icon="chevron-left" onClick={onPrevious} disabled={busy} />}
-        {onSkipTimer && <Ghost label="Timer overslaan" icon="forward" onClick={onSkipTimer} disabled={busy} />}
+      <nav
+        aria-label="Hostbediening"
+        className="flex items-center gap-0.5 rounded-pill border border-host-ctrl-line bg-host-ctrl-bg p-1"
+      >
+        {onPrevious && (
+          <Ghost
+            label="Vorige"
+            icon="chevron-left"
+            onClick={onPrevious}
+            disabled={busy}
+          />
+        )}
+        {onSkipTimer && (
+          <Ghost
+            label="Timer overslaan"
+            icon="forward"
+            onClick={onSkipTimer}
+            disabled={busy}
+          />
+        )}
         {onNext && (
           <button
             type="button"
@@ -80,7 +111,12 @@ export function HostControlBar({
         {onEnd && (
           <>
             <span aria-hidden="true" className="h-5 w-px bg-host-ctrl-line" />
-            <Ghost label="Sessie beëindigen" icon="stop" onClick={onEnd} disabled={busy} />
+            <Ghost
+              label="Sessie beëindigen"
+              icon="stop"
+              onClick={onEnd}
+              disabled={busy}
+            />
           </>
         )}
       </nav>

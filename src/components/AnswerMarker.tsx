@@ -1,7 +1,12 @@
 import { cn } from '~/lib/cn'
 
 export const LETTERS = ['A', 'B', 'C', 'D'] as const
-const SHAPES = ['shape-triangle', 'shape-diamond', 'shape-circle', 'shape-square'] as const
+const SHAPES = [
+  'shape-triangle',
+  'shape-diamond',
+  'shape-circle',
+  'shape-square',
+] as const
 export const SHAPE_NAMES = ['driehoek', 'ruit', 'cirkel', 'vierkant'] as const
 
 const SIZES = {
@@ -34,11 +39,25 @@ export function AnswerMarker({
   return (
     <span
       aria-hidden="true"
-      className={cn('flex shrink-0 items-center justify-center', s.radius, tones[tone])}
-      style={{ width: s.box, height: s.box, gap: Math.max(4, Math.floor(s.box / 11)) }}
+      className={cn(
+        'flex shrink-0 items-center justify-center',
+        s.radius,
+        tones[tone],
+      )}
+      style={{
+        width: s.box,
+        height: s.box,
+        gap: Math.max(4, Math.floor(s.box / 11)),
+      }}
     >
-      <span className={cn('block bg-current', SHAPES[index])} style={{ width: s.shape, height: s.shape }} />
-      <span className="font-display font-bold leading-none" style={{ fontSize: s.letter }}>
+      <span
+        className={cn('block bg-current', SHAPES[index])}
+        style={{ width: s.shape, height: s.shape }}
+      />
+      <span
+        className="font-display font-bold leading-none"
+        style={{ fontSize: s.letter }}
+      >
         {LETTERS[index]}
       </span>
     </span>

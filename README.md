@@ -59,14 +59,14 @@ npm run dev
 
 Dit start `convex dev` en de webapp op <http://localhost:3000>.
 
-| Route | Voor wie |
-|---|---|
-| `/` | Spelers: code, naam en e-mail invullen |
-| `/join/<code>` | Spelers via de QR-code; de code staat al ingevuld |
-| `/play/<sessionId>` | Spelers tijdens het spel |
-| `/host` | Host: PIN, quiz kiezen, lobby openen |
-| `/host/<sessionId>` | Beamer (1920×1080, schaalt mee met elk scherm) |
-| `/admin` | Beheer: quizzen, vragen, instellingen, resultaten en CSV-exports |
+| Route               | Voor wie                                                         |
+| ------------------- | ---------------------------------------------------------------- |
+| `/`                 | Spelers: code, naam en e-mail invullen                           |
+| `/join/<code>`      | Spelers via de QR-code; de code staat al ingevuld                |
+| `/play/<sessionId>` | Spelers tijdens het spel                                         |
+| `/host`             | Host: PIN, quiz kiezen, lobby openen                             |
+| `/host/<sessionId>` | Beamer (1920×1080, schaalt mee met elk scherm)                   |
+| `/admin`            | Beheer: quizzen, vragen, instellingen, resultaten en CSV-exports |
 
 ## Een sessie draaien
 
@@ -92,6 +92,7 @@ Ga naar `/admin`, kies **Vragen bewerken** bij de quiz en zet in **Quizinstellin
 nieuwe sessies: een sessie legt de instelling vast op het moment dat de lobby opent.
 
 Met score aan geldt:
+
 - Een goed antwoord levert 500 punten plus maximaal 500 snelheidsbonus op, lineair over de tijdslimiet.
 - Bij meerkeuze moet de set exact kloppen.
 - Een poll geeft geen punten.
@@ -111,6 +112,7 @@ Per sessie (`/admin` → **Bekijk resultaten en exporteer CSV**):
 ## Ontwerp
 
 `design/` bevat een referentie-snapshot van het ontwerp:
+
 - de artboards als `.dc.html`-bron;
 - de componenteninventaris;
 - de ROX `tokens.json`.

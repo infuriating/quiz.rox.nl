@@ -6,7 +6,8 @@ type Variant = 'primary' | 'outline' | 'ghost' | 'ink'
 type Size = 'sm' | 'md' | 'lg' | 'beamer'
 
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-blue text-white hover:bg-blue-hover hover:shadow-[0_12px_28px_-8px_var(--wash-blue-strong)]',
+  primary:
+    'bg-blue text-white hover:bg-blue-hover hover:shadow-[0_12px_28px_-8px_var(--wash-blue-strong)]',
   outline: 'bg-white text-ink border border-ink-25 hover:border-ink-40',
   ghost: 'bg-transparent text-ink-70 hover:bg-ink-10',
   ink: 'bg-ink text-white hover:bg-ink-85',

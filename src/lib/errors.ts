@@ -1,7 +1,12 @@
 import { ConvexError } from 'convex/values'
 
 export function errorCode(e: unknown): string | null {
-  if (e instanceof ConvexError && e.data && typeof e.data === 'object' && 'code' in e.data) {
+  if (
+    e instanceof ConvexError &&
+    e.data &&
+    typeof e.data === 'object' &&
+    'code' in e.data
+  ) {
     return String((e.data as { code: unknown }).code)
   }
   return null
@@ -10,7 +15,8 @@ export function errorCode(e: unknown): string | null {
 /** Dutch, second person, an instruction rather than a verdict. */
 export function errorMessage(e: unknown): string {
   const code = errorCode(e)
-  const data = e instanceof ConvexError ? (e.data as Record<string, unknown>) : {}
+  const data =
+    e instanceof ConvexError ? (e.data as Record<string, unknown>) : {}
   switch (code) {
     case 'INVALID_CODE':
       return 'Deze code hoort niet bij een actieve quiz. Neem de code over van het scherm.'
@@ -25,7 +31,9 @@ export function errorMessage(e: unknown): string {
     case 'PIN_NOT_CONFIGURED':
       return 'Er is nog geen host-PIN ingesteld. Zet HOST_PIN in Convex (zie README).'
     case 'MISSING_CORRECT': {
-      const qs = Array.isArray(data.questions) ? (data.questions as number[]).join(', ') : ''
+      const qs = Array.isArray(data.questions)
+        ? (data.questions as number[]).join(', ')
+        : ''
       return `Vraag ${qs} heeft nog geen goed antwoord. Vul dit in bij het beheer voordat je start.`
     }
     case 'NO_QUESTIONS':

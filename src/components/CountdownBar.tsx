@@ -14,7 +14,8 @@ export function CountdownBar({
   size?: 'phone' | 'beamer'
   showSeconds?: boolean
 }) {
-  const pct = totalMs <= 0 ? 0 : Math.max(0, Math.min(100, (remainingMs / totalMs) * 100))
+  const pct =
+    totalMs <= 0 ? 0 : Math.max(0, Math.min(100, (remainingMs / totalMs) * 100))
   const secs = Math.ceil(Math.max(0, remainingMs) / 1000)
   const warn = secs <= WARN_SECONDS && secs > 0
   return (
@@ -25,15 +26,24 @@ export function CountdownBar({
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(pct)}
-        className={cn('flex-1 overflow-hidden rounded-pill', size === 'phone' ? 'h-2.5 bg-ink-15' : 'h-5 bg-host-bar-track')}
+        className={cn(
+          'flex-1 overflow-hidden rounded-pill',
+          size === 'phone' ? 'h-2.5 bg-ink-15' : 'h-5 bg-host-bar-track',
+        )}
       >
         <div
-          className={cn('h-full rounded-pill transition-[width] duration-200 ease-linear', warn ? 'bg-warning' : 'bg-gradient-signal')}
+          className={cn(
+            'h-full rounded-pill transition-[width] duration-200 ease-linear',
+            warn ? 'bg-warning' : 'bg-gradient-signal',
+          )}
           style={{ width: `${pct}%` }}
         />
       </div>
       {showSeconds && (
-        <span className="tabular min-w-8 text-right font-display text-base font-semibold" aria-live="off">
+        <span
+          className="tabular min-w-8 text-right font-display text-base font-semibold"
+          aria-live="off"
+        >
           {secs} s
         </span>
       )}

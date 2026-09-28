@@ -5,10 +5,10 @@
 
 Deze map is een momentopname, zodat code-review en latere wijzigingen het ontwerp naast de code hebben.
 
-| | |
-|---|---|
-| Snapshot | 28 september 2026, canvasversie `1790598711-a34a` |
-| Design system | ROX Design System, versie `1790200405-cb2f` |
+|               |                                                   |
+| ------------- | ------------------------------------------------- |
+| Snapshot      | 28 september 2026, canvasversie `1790598711-a34a` |
+| Design system | ROX Design System, versie `1790200405-cb2f`       |
 
 ## Inhoud
 
@@ -22,26 +22,26 @@ Deze map is een momentopname, zodat code-review en latere wijzigingen het ontwer
 
 ## Van ontwerp naar code
 
-| Artboard (`screens/…`) | Route | Component / scherm |
-|---|---|---|
-| `Main`, `player/Speler-Join-fout` | `/`, `/join/$code` | `features/player/JoinScreen` + `CodeInput` |
-| `player/Speler-Lobby` | `/play/$sessionId` | `LobbyScreen` |
-| `player/Speler-Vraag-enkel`, `-meer`, `-meer-gekozen` | idem | `QuestionScreen` + `AnswerButton`, `CountdownBar` |
-| `player/Speler-Ontvangen`, `-Te-laat` | idem | `WaitScreens` |
-| `player/Speler-Goed`, `-Helaas` (+ `-score`) | idem | `RevealScreen` |
-| `player/Speler-Einde` (+ `-score`) | idem | `FinalScreen` |
-| `player/Speler-Herverbinden` | alle speler-routes | `ConnectionBanner` |
-| `host/Host-Pin` | `/host` | `features/host/PinScreen` |
-| `host/Host-Lobby` | `/host/$sessionId` | `HostLobby` + `JoinCodeDisplay` |
-| `host/Host-Vraag` | idem | `HostQuestion` + `AnswerTile`, `CountdownBar` |
-| `host/Host-Uitleg`, `host/Host-Resultaat` | idem | `HostReveal` (met / zonder toelichting) + `DistributionBar` |
-| `host/Host-Tussenstand`, `host/Host-Podium` | idem, **alleen met score** | `HostScoring` + `LeaderboardRow` |
-| `host/Host-Bedankt` | idem | `HostThanks` |
-| `host-dark/*` | idem, donkere modus | dezelfde schermen met `data-theme="dark"` |
-| `admin/Admin-Quizlijst` | `/admin` | `routes/admin.index` |
-| `admin/Admin-Vraageditor` | `/admin/quizzes/$quizId` | `QuestionForm`, `QuizSettings` + `Switch` |
-| `admin/Admin-Sessieresultaten` | `/admin/sessions/$sessionId` | `routes/admin.sessions.$sessionId` + CSV-exports |
-| `Componenten` | n.v.t. | zie `components.md` |
+| Artboard (`screens/…`)                                | Route                        | Component / scherm                                          |
+| ----------------------------------------------------- | ---------------------------- | ----------------------------------------------------------- |
+| `Main`, `player/Speler-Join-fout`                     | `/`, `/join/$code`           | `features/player/JoinScreen` + `CodeInput`                  |
+| `player/Speler-Lobby`                                 | `/play/$sessionId`           | `LobbyScreen`                                               |
+| `player/Speler-Vraag-enkel`, `-meer`, `-meer-gekozen` | idem                         | `QuestionScreen` + `AnswerButton`, `CountdownBar`           |
+| `player/Speler-Ontvangen`, `-Te-laat`                 | idem                         | `WaitScreens`                                               |
+| `player/Speler-Goed`, `-Helaas` (+ `-score`)          | idem                         | `RevealScreen`                                              |
+| `player/Speler-Einde` (+ `-score`)                    | idem                         | `FinalScreen`                                               |
+| `player/Speler-Herverbinden`                          | alle speler-routes           | `ConnectionBanner`                                          |
+| `host/Host-Pin`                                       | `/host`                      | `features/host/PinScreen`                                   |
+| `host/Host-Lobby`                                     | `/host/$sessionId`           | `HostLobby` + `JoinCodeDisplay`                             |
+| `host/Host-Vraag`                                     | idem                         | `HostQuestion` + `AnswerTile`, `CountdownBar`               |
+| `host/Host-Uitleg`, `host/Host-Resultaat`             | idem                         | `HostReveal` (met / zonder toelichting) + `DistributionBar` |
+| `host/Host-Tussenstand`, `host/Host-Podium`           | idem, **alleen met score**   | `HostScoring` + `LeaderboardRow`                            |
+| `host/Host-Bedankt`                                   | idem                         | `HostThanks`                                                |
+| `host-dark/*`                                         | idem, donkere modus          | dezelfde schermen met `data-theme="dark"`                   |
+| `admin/Admin-Quizlijst`                               | `/admin`                     | `routes/admin.index`                                        |
+| `admin/Admin-Vraageditor`                             | `/admin/quizzes/$quizId`     | `QuestionForm`, `QuizSettings` + `Switch`                   |
+| `admin/Admin-Sessieresultaten`                        | `/admin/sessions/$sessionId` | `routes/admin.sessions.$sessionId` + CSV-exports            |
+| `Componenten`                                         | n.v.t.                       | zie `components.md`                                         |
 
 ## Bewuste afwijkingen van deze snapshot
 

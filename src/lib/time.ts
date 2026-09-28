@@ -23,7 +23,11 @@ export function useServerOffset(): number {
 }
 
 /** Remaining ms until `endsAt` (server time), ticking. Cosmetic only: the server decides. */
-export function useRemaining(endsAt: number | null, offset: number, tickMs = 200): number {
+export function useRemaining(
+  endsAt: number | null,
+  offset: number,
+  tickMs = 200,
+): number {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
     if (endsAt === null) return

@@ -2,7 +2,9 @@
 // Run: npm run tokens
 import { readFileSync, writeFileSync } from 'node:fs'
 
-const t = JSON.parse(readFileSync(new URL('../design/tokens.json', import.meta.url), 'utf8'))
+const t = JSON.parse(
+  readFileSync(new URL('../design/tokens.json', import.meta.url), 'utf8'),
+)
 const ref = (v) => String(v).replace(/\{([a-z0-9-]+)\}/g, 'var(--$1)')
 
 const out = [
@@ -19,14 +21,27 @@ section('type')
 out.push(`  --font-display: ${t.type.families.display};`)
 out.push(`  --font-body: ${t.type.families.body};`)
 for (const g of t.type.groups) {
-  for (const s of g.styles) if (s.name.startsWith('text-')) out.push(`  --${s.name}: ${s.fontSize};`)
+  for (const s of g.styles)
+    if (s.name.startsWith('text-')) out.push(`  --${s.name}: ${s.fontSize};`)
 }
 
-for (const group of ['spacing', 'radius', 'shadow', 'motion', 'other', 'fontWeight', 'lineHeight', 'letterSpacing']) {
+for (const group of [
+  'spacing',
+  'radius',
+  'shadow',
+  'motion',
+  'other',
+  'fontWeight',
+  'lineHeight',
+  'letterSpacing',
+]) {
   section(group)
   for (const x of t[group].tokens) out.push(`  --${x.name}: ${ref(x.value)};`)
 }
 out.push('}\n')
 
-writeFileSync(new URL('../src/styles/tokens.css', import.meta.url), out.join('\n'))
+writeFileSync(
+  new URL('../src/styles/tokens.css', import.meta.url),
+  out.join('\n'),
+)
 console.log('Wrote src/styles/tokens.css')

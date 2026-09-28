@@ -3,9 +3,16 @@ import { useEffect, useRef, useState } from 'react'
 import { Icon } from './Icon'
 
 /** Floating banner at the top of the phone screen while the Convex connection is down. */
-export function ConnectionBannerView({ state }: { state: 'offline' | 'restored' }) {
+export function ConnectionBannerView({
+  state,
+}: {
+  state: 'offline' | 'restored'
+}) {
   return (
-    <div role="status" className="absolute top-2 right-3 left-3 z-20 flex items-center gap-3 rounded-[14px] bg-ink px-3.5 py-3 text-white shadow-pop">
+    <div
+      role="status"
+      className="absolute top-2 right-3 left-3 z-20 flex items-center gap-3 rounded-[14px] bg-ink px-3.5 py-3 text-white shadow-pop"
+    >
       {state === 'offline' ? (
         <>
           <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-black-soft text-warning">
@@ -13,9 +20,14 @@ export function ConnectionBannerView({ state }: { state: 'offline' | 'restored' 
           </span>
           <span className="flex flex-1 flex-col gap-0.5">
             <span className="text-[15px] font-semibold">Verbinding weg</span>
-            <span className="text-[13px] text-inverse-muted">We verbinden je opnieuw. Je antwoorden blijven bewaard.</span>
+            <span className="text-[13px] text-inverse-muted">
+              We verbinden je opnieuw. Je antwoorden blijven bewaard.
+            </span>
           </span>
-          <span aria-hidden="true" className="size-[18px] shrink-0 animate-spin rounded-full border-2 border-black-line border-t-white" />
+          <span
+            aria-hidden="true"
+            className="size-[18px] shrink-0 animate-spin rounded-full border-2 border-black-line border-t-white"
+          />
         </>
       ) : (
         <>

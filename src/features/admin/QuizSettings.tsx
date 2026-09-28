@@ -18,7 +18,9 @@ export function QuizSettings({ quiz }: { quiz: Doc<'quizzes'> }) {
   const [capOn, setCapOn] = useState(quiz.maxPlayers !== undefined)
   const [cap, setCap] = useState(String(quiz.maxPlayers ?? 15))
   const [outro, setOutro] = useState(quiz.outroMessage ?? '')
-  const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null)
+  const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(
+    null,
+  )
 
   async function submit() {
     setStatus(null)
@@ -39,12 +41,40 @@ export function QuizSettings({ quiz }: { quiz: Doc<'quizzes'> }) {
   }
 
   return (
-    <section aria-label="Quizinstellingen" className="mx-2 flex flex-col gap-3.5 rounded-[14px] border border-ink-15 bg-ink-05 p-4">
+    <section
+      aria-label="Quizinstellingen"
+      className="mx-2 flex flex-col gap-3.5 rounded-[14px] border border-ink-15 bg-ink-05 p-4"
+    >
       <Label className="text-[11px] text-ink-55">Quizinstellingen</Label>
-      <Input label="Titel" value={title} onChange={(e) => setTitle(e.target.value)} />
-      <Switch checked={scoring} onChange={setScoring} label="Score en tussenstand" hint="Punten, positie, tussenstand en podium. Staat standaard uit." />
-      <Switch checked={capOn} onChange={setCapOn} label="Maximaal aantal deelnemers" hint="De lobby toont dan “van N” en wie daarna aanmeldt krijgt een melding dat de quiz vol is." />
-      {capOn && <Input label="Max. deelnemers" hideLabel type="number" min={1} max={500} inputMode="numeric" value={cap} onChange={(e) => setCap(e.target.value)} />}
+      <Input
+        label="Titel"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <Switch
+        checked={scoring}
+        onChange={setScoring}
+        label="Score en tussenstand"
+        hint="Punten, positie, tussenstand en podium. Staat standaard uit."
+      />
+      <Switch
+        checked={capOn}
+        onChange={setCapOn}
+        label="Maximaal aantal deelnemers"
+        hint="De lobby toont dan “van N” en wie daarna aanmeldt krijgt een melding dat de quiz vol is."
+      />
+      {capOn && (
+        <Input
+          label="Max. deelnemers"
+          hideLabel
+          type="number"
+          min={1}
+          max={500}
+          inputMode="numeric"
+          value={cap}
+          onChange={(e) => setCap(e.target.value)}
+        />
+      )}
       <Textarea
         label="Afsluitende boodschap"
         rows={3}
@@ -59,7 +89,17 @@ export function QuizSettings({ quiz }: { quiz: Doc<'quizzes'> }) {
           Instellingen opslaan
         </Button>
       </div>
-      {status && <p className={status.ok ? 'm-0 text-[13px] text-mint-600' : 'm-0 text-[13px] text-error'}>{status.message}</p>}
+      {status && (
+        <p
+          className={
+            status.ok
+              ? 'm-0 text-[13px] text-mint-600'
+              : 'm-0 text-[13px] text-error'
+          }
+        >
+          {status.message}
+        </p>
+      )}
     </section>
   )
 }
