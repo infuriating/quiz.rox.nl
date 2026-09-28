@@ -1,6 +1,6 @@
 import { convexQuery } from '@convex-dev/react-query'
 import { useQuery } from '@tanstack/react-query'
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { api } from '../../convex/_generated/api'
 import type { Id } from '../../convex/_generated/dataModel'
 import { AnswerMarker } from '~/components/AnswerMarker'
@@ -13,7 +13,9 @@ import {
   exportDistribution,
   exportParticipation,
 } from '~/features/admin/exports'
+import { DeleteSessionButton } from '~/features/admin/DeleteSessionButton'
 import { useAdminPin } from '~/features/admin/pin'
+import { sessionStatus } from '~/features/admin/sessionStatus'
 
 export const Route = createFileRoute('/admin/sessions/$sessionId')({
   component: SessionResults,
@@ -27,6 +29,7 @@ const TYPE_LABEL = {
 
 function SessionResults() {
   const pin = useAdminPin()
+  const navigate = useNavigate()
   const { sessionId } = Route.useParams()
   const { data: r } = useQuery(
     convexQuery(api.admin.sessionResults, {
@@ -57,10 +60,16 @@ function SessionResults() {
           <p className="m-0 text-base text-ink-70">
             {r.players.length} deelnemers · {r.questions.length} vragen ·{' '}
             {r.session.scoringEnabled ? 'met score' : 'zonder score'}
-            {r.session.phase !== 'finished' && ' · nog bezig'}
+            {' · '}
+            {sessionStatus(r.session).toLowerCase()}
           </p>
         </div>
         <div className="flex gap-3">
+          <DeleteSessionButton
+            sessionId={r.session.id}
+            size="lg"
+            onDeleted={() => void navigate({ to: '/admin' })}
+          />
           <Button
             variant="outline"
             size="lg"

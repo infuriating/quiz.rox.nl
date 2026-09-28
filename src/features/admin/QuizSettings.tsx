@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { api } from '../../../convex/_generated/api'
 import type { Doc } from '../../../convex/_generated/dataModel'
 import { Button } from '~/components/Button'
-import { Input, Textarea } from '~/components/Field'
+import { Input, Select, Textarea } from '~/components/Field'
 import { Label } from '~/components/Label'
 import { Switch } from '~/components/Switch'
 import { errorMessage } from '~/lib/errors'
@@ -17,6 +17,7 @@ export function QuizSettings({ quiz }: { quiz: Doc<'quizzes'> }) {
   const [scoring, setScoring] = useState(quiz.scoringEnabled)
   const [capOn, setCapOn] = useState(quiz.maxPlayers !== undefined)
   const [cap, setCap] = useState(String(quiz.maxPlayers ?? 15))
+  const [idle, setIdle] = useState(quiz.idleTimeoutMinutes ?? 60)
   const [outro, setOutro] = useState(quiz.outroMessage ?? '')
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(
     null,
@@ -32,6 +33,7 @@ export function QuizSettings({ quiz }: { quiz: Doc<'quizzes'> }) {
         description: quiz.description,
         scoringEnabled: scoring,
         maxPlayers: capOn ? Number(cap) : undefined,
+        idleTimeoutMinutes: idle,
         outroMessage: outro,
       })
       setStatus({ ok: true, message: 'Opgeslagen. Geldt voor nieuwe sessies.' })
@@ -75,6 +77,18 @@ export function QuizSettings({ quiz }: { quiz: Doc<'quizzes'> }) {
           onChange={(e) => setCap(e.target.value)}
         />
       )}
+      <Select
+        label="Sessie verloopt na"
+        value={idle}
+        onChange={(e) => setIdle(Number(e.target.value))}
+        hint="Zonder actie van de host. Elke klik van de host zet de klok opnieuw. Kies langer als er presentaties tussen de vragen zitten."
+      >
+        {[60, 120, 180, 240].map((m) => (
+          <option key={m} value={m}>
+            {m / 60} uur
+          </option>
+        ))}
+      </Select>
       <Textarea
         label="Afsluitende boodschap"
         rows={3}

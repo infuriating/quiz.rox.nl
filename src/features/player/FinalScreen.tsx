@@ -34,7 +34,9 @@ export function FinalScreen({
             Bedankt voor het meedoen
           </h1>
           <p className="m-0 text-[17px] leading-[1.5] text-ink-70">
-            Je deelname is geregistreerd.
+            {s.endReason === 'expired'
+              ? 'Deze sessie is verlopen. Je antwoorden tot nu toe zijn geregistreerd.'
+              : 'Je deelname is geregistreerd.'}
           </p>
         </div>
         {scored && f.score ? (

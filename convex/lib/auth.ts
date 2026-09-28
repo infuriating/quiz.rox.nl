@@ -21,7 +21,11 @@ export async function requireHost(
   hostToken: string,
 ): Promise<Doc<'sessions'>> {
   const session = await ctx.db.get('sessions', sessionId)
-  if (!session || !constantTimeEqual(session.hostToken, hostToken)) {
+  if (
+    !session ||
+    session.deletedAt !== undefined ||
+    !constantTimeEqual(session.hostToken, hostToken)
+  ) {
     throw new ConvexError({ code: 'NOT_HOST' })
   }
   return session

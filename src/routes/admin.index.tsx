@@ -10,7 +10,9 @@ import { Button } from '~/components/Button'
 import { Card } from '~/components/Card'
 import { Input } from '~/components/Field'
 import { Icon } from '~/components/Icon'
+import { DeleteSessionButton } from '~/features/admin/DeleteSessionButton'
 import { useAdminPin } from '~/features/admin/pin'
+import { sessionStatus } from '~/features/admin/sessionStatus'
 import { errorMessage } from '~/lib/errors'
 import { cn } from '~/lib/cn'
 
@@ -161,6 +163,7 @@ type SessionRow = {
   createdAt: number
   finishedAt: number | null
   phase: string
+  endReason: 'completed' | 'ended' | 'expired' | null
   playerCount: number
   answerCount: number
   scoringEnabled: boolean
@@ -211,20 +214,21 @@ function Sessions({ sessions }: { sessions: Array<SessionRow> }) {
                 <td className={cn(td, 'font-semibold')}>
                   {dateFmt.format(s.createdAt)}
                 </td>
-                <td className={cn(td, 'text-ink-70')}>
-                  {s.phase === 'finished' ? 'Afgerond' : 'Bezig'}
-                </td>
+                <td className={cn(td, 'text-ink-70')}>{sessionStatus(s)}</td>
                 <td className={cn(td, 'tabular')}>{s.playerCount}</td>
                 <td className={cn(td, 'tabular')}>{s.answerCount}</td>
                 <td className={cn(td, 'text-right')}>
-                  <Link
-                    to="/admin/sessions/$sessionId"
-                    params={{ sessionId: s.id }}
-                    className="inline-flex h-9 items-center gap-2 rounded-pill border border-ink-25 bg-white px-4 text-sm font-semibold text-ink no-underline"
-                  >
-                    Bekijk resultaten en exporteer CSV
-                    <Icon name="arrow-right" size={15} />
-                  </Link>
+                  <span className="inline-flex items-center gap-2">
+                    <DeleteSessionButton sessionId={s.id} />
+                    <Link
+                      to="/admin/sessions/$sessionId"
+                      params={{ sessionId: s.id }}
+                      className="inline-flex h-9 items-center gap-2 rounded-pill border border-ink-25 bg-white px-4 text-sm font-semibold text-ink no-underline"
+                    >
+                      Bekijk resultaten en exporteer CSV
+                      <Icon name="arrow-right" size={15} />
+                    </Link>
+                  </span>
                 </td>
               </tr>
             )

@@ -3,6 +3,7 @@ import { mutation, query } from './_generated/server'
 import type { QueryCtx } from './_generated/server'
 import type { Doc, Id } from './_generated/dataModel'
 import { requireHost, requirePin } from './lib/auth'
+import { keepAlive } from './lib/flow'
 import { normalizeJoinCode, randomJoinCode, randomToken } from './lib/codes'
 import {
   correctOptionIds,
@@ -60,10 +61,13 @@ export const createSession = mutation({
       hostToken,
       scoringEnabled: quiz.scoringEnabled,
       maxPlayers: quiz.maxPlayers,
+      idleTimeoutMinutes: quiz.idleTimeoutMinutes,
       phase: 'lobby',
       currentQuestionIndex: 0,
       createdAt: Date.now(),
     })
+    const created = await ctx.db.get('sessions', sessionId)
+    if (created) await keepAlive(ctx, created)
     return { sessionId, hostToken, joinCode }
   },
 })
@@ -207,6 +211,7 @@ function baseSession(
     scoringEnabled: session.scoringEnabled,
     maxPlayers: session.maxPlayers ?? null,
     quizTitle: quiz.title,
+    endReason: session.endReason ?? null,
     createdAt: session.createdAt,
     outroMessage: quiz.outroMessage ?? null,
     currentQuestionIndex: session.currentQuestionIndex,
@@ -331,7 +336,13 @@ export const getPlayerView = query({
     const session = await ctx.db.get('sessions', sessionId)
     const player = await ctx.db.get('players', playerId)
     // Unknown player: the client sends them back to the Join screen.
-    if (!session || !player || player.sessionId !== sessionId) return null
+    if (
+      !session ||
+      session.deletedAt !== undefined ||
+      !player ||
+      player.sessionId !== sessionId
+    )
+      return null
     // During a question the phone only needs its own answer; see loadContext.
     const { quiz, questions, players, playerCount, question, answers } =
       await loadContext(ctx, session, { live: session.phase !== 'question' })

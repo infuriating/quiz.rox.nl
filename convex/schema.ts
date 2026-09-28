@@ -16,6 +16,8 @@ export default defineSchema({
     outroMessage: v.optional(v.string()),
     // Optional cap on participants. When set, the lobby shows "van N" and joins beyond N are refused.
     maxPlayers: v.optional(v.number()),
+    // Minutes without a host action before a session expires. Absent = 60, max 240.
+    idleTimeoutMinutes: v.optional(v.number()),
   }).index('by_title', ['title']),
 
   questions: defineTable({
@@ -41,6 +43,16 @@ export default defineSchema({
     questionStartedAt: v.optional(v.number()),
     questionEndsAt: v.optional(v.number()),
     scheduledRevealId: v.optional(v.id('_scheduled_functions')),
+    // Expiry: idleTimeoutMinutes after the last host action (see lib/flow.ts keepAlive).
+    idleTimeoutMinutes: v.optional(v.number()),
+    expiresAt: v.optional(v.number()),
+    scheduledExpiryId: v.optional(v.id('_scheduled_functions')),
+    // Why the session reached "finished". Absent for sessions from before this field.
+    endReason: v.optional(
+      v.union(v.literal('completed'), v.literal('ended'), v.literal('expired')),
+    ),
+    // Set when an admin deletes the session; its data is then purged in batches.
+    deletedAt: v.optional(v.number()),
     createdAt: v.number(),
     finishedAt: v.optional(v.number()),
   })

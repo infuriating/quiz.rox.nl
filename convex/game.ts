@@ -2,7 +2,13 @@ import { ConvexError, v } from 'convex/values'
 import { internalMutation, mutation } from './_generated/server'
 import { requireHost } from './lib/auth'
 import { getQuestions, questionsMissingCorrect } from './lib/data'
-import { assertPhase, finish, revealNow, startQuestion } from './lib/flow'
+import {
+  assertPhase,
+  finish,
+  keepAlive,
+  revealNow,
+  startQuestion,
+} from './lib/flow'
 
 const hostArgs = { sessionId: v.id('sessions'), hostToken: v.string() }
 
@@ -10,7 +16,10 @@ const hostArgs = { sessionId: v.id('sessions'), hostToken: v.string() }
 export const start = mutation({
   args: hostArgs,
   handler: async (ctx, { sessionId, hostToken }) => {
-    const session = await requireHost(ctx, sessionId, hostToken)
+    const session = await keepAlive(
+      ctx,
+      await requireHost(ctx, sessionId, hostToken),
+    )
     assertPhase(session, 'lobby')
     const questions = await getQuestions(ctx, session.quizId)
     if (questions.length === 0) throw new ConvexError({ code: 'NO_QUESTIONS' })
@@ -26,7 +35,10 @@ export const start = mutation({
 export const skipTimer = mutation({
   args: hostArgs,
   handler: async (ctx, { sessionId, hostToken }) => {
-    const session = await requireHost(ctx, sessionId, hostToken)
+    const session = await keepAlive(
+      ctx,
+      await requireHost(ctx, sessionId, hostToken),
+    )
     assertPhase(session, 'question')
     await revealNow(ctx, session)
     return null
@@ -37,7 +49,10 @@ export const skipTimer = mutation({
 export const next = mutation({
   args: hostArgs,
   handler: async (ctx, { sessionId, hostToken }) => {
-    const session = await requireHost(ctx, sessionId, hostToken)
+    const session = await keepAlive(
+      ctx,
+      await requireHost(ctx, sessionId, hostToken),
+    )
     assertPhase(session, 'reveal', 'leaderboard')
     if (session.phase === 'reveal' && session.scoringEnabled) {
       await ctx.db.patch('sessions', session._id, { phase: 'leaderboard' })
@@ -48,7 +63,7 @@ export const next = mutation({
     if (nextIndex < questions.length) {
       await startQuestion(ctx, session, nextIndex)
     } else {
-      await finish(ctx, session)
+      await finish(ctx, session, 'completed')
     }
     return null
   },
@@ -58,7 +73,10 @@ export const next = mutation({
 export const previous = mutation({
   args: hostArgs,
   handler: async (ctx, { sessionId, hostToken }) => {
-    const session = await requireHost(ctx, sessionId, hostToken)
+    const session = await keepAlive(
+      ctx,
+      await requireHost(ctx, sessionId, hostToken),
+    )
     assertPhase(session, 'question', 'reveal', 'leaderboard')
     const target =
       session.phase === 'leaderboard'
@@ -74,7 +92,10 @@ export const previous = mutation({
 export const showLeaderboard = mutation({
   args: hostArgs,
   handler: async (ctx, { sessionId, hostToken }) => {
-    const session = await requireHost(ctx, sessionId, hostToken)
+    const session = await keepAlive(
+      ctx,
+      await requireHost(ctx, sessionId, hostToken),
+    )
     if (!session.scoringEnabled)
       throw new ConvexError({ code: 'SCORING_DISABLED' })
     assertPhase(session, 'reveal')
@@ -86,9 +107,12 @@ export const showLeaderboard = mutation({
 export const end = mutation({
   args: hostArgs,
   handler: async (ctx, { sessionId, hostToken }) => {
-    const session = await requireHost(ctx, sessionId, hostToken)
+    const session = await keepAlive(
+      ctx,
+      await requireHost(ctx, sessionId, hostToken),
+    )
     if (session.phase === 'finished') return null
-    await finish(ctx, session)
+    await finish(ctx, session, 'ended')
     return null
   },
 })
@@ -106,6 +130,21 @@ export const autoReveal = internalMutation({
       return null
     }
     await revealNow(ctx, session)
+    return null
+  },
+})
+
+/** Scheduled by keepAlive: one hour after the last host action. */
+export const expire = internalMutation({
+  args: { sessionId: v.id('sessions') },
+  handler: async (ctx, { sessionId }) => {
+    const session = await ctx.db.get('sessions', sessionId)
+    if (!session || session.phase === 'finished') return null
+    // A newer keepAlive may have pushed the expiry; only the latest job acts.
+    if (session.expiresAt !== undefined && session.expiresAt > Date.now()) {
+      return null
+    }
+    await finish(ctx, session, 'expired')
     return null
   },
 })

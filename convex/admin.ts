@@ -1,16 +1,20 @@
 import { ConvexError, v } from 'convex/values'
-import { mutation, query } from './_generated/server'
+import { internalMutation, mutation, query } from './_generated/server'
 import type { MutationCtx } from './_generated/server'
 import type { Id } from './_generated/dataModel'
+import { internal } from './_generated/api'
 import { requirePin } from './lib/auth'
+import { cancelSessionJobs } from './lib/flow'
 import { distribution, getAnswers, getPlayers, getQuestions } from './lib/data'
 import {
   MAX_OPTION_LENGTH,
+  MAX_IDLE_TIMEOUT_MINUTES,
   MAX_OUTRO_LENGTH,
   MAX_PLAYERS_PER_SESSION,
   MAX_QUESTION_LENGTH,
   MAX_QUIZZES,
   MAX_SESSIONS_PER_QUIZ,
+  PURGE_BATCH_SIZE,
 } from './lib/limits'
 import { optionValidator, questionTypeValidator } from './lib/validators'
 
@@ -34,21 +38,24 @@ export const listQuizzes = query({
           .order('desc')
           .take(MAX_SESSIONS_PER_QUIZ)
         const sessionRows = await Promise.all(
-          sessions.map(async (s) => {
-            const players = await getPlayers(ctx, s._id)
-            let answerCount = 0
-            for (const q of questions)
-              answerCount += (await getAnswers(ctx, s._id, q._id)).length
-            return {
-              id: s._id,
-              createdAt: s.createdAt,
-              finishedAt: s.finishedAt ?? null,
-              phase: s.phase,
-              scoringEnabled: s.scoringEnabled,
-              playerCount: players.length,
-              answerCount,
-            }
-          }),
+          sessions
+            .filter((s) => s.deletedAt === undefined)
+            .map(async (s) => {
+              const players = await getPlayers(ctx, s._id)
+              let answerCount = 0
+              for (const q of questions)
+                answerCount += (await getAnswers(ctx, s._id, q._id)).length
+              return {
+                id: s._id,
+                createdAt: s.createdAt,
+                finishedAt: s.finishedAt ?? null,
+                phase: s.phase,
+                endReason: s.endReason ?? null,
+                scoringEnabled: s.scoringEnabled,
+                playerCount: players.length,
+                answerCount,
+              }
+            }),
         )
         return {
           id: quiz._id,
@@ -101,6 +108,7 @@ export const updateQuizSettings = mutation({
     scoringEnabled: v.boolean(),
     outroMessage: v.optional(v.string()),
     maxPlayers: v.optional(v.number()),
+    idleTimeoutMinutes: v.optional(v.number()),
   },
   handler: async (
     ctx,
@@ -112,6 +120,7 @@ export const updateQuizSettings = mutation({
       scoringEnabled,
       outroMessage,
       maxPlayers,
+      idleTimeoutMinutes,
     },
   ) => {
     requirePin(pin)
@@ -128,6 +137,17 @@ export const updateQuizSettings = mutation({
         max: MAX_PLAYERS_PER_SESSION,
       })
     }
+    if (
+      idleTimeoutMinutes !== undefined &&
+      (!Number.isInteger(idleTimeoutMinutes) ||
+        idleTimeoutMinutes < 15 ||
+        idleTimeoutMinutes > MAX_IDLE_TIMEOUT_MINUTES)
+    ) {
+      throw new ConvexError({
+        code: 'INVALID_IDLE_TIMEOUT',
+        max: MAX_IDLE_TIMEOUT_MINUTES,
+      })
+    }
     const outro = outroMessage?.trim()
     if (outro && outro.length > MAX_OUTRO_LENGTH)
       throw new ConvexError({ code: 'OUTRO_TOO_LONG' })
@@ -137,6 +157,7 @@ export const updateQuizSettings = mutation({
       scoringEnabled,
       outroMessage: outro || undefined,
       maxPlayers,
+      idleTimeoutMinutes,
     })
     return null
   },
@@ -267,7 +288,7 @@ export const sessionResults = query({
   handler: async (ctx, { pin, sessionId }) => {
     requirePin(pin)
     const session = await ctx.db.get('sessions', sessionId)
-    if (!session) return null
+    if (!session || session.deletedAt !== undefined) return null
     const quiz = await ctx.db.get('quizzes', session.quizId)
     const [questions, players] = await Promise.all([
       getQuestions(ctx, session.quizId),
@@ -304,6 +325,7 @@ export const sessionResults = query({
         createdAt: session.createdAt,
         finishedAt: session.finishedAt ?? null,
         phase: session.phase,
+        endReason: session.endReason ?? null,
         scoringEnabled: session.scoringEnabled,
       },
       quizTitle: quiz?.title ?? '',
@@ -316,5 +338,61 @@ export const sessionResults = query({
       })),
       questions: perQuestion,
     }
+  },
+})
+
+// ---------------------------------------------------------------------------
+// Deleting a session: hide it at once, purge its players and answers in batches
+// ---------------------------------------------------------------------------
+
+export const deleteSession = mutation({
+  args: { ...pinArg, sessionId: v.id('sessions') },
+  handler: async (ctx, { pin, sessionId }) => {
+    requirePin(pin)
+    const session = await ctx.db.get('sessions', sessionId)
+    if (!session || session.deletedAt !== undefined) return null
+    await cancelSessionJobs(ctx, session)
+    // Finished + deletedAt: the join code is free and every view treats it as gone.
+    await ctx.db.patch('sessions', sessionId, {
+      phase: 'finished',
+      deletedAt: Date.now(),
+      finishedAt: session.finishedAt ?? Date.now(),
+      scheduledRevealId: undefined,
+      scheduledExpiryId: undefined,
+    })
+    await ctx.scheduler.runAfter(0, internal.admin.purgeSession, { sessionId })
+    return null
+  },
+})
+
+/** Deletes a deleted session's answers, then players, then the session, one batch per run. */
+export const purgeSession = internalMutation({
+  args: { sessionId: v.id('sessions') },
+  handler: async (ctx, { sessionId }) => {
+    const session = await ctx.db.get('sessions', sessionId)
+    if (!session || session.deletedAt === undefined) return null
+    const answers = await ctx.db
+      .query('answers')
+      .withIndex('by_sessionId_and_questionId', (q) =>
+        q.eq('sessionId', sessionId),
+      )
+      .take(PURGE_BATCH_SIZE)
+    const players =
+      answers.length > 0
+        ? []
+        : await ctx.db
+            .query('players')
+            .withIndex('by_sessionId', (q) => q.eq('sessionId', sessionId))
+            .take(PURGE_BATCH_SIZE)
+    for (const a of answers) await ctx.db.delete('answers', a._id)
+    for (const p of players) await ctx.db.delete('players', p._id)
+    if (answers.length > 0 || players.length > 0) {
+      await ctx.scheduler.runAfter(0, internal.admin.purgeSession, {
+        sessionId,
+      })
+    } else {
+      await ctx.db.delete('sessions', sessionId)
+    }
+    return null
   },
 })

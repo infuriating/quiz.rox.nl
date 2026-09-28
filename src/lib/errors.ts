@@ -40,6 +40,8 @@ export function errorMessage(e: unknown): string {
       return 'Deze quiz heeft nog geen vragen. Voeg eerst vragen toe.'
     case 'INVALID_MAX_PLAYERS':
       return `Vul een aantal tussen 1 en ${typeof data.max === 'number' ? data.max : 500} in, of laat het veld leeg.`
+    case 'INVALID_IDLE_TIMEOUT':
+      return 'Kies een verlooptijd van maximaal 4 uur.'
     case 'OUTRO_TOO_LONG':
       return 'Maak de afsluitende boodschap korter dan 120 tekens.'
     case 'INVALID_QUESTION_TEXT':
