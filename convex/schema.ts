@@ -61,7 +61,8 @@ export default defineSchema({
     finishedAt: v.optional(v.number()),
   })
     .index('by_joinCode', ['joinCode'])
-    .index('by_quizId', ['quizId']),
+    .index('by_quizId', ['quizId'])
+    .index('by_createdAt', ['createdAt']),
 
   players: defineTable({
     sessionId: v.id('sessions'),

@@ -42,11 +42,13 @@ function SessionResults() {
     return (
       <main className="px-10 py-12 text-ink-70">Deze sessie bestaat niet.</main>
     )
-  const date = new Date(r.session.createdAt).toLocaleDateString('nl-NL', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
+  const longDate = (ms: number) =>
+    new Date(ms).toLocaleDateString('nl-NL', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+  const date = longDate(r.session.createdAt)
   return (
     <main className="mx-auto flex max-w-[1440px] flex-col gap-6 px-10 py-10">
       <Link to="/admin" className="text-sm no-underline text-blue">
@@ -62,6 +64,11 @@ function SessionResults() {
             {r.session.scoringEnabled ? 'met score' : 'zonder score'}
             {' · '}
             {sessionStatus(r.session).toLowerCase()}
+          </p>
+          <p className="m-0 text-sm text-ink-55">
+            Wordt op {longDate(r.session.deleteAt)} automatisch verwijderd, met
+            alle namen en e-mailadressen. Exporteer de CSV als je de gegevens
+            langer nodig hebt.
           </p>
         </div>
         <div className="flex gap-3">

@@ -22,5 +22,14 @@ export const JOINS_PER_MINUTE = 120
 export const DEFAULT_IDLE_TIMEOUT_MINUTES = 60
 /** Upper bound for the per-quiz override, e.g. for a quiz with presentations in between. */
 export const MAX_IDLE_TIMEOUT_MINUTES = 4 * 60
+/**
+ * Retention: a session with its players (names, emails) and answers is deleted
+ * this long after it was created. Long enough to serve as a training record
+ * for a yearly audit; export the CSV first if it must be kept longer.
+ */
+export const RETENTION_DAYS = 365
+export const RETENTION_MS = RETENTION_DAYS * 24 * 60 * 60 * 1000
+/** Sessions marked for deletion per run of the retention job. */
+export const RETENTION_BATCH_SIZE = 100
 /** Rows deleted per transaction when purging a deleted session. */
 export const PURGE_BATCH_SIZE = 500
