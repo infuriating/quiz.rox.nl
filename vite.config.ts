@@ -180,6 +180,10 @@ export default defineConfig({
       },
     ],
   },
+  test: {
+    include: ['convex/**/*.test.ts'],
+    server: { deps: { inline: ['convex-test'] } },
+  },
   server: {
     port: 3000,
   },

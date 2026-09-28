@@ -1,6 +1,6 @@
 name: Checks
 description: >
-  Typecheck, lint and format: the same gates as `npm run check` and the
+  Typecheck, lint, format and tests: the same gates as `npm run check` and the
   pre-commit hook. Shared by ci.yml (pull requests) and deploy.yml (before a
   production deploy). Assumes .github/actions/setup has already run.
 
@@ -26,3 +26,10 @@ runs:
       shell: bash
       if: ${{ !cancelled() }}
       run: npm run format:check
+
+    # Backend tests (convex-test, in memory): game flow, sanitized views,
+    # password, joining, expiry, inactive and delete.
+    - name: Test
+      shell: bash
+      if: ${{ !cancelled() }}
+      run: npx vp test

@@ -183,8 +183,9 @@ the address automatically.
 
 ### CI and automatic deploys (GitHub Actions)
 
-- **`.github/workflows/ci.yml`** runs on every pull request to `main`: typecheck, lint (findings
-  show up as inline PR annotations), format check, and a build of the SPA against `VITE_CONVEX_URL`.
+- **`.github/workflows/ci.yml`** runs on every pull request to `main` except Dependabot's: typecheck,
+  lint (findings show up as inline PR annotations), format check, the tests, and a build of the SPA
+  against `VITE_CONVEX_URL`.
 - **`.github/workflows/deploy.yml`** runs on every push to `main`. The same checks run first,
   inline. Then `npx convex deploy` deploys the Convex functions, `npx vp build` builds the
   frontend against the `VITE_CONVEX_URL` repository variable, and `npx wrangler deploy` uploads it
@@ -234,9 +235,26 @@ in `vite.config.ts`.
 | `npm run check`  | Formatting, lint and type check in one go (`vp check`)  |
 | `npm run lint`   | Oxlint, including the type-aware rules and Convex rules |
 | `npm run format` | Format with oxfmt                                       |
+| `npm test`       | Backend tests (`vp test`)                               |
 | `npm run build`  | Type check and production build                         |
 
 A pre-commit hook (`.vite-hooks`) runs `vp check --fix` on staged files.
+
+### Tests
+
+The backend tests run the Convex functions in memory with
+[`convex-test`](https://docs.convex.dev/testing/convex-test), with fake timers for the scheduler. No
+deployment or login is needed. They live next to the code (`convex/*.test.ts`, shared helpers in
+`convex/test.setup.ts`) and cover:
+
+- a full game, with scoring off and on;
+- that correct answers, explanations and the distribution stay hidden until the reveal;
+- the host password, joining (duplicate email, validation, max players), late answers;
+- session expiry and the per-quiz timeout;
+- inactive quizzes, and deleting sessions and quizzes including the purge.
+
+Convex does not deploy files with more than one dot in their name, so the tests never reach a
+deployment.
 
 ## Design
 
@@ -266,6 +284,7 @@ convex/
   answers.ts       answer submission and evaluation (only here, on server time)
   admin.ts         quizzes, questions, settings, results, inactive/delete
   seed.ts          ISO 27001 seed
+  *.test.ts        backend tests (convex-test)
   lib/             auth, scoring, data helpers, flow, join codes, limits
 src/
   styles/tokens.css   ROX tokens (generated from the design system)
