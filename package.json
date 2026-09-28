@@ -8,9 +8,11 @@
     "typecheck": "tsc --noEmit",
     "build": "npm run typecheck && vite build",
     "start": "node .output/server/index.mjs",
-    "format": "prettier --write .",
-    "lint": "npm run typecheck && eslint .  --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "tokens": "node scripts/generate-tokens.mjs"
+    "format": "oxfmt",
+    "lint": "npm run typecheck && oxlint --deny-warnings",
+    "tokens": "node scripts/generate-tokens.mjs",
+    "format:check": "oxfmt --check",
+    "lint:fix": "oxlint --fix"
   },
   "dependencies": {
     "@convex-dev/react-query": "^0.1.0",
@@ -27,12 +29,14 @@
   "devDependencies": {
     "@convex-dev/eslint-plugin": "^5.0.0",
     "@tailwindcss/vite": "^4.3.3",
-    "@tanstack/eslint-config": "^0.4.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-react": "^6.0.5",
-    "prettier": "^3.9.6",
+    "eslint": "9.39.5",
+    "oxfmt": "0.71.0",
+    "oxlint": "1.86.0",
+    "oxlint-tsgolint": "7.0.2003",
     "tailwindcss": "^4.3.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vite": "^8.2.0",
