@@ -10,7 +10,7 @@ import { Label } from '~/components/Label'
 import { useAdminPin } from '~/features/admin/pin'
 import { QuestionForm } from '~/features/admin/QuestionForm'
 import { QuizSettings } from '~/features/admin/QuizSettings'
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 
 export const Route = createFileRoute('/admin/quizzes/$quizId')({
   component: QuestionEditor,
@@ -61,14 +61,14 @@ function QuestionEditor() {
                   if (dragId && dragId !== q._id) void move({ pin, questionId: dragId, toOrder: q.order })
                   setDragId(null)
                 }}
-                className={cx('flex items-center gap-3 rounded-sm py-1 pr-3 pl-2', on && 'bg-blue-100', dragId === q._id && 'opacity-50')}
+                className={cn('flex items-center gap-3 rounded-sm py-1 pr-3 pl-2', on && 'bg-blue-100', dragId === q._id && 'opacity-50')}
               >
                 <span aria-hidden="true" className="flex size-7 cursor-grab items-center justify-center text-ink-40">
                   <Icon name="grip" size={18} />
                 </span>
                 <button type="button" onClick={() => setSelected(q._id)} className="flex flex-1 cursor-pointer items-center gap-3 border-0 bg-transparent py-2 text-left">
-                  <span className={cx('w-7 font-display text-sm font-semibold', on ? 'text-blue-600' : 'text-ink-55')}>{String(q.order).padStart(2, '0')}</span>
-                  <span className={cx('flex-1 text-[15px]', on ? 'font-semibold' : 'font-medium')}>
+                  <span className={cn('w-7 font-display text-sm font-semibold', on ? 'text-blue-600' : 'text-ink-55')}>{String(q.order).padStart(2, '0')}</span>
+                  <span className={cn('flex-1 text-[15px]', on ? 'font-semibold' : 'font-medium')}>
                     {q.topic || 'Zonder onderwerp'}
                     {missing && <span className="sr-only"> (nog geen goed antwoord)</span>}
                   </span>

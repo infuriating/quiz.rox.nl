@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from 'react'
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 
 const LENGTH = 6
 
@@ -28,7 +28,7 @@ export function CodeInput({
         {label}
       </label>
       <div
-        className={cx('relative flex gap-2 rounded-sm', error && 'shadow-[0_0_0_4px_var(--status-error-ring)]')}
+        className={cn('relative flex gap-2 rounded-sm', error && 'shadow-[0_0_0_4px_var(--status-error-ring)]')}
         onClick={() => ref.current?.focus()}
       >
         <input
@@ -54,7 +54,7 @@ export function CodeInput({
             <span
               key={i}
               aria-hidden="true"
-              className={cx(
+              className={cn(
                 'flex h-[60px] flex-1 items-center justify-center rounded-[10px] bg-white font-display text-[26px] font-bold text-ink',
                 error ? 'border-2 border-error' : active ? 'border-2 border-blue' : 'border-[1.5px] border-ink-25',
               )}

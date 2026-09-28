@@ -1,4 +1,4 @@
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 
 /** Six separate characters on light blue. Codes never contain 0/O or 1/I. */
 export function JoinCodeDisplay({ code, size = 'lg' }: { code: string; size?: 'lg' | 'md' }) {
@@ -6,7 +6,7 @@ export function JoinCodeDisplay({ code, size = 'lg' }: { code: string; size?: 'l
   return (
     <div role="text" aria-label={`Quizcode ${code.split('').join(' ')}`} className="flex gap-4">
       {code.split('').map((c, i) => (
-        <span key={i} aria-hidden="true" className={cx('flex items-center justify-center bg-host-code-bg font-display font-bold leading-none text-host-text', cell)}>
+        <span key={i} aria-hidden="true" className={cn('flex items-center justify-center bg-host-code-bg font-display font-bold leading-none text-host-text', cell)}>
           {c}
         </span>
       ))}

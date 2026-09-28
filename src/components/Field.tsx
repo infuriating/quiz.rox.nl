@@ -1,5 +1,5 @@
 import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react'
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 
 const control =
   'box-border w-full rounded-sm border bg-white font-body text-base text-ink placeholder:text-ink-40 focus:border-blue focus:shadow-[0_0_0_4px_var(--focus-ring-soft)] focus:outline-none'
@@ -9,7 +9,7 @@ type FieldProps = { label: string; hint?: string; error?: string | null; hideLab
 function Wrap({ id, label, hint, error, hideLabel, children }: FieldProps & { id: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className={cx('rox-label text-xs text-ink', hideLabel && 'sr-only')}>
+      <label htmlFor={id} className={cn('rox-label text-xs text-ink', hideLabel && 'sr-only')}>
         {label}
       </label>
       {children}
@@ -42,7 +42,7 @@ export function Input({ label, hint, error, hideLabel, size = 'md', className, .
         aria-invalid={error ? true : undefined}
         aria-describedby={hint || error ? `${id}-msg` : undefined}
         {...rest}
-        className={cx(control, stateClass(error), size === 'lg' ? 'h-14 px-4 text-[17px]' : 'h-12 px-3.5', className)}
+        className={cn(control, stateClass(error), size === 'lg' ? 'h-14 px-4 text-[17px]' : 'h-12 px-3.5', className)}
       />
     </Wrap>
   )
@@ -57,7 +57,7 @@ export function Textarea({ label, hint, error, hideLabel, className, ...rest }: 
         aria-invalid={error ? true : undefined}
         aria-describedby={hint || error ? `${id}-msg` : undefined}
         {...rest}
-        className={cx(control, stateClass(error), 'resize-y px-3.5 py-3 leading-[1.5]', className)}
+        className={cn(control, stateClass(error), 'resize-y px-3.5 py-3 leading-[1.5]', className)}
       />
     </Wrap>
   )
@@ -67,7 +67,7 @@ export function Select({ label, hint, error, hideLabel, className, children, ...
   const id = useId()
   return (
     <Wrap id={id} label={label} hint={hint} error={error} hideLabel={hideLabel}>
-      <select id={id} {...rest} className={cx(control, stateClass(error), 'h-12 px-3.5', className)}>
+      <select id={id} {...rest} className={cn(control, stateClass(error), 'h-12 px-3.5', className)}>
         {children}
       </select>
     </Wrap>

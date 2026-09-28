@@ -4,7 +4,7 @@ import { api } from '../../../convex/_generated/api'
 import { Button } from '~/components/Button'
 import { Label } from '~/components/Label'
 import { errorMessage } from '~/lib/errors'
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 
 const LENGTH = 6
 
@@ -29,9 +29,9 @@ export function PinScreen({ onOk, compact }: { onOk: (pin: string) => void; comp
 
   const cell = compact ? 'h-16 w-[52px] rounded-sm' : 'h-32 w-[104px] rounded-md'
   return (
-    <form onSubmit={submit} className={cx('flex flex-col items-center justify-center text-center', compact ? 'min-h-dvh gap-8 bg-ink-05 px-6' : 'h-full gap-14')}>
+    <form onSubmit={submit} className={cn('flex flex-col items-center justify-center text-center', compact ? 'min-h-dvh gap-8 bg-ink-05 px-6' : 'h-full gap-14')}>
       <Label className={compact ? 'text-xs text-ink-55' : 'text-beamer-label text-host-muted'}>{compact ? 'Beheer' : 'Host'}</Label>
-      <h1 className={cx('m-0 font-display font-bold', compact ? 'text-h2 tracking-display' : 'text-beamer-title leading-[1.04] tracking-hero text-host-text')}>Voer je host-PIN in</h1>
+      <h1 className={cn('m-0 font-display font-bold', compact ? 'text-h2 tracking-display' : 'text-beamer-title leading-[1.04] tracking-hero text-host-text')}>Voer je host-PIN in</h1>
       <div className="relative flex gap-5" onClick={() => ref.current?.focus()}>
         <label htmlFor="pin" className="sr-only">
           Host-PIN
@@ -59,17 +59,17 @@ export function PinScreen({ onOk, compact }: { onOk: (pin: string) => void; comp
           <span
             key={i}
             aria-hidden="true"
-            className={cx(
+            className={cn(
               'box-border flex items-center justify-center bg-host-raised',
               cell,
               error ? 'border-2 border-error' : focused && i === Math.min(pin.length, LENGTH - 1) ? 'border-[3px] border-blue' : 'border-2 border-host-line',
             )}
           >
-            {i < pin.length && <span className={cx('rounded-full bg-host-text', compact ? 'size-3' : 'size-[22px]')} />}
+            {i < pin.length && <span className={cn('rounded-full bg-host-text', compact ? 'size-3' : 'size-[22px]')} />}
           </span>
         ))}
       </div>
-      <p id="pin-msg" className={cx('m-0', compact ? 'text-sm' : 'text-beamer-label', error ? 'text-error' : 'text-host-muted')}>
+      <p id="pin-msg" className={cn('m-0', compact ? 'text-sm' : 'text-beamer-label', error ? 'text-error' : 'text-host-muted')}>
         {error ?? 'De PIN staat in de Convex-omgeving als HOST_PIN.'}
       </p>
       <Button type="submit" size={compact ? 'lg' : 'beamer'} iconRight="arrow-right" disabled={pin.length < 4}>

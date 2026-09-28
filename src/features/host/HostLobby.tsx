@@ -1,7 +1,7 @@
 import { QRCodeSVG } from 'qrcode.react'
 import { JoinCodeDisplay } from '~/components/JoinCodeDisplay'
 import { Label } from '~/components/Label'
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 import type { HostView } from './types'
 
 export function HostLobby({ view }: { view: HostView }) {
@@ -43,7 +43,7 @@ export function HostLobby({ view }: { view: HostView }) {
           {view.players.map((p) => (
             <span
               key={p.id}
-              className={cx(
+              className={cn(
                 'flex h-20 animate-pop items-center justify-center truncate rounded-pill px-4 font-display text-[32px] font-semibold',
                 p.id === newest ? 'bg-blue text-white' : 'bg-host-chip text-host-text',
               )}

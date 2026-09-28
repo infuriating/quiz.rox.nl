@@ -1,4 +1,4 @@
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 import { Icon } from './Icon'
 
 export function formatScore(n: number): string {
@@ -33,13 +33,13 @@ export function LeaderboardRow({ rank, previousRank, name, score }: { rank: numb
   const first = rank === 1
   return (
     <li
-      className={cx(
+      className={cn(
         'flex h-[120px] items-center gap-9 rounded-lg pr-12 pl-8',
         first ? 'bg-host-code-bg' : 'border-2 border-host-hair bg-host-raised',
       )}
     >
       <span
-        className={cx(
+        className={cn(
           'flex size-[72px] shrink-0 items-center justify-center rounded-md font-display text-[36px] font-bold',
           first ? 'bg-blue text-white' : 'bg-host-rank-bg text-host-text',
         )}

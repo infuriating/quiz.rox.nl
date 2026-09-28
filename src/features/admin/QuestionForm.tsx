@@ -8,7 +8,7 @@ import { Card } from '~/components/Card'
 import { Input, Select, Textarea } from '~/components/Field'
 import { Icon } from '~/components/Icon'
 import { errorMessage } from '~/lib/errors'
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 import { useAdminPin } from './pin'
 
 type Option = { id: string; text: string; correct: boolean }
@@ -126,7 +126,7 @@ export function QuestionForm({
           </Button>
         </div>
       </div>
-      {status && <p className={cx('m-0 -mt-3 text-sm', status.ok ? 'text-mint-600' : 'text-error')}>{status.message}</p>}
+      {status && <p className={cn('m-0 -mt-3 text-sm', status.ok ? 'text-mint-600' : 'text-error')}>{status.message}</p>}
 
       <Card className="flex flex-col gap-6 p-7">
         <div className="grid grid-cols-3 gap-5">
@@ -146,7 +146,7 @@ export function QuestionForm({
           <legend className="rox-label pb-2 text-xs text-ink">Type</legend>
           <div className="flex gap-3">
             {TYPES.map((t) => (
-              <label key={t.value} className={cx('flex flex-1 basis-0 cursor-pointer items-center gap-3 rounded-sm px-4 py-3', type === t.value ? 'border-2 border-blue bg-blue-50' : 'border border-ink-25 bg-white')}>
+              <label key={t.value} className={cn('flex flex-1 basis-0 cursor-pointer items-center gap-3 rounded-sm px-4 py-3', type === t.value ? 'border-2 border-blue bg-blue-50' : 'border border-ink-25 bg-white')}>
                 <input
                   type="radio"
                   name="type"
@@ -175,7 +175,7 @@ export function QuestionForm({
         {options.map((o, i) => (
           <div
             key={o.id}
-            className={cx('flex items-center gap-3', dragFrom === i && 'opacity-50')}
+            className={cn('flex items-center gap-3', dragFrom === i && 'opacity-50')}
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => {
               if (dragFrom === null || dragFrom === i) return
@@ -203,7 +203,7 @@ export function QuestionForm({
               />
             </div>
             {type !== 'poll' && (
-              <label className={cx('box-border flex h-12 w-[132px] shrink-0 cursor-pointer items-center gap-2.5 rounded-pill border px-3.5 text-sm font-semibold', o.correct ? 'border-success bg-success text-white' : 'border-ink-25 bg-white text-ink-70')}>
+              <label className={cn('box-border flex h-12 w-[132px] shrink-0 cursor-pointer items-center gap-2.5 rounded-pill border px-3.5 text-sm font-semibold', o.correct ? 'border-success bg-success text-white' : 'border-ink-25 bg-white text-ink-70')}>
                 <input type="checkbox" checked={o.correct} onChange={(e) => setOption(i, { correct: e.target.checked })} className="m-0 size-[18px] accent-[var(--rox-mint-600)]" />
                 Goed
               </label>

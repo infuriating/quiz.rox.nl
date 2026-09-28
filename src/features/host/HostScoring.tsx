@@ -2,7 +2,7 @@
 import { Badge } from '~/components/Badge'
 import { Label } from '~/components/Label'
 import { LeaderboardRow, formatScore } from '~/components/LeaderboardRow'
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 import type { HostView } from './types'
 
 export function HostLeaderboard({ view }: { view: HostView }) {
@@ -42,11 +42,11 @@ export function HostPodium({ view }: { view: HostView }) {
           return (
             <div key={p.playerId} className="flex w-[440px] flex-col items-center gap-6">
               <div className="flex flex-col items-center gap-2">
-                <span className={cx('font-display leading-none font-bold tracking-display text-host-text', first ? 'text-[64px]' : 'text-[52px]')}>{p.name}</span>
+                <span className={cn('font-display leading-none font-bold tracking-display text-host-text', first ? 'text-[64px]' : 'text-[52px]')}>{p.name}</span>
                 <span className="tabular font-display text-[32px] font-semibold text-host-muted">{formatScore(p.score)}</span>
               </div>
               <div
-                className={cx('flex w-full justify-center rounded-t-[28px] pt-8', first ? 'bg-blue text-white' : 'bg-host-pod-other text-host-pod-other-fg')}
+                className={cn('flex w-full justify-center rounded-t-[28px] pt-8', first ? 'bg-blue text-white' : 'bg-host-pod-other text-host-pod-other-fg')}
                 style={{ height: HEIGHTS[Math.min(p.rank, 3)] }}
               >
                 <span className="font-display text-[128px] leading-none font-bold tracking-hero">{p.rank}</span>

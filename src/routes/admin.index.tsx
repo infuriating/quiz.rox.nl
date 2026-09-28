@@ -11,7 +11,7 @@ import { Input } from '~/components/Field'
 import { Icon } from '~/components/Icon'
 import { useAdminPin } from '~/features/admin/pin'
 import { errorMessage } from '~/lib/errors'
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 
 export const Route = createFileRoute('/admin/')({
   component: QuizList,
@@ -81,7 +81,7 @@ function QuizList() {
                 onClick={() => setOpen((o) => ({ ...o, [q.id]: !isOpen }))}
                 className="flex size-9 cursor-pointer items-center justify-center rounded-full border-0 bg-ink-10"
               >
-                <span className={cx('inline-flex transition-transform', !isOpen && '-rotate-90')}>
+                <span className={cn('inline-flex transition-transform', !isOpen && '-rotate-90')}>
                   <Icon name="chevron-down" size={18} className="text-ink-70" />
                 </span>
               </button>
@@ -140,14 +140,14 @@ function Sessions({ sessions }: { sessions: SessionRow[] }) {
         </thead>
         <tbody>
           {sessions.map((s, i) => {
-            const td = cx('px-5 py-4 align-middle text-[15px]', i < sessions.length - 1 && 'border-b border-ink-15')
+            const td = cn('px-5 py-4 align-middle text-[15px]', i < sessions.length - 1 && 'border-b border-ink-15')
             return (
               <tr key={s.id}>
-                <td className={cx(td, 'font-semibold')}>{dateFmt.format(s.createdAt)}</td>
-                <td className={cx(td, 'text-ink-70')}>{s.phase === 'finished' ? 'Afgerond' : 'Bezig'}</td>
-                <td className={cx(td, 'tabular')}>{s.playerCount}</td>
-                <td className={cx(td, 'tabular')}>{s.answerCount}</td>
-                <td className={cx(td, 'text-right')}>
+                <td className={cn(td, 'font-semibold')}>{dateFmt.format(s.createdAt)}</td>
+                <td className={cn(td, 'text-ink-70')}>{s.phase === 'finished' ? 'Afgerond' : 'Bezig'}</td>
+                <td className={cn(td, 'tabular')}>{s.playerCount}</td>
+                <td className={cn(td, 'tabular')}>{s.answerCount}</td>
+                <td className={cn(td, 'text-right')}>
                   <Link
                     to="/admin/sessions/$sessionId"
                     params={{ sessionId: s.id }}

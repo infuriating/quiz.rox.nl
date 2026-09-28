@@ -1,4 +1,4 @@
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 import { AnswerMarker } from './AnswerMarker'
 import { Icon } from './Icon'
 import { Label } from './Label'
@@ -41,14 +41,14 @@ export function AnswerButton({
       aria-pressed={!multi && state === 'pressed' ? true : undefined}
       disabled={state === 'disabled' || state === 'dimmed' || state === 'correct' || state === 'incorrect'}
       onClick={onClick}
-      className={cx(
+      className={cn(
         'flex min-h-14 w-full flex-1 basis-0 cursor-pointer items-center gap-3 rounded-md py-3 pr-3.5 pl-3 text-left transition-[background,border-color] duration-150 ease-cut',
         'disabled:cursor-default',
         surface,
       )}
     >
       <AnswerMarker index={index} tone={state === 'pressed' ? 'inverse' : 'ink'} />
-      <span className={cx('line-clamp-4 flex-1 font-medium leading-[1.38]', long ? 'text-phone-option-long' : 'text-phone-option')}>{text}</span>
+      <span className={cn('line-clamp-4 flex-1 font-medium leading-[1.38]', long ? 'text-phone-option-long' : 'text-phone-option')}>{text}</span>
       {state === 'correct' && (
         <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-success text-white">
           <Icon name="check" size={16} strokeWidth={2.6} />
@@ -58,7 +58,7 @@ export function AnswerButton({
       {showCheckbox && (
         <span
           aria-hidden="true"
-          className={cx(
+          className={cn(
             'flex size-[22px] shrink-0 items-center justify-center rounded-[6px]',
             state === 'selected' ? 'bg-blue text-white' : 'border-[1.5px] border-ink-40 bg-white',
           )}

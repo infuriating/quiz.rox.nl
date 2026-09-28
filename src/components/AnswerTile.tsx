@@ -1,4 +1,4 @@
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 import { AnswerMarker } from './AnswerMarker'
 import { DistributionBar } from './DistributionBar'
 import { Icon } from './Icon'
@@ -24,7 +24,7 @@ export function AnswerTile({
   const sizes = { option: 'text-beamer-option', long: 'text-beamer-option-long', compact: 'text-[24px]' }
   return (
     <div
-      className={cx(
+      className={cn(
         'flex min-h-0 flex-1 basis-0 items-center gap-7 rounded-lg py-6 pr-8 pl-6',
         state === 'correct' ? 'border-[3px] border-success bg-host-ok-bg' : 'border-2 border-host-line bg-host-raised',
       )}
@@ -32,7 +32,7 @@ export function AnswerTile({
     >
       <AnswerMarker index={index} size="beamer" tone="host" />
       <div className="min-w-0 flex-1">
-        <div className={cx('font-medium leading-[1.28] text-host-text', sizes[textSize])}>{text}</div>
+        <div className={cn('font-medium leading-[1.28] text-host-text', sizes[textSize])}>{text}</div>
         {count !== undefined && total !== undefined && <DistributionBar count={count} total={total} correct={state === 'correct'} />}
       </div>
       {state === 'correct' && (

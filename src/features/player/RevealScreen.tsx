@@ -2,7 +2,7 @@ import { AnswerButton } from '~/components/AnswerButton'
 import { Icon } from '~/components/Icon'
 import { Label } from '~/components/Label'
 import { StatusDisc } from '~/components/StatusDisc'
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 import type { PlayerView } from './types'
 import { PhoneFrame } from './PhoneFrame'
 
@@ -19,7 +19,7 @@ function RankCard({ score, of }: { score: Score; of: number }) {
           {score.rank}e<span className="text-lg font-semibold text-ink-55"> van {of}</span>
         </span>
       </span>
-      <span className={cx('inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-sm font-semibold', up ? 'bg-mint-100 text-mint-600' : 'bg-ink-10 text-ink-70')}>
+      <span className={cn('inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-sm font-semibold', up ? 'bg-mint-100 text-mint-600' : 'bg-ink-10 text-ink-70')}>
         <Icon name={up ? 'arrow-up' : delta < 0 ? 'arrow-down' : 'minus'} size={14} strokeWidth={2.6} />
         {delta === 0 ? 'Zelfde plek' : `${Math.abs(delta)} ${Math.abs(delta) === 1 ? 'plek' : 'plekken'}`}
       </span>

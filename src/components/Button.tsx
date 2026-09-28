@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 import { Icon, type IconName } from './Icon'
 
 type Variant = 'primary' | 'outline' | 'ghost' | 'ink'
@@ -41,7 +41,7 @@ export function Button({
     <button
       type="button"
       {...rest}
-      className={cx(
+      className={cn(
         'inline-flex shrink-0 cursor-pointer items-center justify-center rounded-pill font-semibold transition-[background,box-shadow,transform] duration-200 ease-cut active:scale-[.97]',
         'disabled:cursor-not-allowed disabled:border-0 disabled:bg-ink-15 disabled:text-ink-40 disabled:shadow-none',
         VARIANTS[variant],

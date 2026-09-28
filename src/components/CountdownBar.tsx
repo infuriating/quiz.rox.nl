@@ -1,4 +1,4 @@
-import { cx } from '~/lib/cx'
+import { cn } from '~/lib/cn'
 
 const WARN_SECONDS = 5
 
@@ -25,10 +25,10 @@ export function CountdownBar({
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(pct)}
-        className={cx('flex-1 overflow-hidden rounded-pill', size === 'phone' ? 'h-2.5 bg-ink-15' : 'h-5 bg-host-bar-track')}
+        className={cn('flex-1 overflow-hidden rounded-pill', size === 'phone' ? 'h-2.5 bg-ink-15' : 'h-5 bg-host-bar-track')}
       >
         <div
-          className={cx('h-full rounded-pill transition-[width] duration-200 ease-linear', warn ? 'bg-warning' : 'bg-gradient-signal')}
+          className={cn('h-full rounded-pill transition-[width] duration-200 ease-linear', warn ? 'bg-warning' : 'bg-gradient-signal')}
           style={{ width: `${pct}%` }}
         />
       </div>
