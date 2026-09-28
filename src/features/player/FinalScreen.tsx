@@ -49,7 +49,7 @@ export function FinalScreen({
                   {f.score.rank}e
                 </span>
                 <span className="font-display text-[22px] font-semibold text-veil">
-                  van {s.playerCount}
+                  van {s.playerCount ?? 0}
                 </span>
               </div>
               <div className="h-px bg-line-on-dark-strong" />
@@ -86,7 +86,7 @@ export function FinalScreen({
                 value={`${f.questionsAnswered} / ${s.totalQuestions}`}
                 label="Vragen beantwoord"
               />
-              <Stat value={String(s.playerCount)} label="Deelnemers" />
+              <Stat value={String(s.playerCount ?? 0)} label="Deelnemers" />
             </div>
           </>
         )}

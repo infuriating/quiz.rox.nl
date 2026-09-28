@@ -3,7 +3,7 @@ import { Icon } from '~/components/Icon'
 import { Label } from '~/components/Label'
 import { StatusDisc } from '~/components/StatusDisc'
 import type { PlayerView } from './types'
-import { CenterMessage, PhoneFrame } from './PhoneFrame'
+import { CenterMessage, PhoneFrame, WaitingDots } from './PhoneFrame'
 
 export function ReceivedScreen({
   view,
@@ -16,9 +16,6 @@ export function ReceivedScreen({
   const picked = q.options
     .map((o, i) => ({ ...o, i }))
     .filter((o) => view.myAnswer?.optionIds.includes(o.id))
-  const pct = view.session.playerCount
-    ? (view.answeredCount / view.session.playerCount) * 100
-    : 0
   return (
     <PhoneFrame banner={banner}>
       <CenterMessage
@@ -42,19 +39,8 @@ export function ReceivedScreen({
               </div>
             ))}
           </div>
-          <div role="status" className="flex w-full flex-col gap-2.5">
-            <div className="flex justify-between text-sm text-ink-55">
-              <span>Wachten op de anderen</span>
-              <span className="font-display font-semibold text-ink">
-                {view.answeredCount} / {view.session.playerCount}
-              </span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-pill bg-ink-15">
-              <div
-                className="h-full rounded-pill bg-ink transition-[width] duration-300"
-                style={{ width: `${pct}%` }}
-              />
-            </div>
+          <div role="status" className="flex justify-center">
+            <WaitingDots label="Wachten op de anderen" />
           </div>
         </div>
       </CenterMessage>
@@ -86,7 +72,7 @@ export function LateScreen({
             <Label className="text-xs text-ink-55">Deze vraag</Label>
             <span className="font-display text-[28px] font-bold">0 punten</span>
             <span className="text-[15px] text-ink-55">
-              Je staat {score.rank}e van {view.session.playerCount}
+              Je staat {score.rank}e van {view.session.playerCount ?? 0}
             </span>
           </div>
         ) : (

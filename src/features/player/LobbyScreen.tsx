@@ -44,7 +44,7 @@ export function LobbyScreen({
           >
             <Icon name="users" size={18} className="text-ink-70" />
             <span className="font-display text-[17px] font-semibold">
-              {view.session.playerCount}{' '}
+              {view.session.playerCount ?? 0}{' '}
               {view.session.playerCount === 1 ? 'speler' : 'spelers'}
             </span>
             <span className="text-[15px] text-ink-55">in de lobby</span>

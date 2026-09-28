@@ -161,28 +161,44 @@ export const getServerTime = mutation({
 // added from phase "reveal" onward. Score and rank are absent when scoring is off.
 // ---------------------------------------------------------------------------
 
-async function loadContext(ctx: QueryCtx, session: Doc<'sessions'>) {
+/**
+ * Loads what a view needs. With `live: false` the players and answers tables are
+ * not read at all, so writes by other players (answers, score updates) do not
+ * re-run this query. Player views use that during the question phase: otherwise
+ * every answer would re-run every phone's query (players × answers calls).
+ */
+async function loadContext(
+  ctx: QueryCtx,
+  session: Doc<'sessions'>,
+  { live }: { live: boolean },
+) {
   const [quiz, questions, players] = await Promise.all([
     ctx.db.get('quizzes', session.quizId),
     getQuestions(ctx, session.quizId),
-    getPlayers(ctx, session._id),
+    live ? getPlayers(ctx, session._id) : Promise.resolve(null),
   ])
   if (!quiz) throw new ConvexError({ code: 'NO_QUIZ' })
   const question =
     session.phase === 'lobby' || session.phase === 'finished'
       ? undefined
       : questions[session.currentQuestionIndex]
-  const answers = question
-    ? await getAnswers(ctx, session._id, question._id)
-    : []
-  return { quiz, questions, players, question, answers }
+  const answers =
+    question && live ? await getAnswers(ctx, session._id, question._id) : []
+  return {
+    quiz,
+    questions,
+    players: players ?? [],
+    playerCount: players?.length ?? null,
+    question,
+    answers,
+  }
 }
 
 function baseSession(
   session: Doc<'sessions'>,
   quiz: Doc<'quizzes'>,
   total: number,
-  playerCount: number,
+  playerCount: number | null,
 ) {
   return {
     id: session._id,
@@ -248,9 +264,13 @@ export const getHostView = query({
     const { quiz, questions, players, question, answers } = await loadContext(
       ctx,
       session,
+      { live: true },
     )
     const view = {
-      session: baseSession(session, quiz, questions.length, players.length),
+      session: {
+        ...baseSession(session, quiz, questions.length, null),
+        playerCount: players.length,
+      },
       players: players.map((p) => ({
         id: p._id,
         name: p.name,
@@ -312,16 +332,15 @@ export const getPlayerView = query({
     const player = await ctx.db.get('players', playerId)
     // Unknown player: the client sends them back to the Join screen.
     if (!session || !player || player.sessionId !== sessionId) return null
-    const { quiz, questions, players, question, answers } = await loadContext(
-      ctx,
-      session,
-    )
+    // During a question the phone only needs its own answer; see loadContext.
+    const { quiz, questions, players, playerCount, question, answers } =
+      await loadContext(ctx, session, { live: session.phase !== 'question' })
     const mine = question
       ? await getPlayerAnswer(ctx, playerId, question._id)
       : null
 
     const view = {
-      session: baseSession(session, quiz, questions.length, players.length),
+      session: baseSession(session, quiz, questions.length, playerCount),
       player: { id: player._id, name: player.name },
       question: question
         ? sanitizeQuestion(
@@ -331,7 +350,6 @@ export const getPlayerView = query({
           )
         : null,
       myAnswer: mine ? { optionIds: mine.optionIds } : null,
-      answeredCount: answers.length,
       reveal: null as null | {
         correctOptionIds: Array<string>
         correct: boolean | null

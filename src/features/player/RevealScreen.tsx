@@ -61,7 +61,7 @@ export function RevealScreen({
 }) {
   const q = view.question!
   const r = view.reveal!
-  const total = view.session.playerCount
+  const total = view.session.playerCount ?? 0
   const mine = view.myAnswer!.optionIds
   const indexed = q.options.map((o, i) => ({ ...o, i }))
   const correctOpts = indexed.filter((o) => r.correctOptionIds.includes(o.id))
