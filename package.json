@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "convex dev --start 'vp dev'",
     "typecheck": "tsc --noEmit",
-    "build": "npm run typecheck && vp build",
+    "build": "npm run typecheck && npm run build:web",
+    "build:web": "vp build && node scripts/write-headers.mjs",
     "test": "vp test",
     "format": "vp fmt",
     "lint": "vp lint --deny-warnings",

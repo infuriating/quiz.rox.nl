@@ -148,6 +148,24 @@ static files in `dist/client`, with `index.html` as the shell.
 `/admin/…`) get the shell via `not_found_handling: "single-page-application"`. Cloudflare does not
 bill static asset requests as Worker invocations.
 
+### Security headers
+
+After the Vite+ build, `scripts/write-headers.mjs` writes `dist/client/_headers`. Cloudflare serves
+these headers with every response:
+
+- **Content-Security-Policy:**
+  - Scripts only from the app's own origin, plus the inline scripts in the prerendered shell,
+    allowed by hash. Those scripts change per build, so the hashes are computed on every build.
+  - Connections only to the app itself and to `VITE_CONVEX_URL`.
+  - Fonts only from Google Fonts.
+  - No framing (`frame-ancestors 'none'`).
+- **Other headers:** `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`,
+  `Permissions-Policy`, `Cross-Origin-Opener-Policy` and `Strict-Transport-Security`.
+
+`npm run build:web` runs both steps. Always build the frontend with it, not with a bare `vp build`,
+or the deploy has no headers. Adding a new external origin (a font, an analytics script, an API)
+means adding it to the CSP in that script.
+
 One-time setup:
 
 1. Log in to Convex and create a production deployment (`npx convex login`, then
@@ -176,8 +194,9 @@ Deploy:
 npm run deploy
 ```
 
-This first deploys the Convex functions and builds the frontend with the production
-`VITE_CONVEX_URL` (`convex deploy --cmd`), then uploads the assets to Cloudflare (`wrangler deploy`).
+This first deploys the Convex functions and builds the frontend (with its headers) against the
+production `VITE_CONVEX_URL` (`convex deploy --cmd`), then uploads the assets to Cloudflare
+(`wrangler deploy`).
 Attach a custom domain in the Cloudflare dashboard. The URL and QR code on the projector pick up
 the address automatically.
 
@@ -187,8 +206,8 @@ the address automatically.
   lint (findings show up as inline PR annotations), format check, the tests, and a build of the SPA
   against `VITE_CONVEX_URL`.
 - **`.github/workflows/deploy.yml`** runs on every push to `main`. The same checks run first,
-  inline. Then `npx convex deploy` deploys the Convex functions, `npx vp build` builds the
-  frontend against the `VITE_CONVEX_URL` repository variable, and `npx wrangler deploy` uploads it
+  inline. Then `npx convex deploy` deploys the Convex functions, `npm run build:web` builds the
+  frontend and its `_headers` against the `VITE_CONVEX_URL` repository variable, and `npx wrangler deploy` uploads it
   to Cloudflare. The deploy is never cancelled halfway, so the functions and the frontend stay in
   step. It warns when the `convex deploy` output does not mention `VITE_CONVEX_URL`.
 - Both share `.github/actions/setup` (Vite+, Node from `.node-version`, frozen-lockfile install)
@@ -236,7 +255,7 @@ in `vite.config.ts`.
 | `npm run lint`   | Oxlint, including the type-aware rules and Convex rules |
 | `npm run format` | Format with oxfmt                                       |
 | `npm test`       | Backend tests (`vp test`)                               |
-| `npm run build`  | Type check and production build                         |
+| `npm run build`  | Type check and production build, including `_headers`   |
 
 A pre-commit hook (`.vite-hooks`) runs `vp check --fix` on staged files.
 
@@ -276,7 +295,7 @@ npm run tokens
 ```
 design/            design snapshot (see design/README.md)
 .github/           CI and deploy workflows, shared setup/checks actions, Dependabot
-scripts/           generate-tokens.mjs
+scripts/           generate-tokens.mjs, write-headers.mjs
 convex/
   schema.ts        tables and indexes
   sessions.ts      password check, session creation, joining, player and host views (sanitized)

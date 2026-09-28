@@ -57,9 +57,10 @@ jobs:
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
 
-      # Typecheck already ran in the checks above, so the Vite+ build alone.
+      # Typecheck already ran in the checks above, so the Vite+ build alone,
+      # plus the generated _headers (CSP hashes for this build).
       - name: Build
-        run: npx vp build
+        run: npm run build:web
 
       # Assets-only Worker (wrangler.jsonc). Uses the wrangler version pinned
       # in the lockfile rather than a third-party action.
