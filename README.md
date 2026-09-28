@@ -1,216 +1,233 @@
 # ROX Live Quiz
 
-Een live quiz voor één zaal: het hostscherm draait op de beamer, spelers antwoorden op hun telefoon.
-De eerste toepassing is de interne ISO 27001-awarenesstraining, maar de app is generiek: alles wat
-ISO-specifiek is staat alleen in de seed-data.
+A live quiz for one room. The host screen runs on a projector and players answer on their phones.
+The first use is ROX's internal ISO 27001 awareness training, but the app is generic: everything
+ISO-specific lives in the seed data only. The UI is in Dutch.
 
-- **Score is optioneel per quiz en staat standaard uit.** Zonder score zijn er geen punten, posities,
-  tussenstand of podium.
-- **De antwoordverdeling** (hoeveel spelers welke optie kozen) wordt altijd bijgehouden en getoond.
-- **Maximaal aantal deelnemers** is optioneel per quiz. Staat het aan, dan toont de lobby "van N"
-  en krijgt wie daarna aanmeldt de melding dat de quiz vol is.
+- **Scoring is optional per quiz and off by default.** With scoring off there are no points,
+  ranks, leaderboard or podium.
+- **The answer distribution** (how many players picked each option) is always tracked and shown.
+- **A maximum number of participants** is optional per quiz. When set, the lobby shows "van N"
+  and anyone joining after that is told the quiz is full.
+- **Sessions expire** after 1 hour without a host action (configurable per quiz up to 4 hours),
+  and can be deleted from `/admin`.
 
 Stack: TanStack Start + TanStack Router, React Query via `@convex-dev/react-query`, Convex,
-Tailwind CSS v4 (thema uit de ROX-tokens), TypeScript strict, Vite+ (oxlint, oxfmt).
+Tailwind CSS v4 (themed from the ROX tokens), strict TypeScript, Vite+ (oxlint, oxfmt).
 
-## Installeren
+## Setup
 
 ```bash
 npm install
 npx convex dev
 ```
 
-`npx convex dev` vraagt de eerste keer om in te loggen en een project te kiezen of aan te maken.
-Het schrijft `CONVEX_DEPLOYMENT` en `VITE_CONVEX_URL` naar `.env.local`.
+On first run, `npx convex dev` asks you to log in and pick or create a project. It writes
+`CONVEX_DEPLOYMENT` and `VITE_CONVEX_URL` to `.env.local`.
 
-Zonder Convex-account kan het ook lokaal:
+To run locally without a Convex account:
 
 ```bash
 CONVEX_AGENT_MODE=anonymous npx convex dev
 ```
 
-## Host-PIN instellen
+## Host PIN
 
-De hostschermen en `/admin` zijn beveiligd met één PIN (4 tot 6 cijfers), die server-side wordt
-gecontroleerd:
+The host screens and `/admin` are protected by a single PIN (4 to 6 digits), checked server-side:
 
 ```bash
 npx convex env set HOST_PIN 123456
 ```
 
-## Seed-data laden
+## Seed data
 
 ```bash
 npx convex run seed:seed
 ```
 
-Dit maakt de quiz "ISO 27001 Training" aan (score uit). Het script is idempotent op titel: nog een
-keer draaien doet niets. De seed logt waarschuwingen voor vragen met een `_todo` of zonder goed antwoord.
+This creates the quiz "ISO 27001 Training" with scoring off. The seed is idempotent by title, so
+running it again does nothing. It logs a warning for any question marked `_todo` or without a
+correct answer.
 
-> Een sessie kan alleen starten als elke niet-poll-vraag een goed antwoord heeft.
+> A session can only start when every non-poll question has a correct answer.
 
-## Starten
+## Running
 
 ```bash
 npm run dev
 ```
 
-Dit start `convex dev` en de webapp op <http://localhost:3000>.
+This starts `convex dev` and the web app on <http://localhost:3000>.
 
-| Route               | Voor wie                                                         |
-| ------------------- | ---------------------------------------------------------------- |
-| `/`                 | Spelers: code, naam en e-mail invullen                           |
-| `/join/<code>`      | Spelers via de QR-code; de code staat al ingevuld                |
-| `/play/<sessionId>` | Spelers tijdens het spel                                         |
-| `/host`             | Host: PIN, quiz kiezen, lobby openen                             |
-| `/host/<sessionId>` | Beamer (1920×1080, schaalt mee met elk scherm)                   |
-| `/admin`            | Beheer: quizzen, vragen, instellingen, resultaten en CSV-exports |
+| Route               | For                                                       |
+| ------------------- | --------------------------------------------------------- |
+| `/`                 | Players: enter code, name and email                       |
+| `/join/<code>`      | Players via the QR code; the code is prefilled            |
+| `/play/<sessionId>` | Players during the game                                   |
+| `/host`             | Host: PIN, pick a quiz, open the lobby                    |
+| `/host/<sessionId>` | Projector (1920×1080, scales to any screen)               |
+| `/admin`            | Admin: quizzes, questions, settings, results, CSV exports |
 
-## Een sessie draaien
+## Running a session
 
-1. Open `/host` op de laptop aan de beamer en voer de PIN in.
-2. Kies een quiz en klik **Open de lobby**. De joincode, de URL en een QR-code verschijnen.
-3. Spelers scannen de QR-code of gaan naar de URL en vullen de code in. Hun namen verschijnen live.
-4. Klik **Start de quiz**. Bij elke vraag:
-   - **Resultaat:** verschijnt automatisch als de tijd op is of iedereen heeft geantwoord.
-     Met **Timer overslaan** ga je er direct heen.
-   - **Volgende:** gaat naar de volgende vraag. Met score aan komt eerst de tussenstand.
-   - **Vorige:** gaat terug naar het vorige resultaat.
-   - **Sessie beëindigen:** stopt direct.
-5. In de bedieningsbalk schakel je met het maan- of zon-icoon tussen licht en donker. De keuze wordt per apparaat onthouden.
+1. Open `/host` on the laptop connected to the projector and enter the PIN.
+2. Pick a quiz and click **"Open de lobby"**. The join code, URL and a QR code appear.
+3. Players scan the QR code, or go to the URL and enter the code. Their names appear live.
+4. Click **"Start de quiz"**. For each question:
+   - **Result:** shown automatically when time is up or everyone has answered.
+     **"Timer overslaan"** jumps there straight away.
+   - **"Volgende"** goes to the next question. With scoring on, the leaderboard comes first.
+   - **"Vorige"** goes back to the previous result.
+   - **"Sessie beëindigen"** ends the session immediately.
+5. The moon/sun icon in the control bar switches between light and dark. The choice is remembered
+   per device.
 
-Spelers die hun telefoon verversen of hun wifi kwijtraken, komen vanzelf terug in dezelfde sessie
-(hun speler-ID staat in `localStorage`). Aanmelden met hetzelfde e-mailadres in dezelfde sessie geeft
-dezelfde speler terug.
+Players who refresh their phone or lose wifi rejoin the same session automatically (their player ID
+is kept in `localStorage`). Joining again with the same email in the same session returns the same
+player.
 
-## Score aan- of uitzetten
+## Turning scoring on or off
 
-Ga naar `/admin`, kies **Vragen bewerken** bij de quiz en zet in **Quizinstellingen** de schakelaar
-**Score en tussenstand** aan of uit. Klik daarna **Instellingen opslaan**. De instelling geldt voor
-nieuwe sessies: een sessie legt de instelling vast op het moment dat de lobby opent.
+Go to `/admin`, choose **"Vragen bewerken"** for the quiz, and in **"Quizinstellingen"** switch
+**"Score en tussenstand"** on or off. Then click **"Instellingen opslaan"**. The setting applies to
+new sessions: a session captures the quiz settings when its lobby opens.
 
-Met score aan geldt:
+With scoring on:
 
-- Een goed antwoord levert 500 punten plus maximaal 500 snelheidsbonus op, lineair over de tijdslimiet.
-- Bij meerkeuze moet de set exact kloppen.
-- Een poll geeft geen punten.
+- A correct answer earns 500 points plus up to a 500-point speed bonus, linear over the time limit.
+- Multi-select questions must match the correct set exactly.
+- Polls earn no points.
+
+## Session expiry and deletion
+
+- **Expiry:** a session ends (status "Verlopen") after a period without host activity. Every host
+  action restarts the clock, so a long training does not expire halfway. The default is 1 hour; set
+  **"Sessie verloopt na"** in the quiz settings to up to 4 hours, e.g. for a quiz with presentations
+  in between. Results and exports of an expired session are kept, and its join code becomes free.
+- **Deletion:** **"Verwijderen"** on a session in `/admin` (or on its results page) removes the
+  session with all its players and answers. It disappears immediately; the data is purged in the
+  background in batches.
 
 ## Exports
 
-Per sessie (`/admin` → **Bekijk resultaten en exporteer CSV**):
+Per session (`/admin` → **"Bekijk resultaten en exporteer CSV"**):
 
-- **Deelname (CSV):**
-  - Kolommen: sessiedatum, quiz, naam, e-mail, aantal beantwoorde vragen, en per vraag
-    goed / fout / niet beantwoord.
-  - Een kolom `score` alleen als de sessie met score speelde.
-  - Voor de ISO 27001-training is dit het trainingsrecord voor de auditor.
-- **Verdeling (CSV):** per vraag en per optie de tekst, of die goed is en hoeveel spelers die kozen,
-  plus het aantal spelers zonder antwoord.
+- **Participation CSV:**
+  - Columns: session date, quiz, name, email, number of questions answered, and per question
+    correct / incorrect / not answered.
+  - A `score` column only when the session was played with scoring on.
+  - For the ISO 27001 training, this is the training record for the auditor.
+- **Distribution CSV:** per question and option, the option text, whether it is correct, and how
+  many players picked it, plus the number of players who did not answer.
 
 ## Hosting (Cloudflare Workers + Convex)
 
-De app is gebouwd als SPA: alle routes renderen in de browser, en alle data en realtime-updates lopen
-via een WebSocket rechtstreeks naar Convex. `npm run build` levert daarom alleen statische bestanden op in
-`dist/client`, met `index.html` als shell.
+The app is built as a single-page app: every route renders in the browser, and all data and
+realtime updates go over a WebSocket straight to Convex. `npm run build` therefore produces only
+static files in `dist/client`, with `index.html` as the shell.
 
-`wrangler.jsonc` beschrijft een Cloudflare Worker die alleen assets serveert. Onbekende paden
-(`/play/…`, `/host/…`, `/admin/…`) krijgen de shell via `not_found_handling: "single-page-application"`.
-Requests naar statische assets tellen bij Cloudflare niet als Worker-invocations.
+`wrangler.jsonc` describes an assets-only Cloudflare Worker. Unknown paths (`/play/…`, `/host/…`,
+`/admin/…`) get the shell via `not_found_handling: "single-page-application"`. Cloudflare does not
+bill static asset requests as Worker invocations.
 
-Eenmalig:
+One-time setup:
 
-1. Log in bij Convex en maak een productie-deployment (`npx convex login`, daarna `npx convex deploy`).
-2. Zet de host-PIN op productie:
+1. Log in to Convex and create a production deployment (`npx convex login`, then
+   `npx convex deploy`).
+2. Set the host PIN on production:
 
    ```bash
    npx convex env set HOST_PIN 123456 --prod
    ```
 
-3. Seed de quiz op productie:
+3. Seed the quiz on production:
 
    ```bash
    npx convex run seed:seed --prod
    ```
 
-4. Log in bij Cloudflare:
+4. Log in to Cloudflare:
 
    ```bash
    npx wrangler login
    ```
 
-Deployen:
+Deploy:
 
 ```bash
 npm run deploy
 ```
 
-Dit deployt eerst de Convex-functies en bouwt dan de frontend met `VITE_CONVEX_URL` van de
-productie-deployment (`convex deploy --cmd`). Daarna gaan de assets naar Cloudflare (`wrangler deploy`).
-Een eigen domein koppel je in het Cloudflare-dashboard. De URL en QR-code op de beamer nemen het
-adres vanzelf over.
+This first deploys the Convex functions and builds the frontend with the production
+`VITE_CONVEX_URL` (`convex deploy --cmd`), then uploads the assets to Cloudflare (`wrangler deploy`).
+Attach a custom domain in the Cloudflare dashboard. The URL and QR code on the projector pick up
+the address automatically.
 
-Lokaal de productiebuild bekijken:
+To try the production build locally:
 
 ```bash
 npm run preview
 ```
 
-Dit bouwt de app en serveert `dist/client` met `wrangler dev` op <http://localhost:8787>.
+This builds the app and serves `dist/client` with `wrangler dev` on <http://localhost:8787>.
 
-## Controleren
+## Checks
 
-De tooling loopt via [Vite+](https://viteplus.dev/) (`vp`), met oxlint en oxfmt, en de config
-staat in `vite.config.ts`.
+Tooling runs through [Vite+](https://viteplus.dev/) (`vp`) with oxlint and oxfmt. The config lives
+in `vite.config.ts`.
 
-| Script           | Wat het doet                                               |
-| ---------------- | ---------------------------------------------------------- |
-| `npm run check`  | Formattering, lint en typecheck in één keer (`vp check`)   |
-| `npm run lint`   | Oxlint, inclusief de type-aware regels en de Convex-regels |
-| `npm run format` | Formatteren met oxfmt                                      |
-| `npm run build`  | Typecheck en productiebuild                                |
+| Script           | What it does                                            |
+| ---------------- | ------------------------------------------------------- |
+| `npm run check`  | Formatting, lint and type check in one go (`vp check`)  |
+| `npm run lint`   | Oxlint, including the type-aware rules and Convex rules |
+| `npm run format` | Format with oxfmt                                       |
+| `npm run build`  | Type check and production build                         |
 
-Een pre-commit hook (`.vite-hooks`) draait `vp check --fix` op de gestagede bestanden.
+A pre-commit hook (`.vite-hooks`) runs `vp check --fix` on staged files.
 
-## Ontwerp
+## Design
 
-`design/` bevat een referentie-snapshot van het ontwerp:
+`design/` holds a reference snapshot of the design:
 
-- de artboards als `.dc.html`-bron;
-- de componenteninventaris;
-- de ROX `tokens.json`.
+- the artboards as `.dc.html` source;
+- the component inventory;
+- the ROX `tokens.json`.
 
-De bron van waarheid blijft het canvas; zie `design/README.md` voor de link, de koppeling tussen
-ontwerp en code, en de bewuste afwijkingen. Na een wijziging in de ROX-tokens:
+The canvas remains the source of truth. See `design/README.md` for the link, the design-to-code map
+and the intentional deviations. After a change to the ROX tokens:
 
 ```bash
 npm run tokens
 ```
 
-## Projectstructuur
+## Project structure
 
 ```
-design/            snapshot van het ontwerp (zie design/README.md)
+design/            design snapshot (see design/README.md)
 scripts/           generate-tokens.mjs
 convex/
-  schema.ts        tabellen en indexes
-  sessions.ts      PIN, sessie aanmaken, joinen, speler- en hostweergave (gesanitized)
-  game.ts          fase-overgangen en de geplande automatische reveal
-  answers.ts       antwoord indienen en beoordelen (alleen hier, op servertijd)
-  admin.ts         quizzen, vragen, instellingen, resultaten
-  seed.ts          ISO 27001-seed
-  lib/             auth, scoring, data-helpers, flow, joincodes, limieten
+  schema.ts        tables and indexes
+  sessions.ts      PIN, session creation, joining, player and host views (sanitized)
+  game.ts          phase transitions, scheduled auto-reveal and expiry
+  answers.ts       answer submission and evaluation (only here, on server time)
+  admin.ts         quizzes, questions, settings, results, session deletion
+  seed.ts          ISO 27001 seed
+  lib/             auth, scoring, data helpers, flow, join codes, limits
 src/
-  styles/tokens.css   ROX-tokens (gegenereerd uit het design system)
-  styles/app.css      Tailwind-thema, beamerschaal, licht/donker voor de host
-  components/         één component per item uit de componenteninventaris
-  features/           schermen per oppervlak (player, host, admin)
-  routes/             bestandsgebaseerde routes
+  styles/tokens.css   ROX tokens (generated from the design system)
+  styles/app.css      Tailwind theme, projector scale, light/dark for the host
+  components/         one component per item in the component inventory
+  features/           screens per surface (player, host, admin)
+  routes/             file-based routes
 ```
 
-### Veiligheidsregels in de backend
+### Backend rules
 
-- **Vóór de reveal:** goede antwoorden, de toelichting en de verdeling gaan pas naar een client vanaf
-  de fase `reveal`. Dat geldt ook voor de beamer. Tijdens een vraag gaat alleen "X / N beantwoord" mee.
-- **Antwoorden beoordelen:** alleen `submitAnswer` doet dat, op servertijd. Te late antwoorden,
-  tweede antwoorden en antwoorden in de verkeerde fase worden geweigerd.
-- **Score en positie:** zonder score leveren de queries deze velden niet (`null`), niet `0`.
+- **Before the reveal:** correct answers, the explanation and the distribution only reach a client
+  from the `reveal` phase onward, including the projector. During a question, only the host gets
+  the "X / N beantwoord" count.
+- **Evaluating answers:** only `submitAnswer` does this, on server time. Late answers, second
+  answers and answers in the wrong phase are rejected.
+- **Score and rank:** with scoring off, the queries do not return these fields (`null`), not `0`.
+- **Fan-out:** during a question, a phone's view does not read other players' answers or scores, so
+  one answer re-runs only the host view and the answering player's own view.

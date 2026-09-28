@@ -1,71 +1,82 @@
-# Ontwerp: referentie-snapshot
+# Design: reference snapshot
 
-**Bron van waarheid is het canvas, niet deze map:**
-[ROX Live Quiz op claude.ai](https://claude.ai/artifact/PFFqtCg3ZKJXdvv8nrvBDB) (privé; vraag de eigenaar om toegang).
+**The source of truth is the canvas, not this folder:**
+[ROX Live Quiz on claude.ai](https://claude.ai/artifact/PFFqtCg3ZKJXdvv8nrvBDB) (private; ask the owner for access).
 
-Deze map is een momentopname, zodat code-review en latere wijzigingen het ontwerp naast de code hebben.
+This folder is a point-in-time snapshot, so code review and later changes have the design next to
+the code.
 
-|               |                                                   |
-| ------------- | ------------------------------------------------- |
-| Snapshot      | 28 september 2026, canvasversie `1790598711-a34a` |
-| Design system | ROX Design System, versie `1790200405-cb2f`       |
+|               |                                                     |
+| ------------- | --------------------------------------------------- |
+| Snapshot      | 28 September 2026, canvas version `1790598711-a34a` |
+| Design system | ROX Design System, version `1790200405-cb2f`        |
 
-## Inhoud
+## Contents
 
-- `screens/` bevat de artboards als `.dc.html`-bron (Design Component-formaat van het canvas) en
-  `canvas.json` (de indeling: welke artboards, formaat, pagina).
-  - Deze bestanden **renderen niet los** in een browser: ze verwachten de runtime (`support.js`) van het canvas.
-    Lees ze als HTML-specificatie met exacte maten, kleuren en copy. Alle stijlen staan inline.
-- `components.md` is de componenteninventaris met states, gekoppeld aan de bestanden in `src/components/`.
-- `tokens.json` is de export van het ROX Design System. `npm run tokens` genereert daaruit
-  `src/styles/tokens.css`. Pas die css nooit met de hand aan.
+- `screens/` holds the artboards as `.dc.html` source (the canvas's Design Component format) and
+  `canvas.json` (the layout: which artboards, their size, page).
+  - These files **do not render on their own** in a browser: they expect the canvas runtime
+    (`support.js`). Read them as an HTML spec with exact sizes, colours and copy. All styles are inline.
+- `components.md` is the component inventory with states, mapped to the files in `src/components/`.
+- `tokens.json` is the ROX Design System export. `npm run tokens` generates
+  `src/styles/tokens.css` from it. Never edit that CSS by hand.
 
-## Van ontwerp naar code
+The copy in the artboards is Dutch, like the app's UI.
 
-| Artboard (`screens/…`)                                | Route                        | Component / scherm                                          |
-| ----------------------------------------------------- | ---------------------------- | ----------------------------------------------------------- |
-| `Main`, `player/Speler-Join-fout`                     | `/`, `/join/$code`           | `features/player/JoinScreen` + `CodeInput`                  |
-| `player/Speler-Lobby`                                 | `/play/$sessionId`           | `LobbyScreen`                                               |
-| `player/Speler-Vraag-enkel`, `-meer`, `-meer-gekozen` | idem                         | `QuestionScreen` + `AnswerButton`, `CountdownBar`           |
-| `player/Speler-Ontvangen`, `-Te-laat`                 | idem                         | `WaitScreens`                                               |
-| `player/Speler-Goed`, `-Helaas` (+ `-score`)          | idem                         | `RevealScreen`                                              |
-| `player/Speler-Einde` (+ `-score`)                    | idem                         | `FinalScreen`                                               |
-| `player/Speler-Herverbinden`                          | alle speler-routes           | `ConnectionBanner`                                          |
-| `host/Host-Pin`                                       | `/host`                      | `features/host/PinScreen`                                   |
-| `host/Host-Lobby`                                     | `/host/$sessionId`           | `HostLobby` + `JoinCodeDisplay`                             |
-| `host/Host-Vraag`                                     | idem                         | `HostQuestion` + `AnswerTile`, `CountdownBar`               |
-| `host/Host-Uitleg`, `host/Host-Resultaat`             | idem                         | `HostReveal` (met / zonder toelichting) + `DistributionBar` |
-| `host/Host-Tussenstand`, `host/Host-Podium`           | idem, **alleen met score**   | `HostScoring` + `LeaderboardRow`                            |
-| `host/Host-Bedankt`                                   | idem                         | `HostThanks`                                                |
-| `host-dark/*`                                         | idem, donkere modus          | dezelfde schermen met `data-theme="dark"`                   |
-| `admin/Admin-Quizlijst`                               | `/admin`                     | `routes/admin.index`                                        |
-| `admin/Admin-Vraageditor`                             | `/admin/quizzes/$quizId`     | `QuestionForm`, `QuizSettings` + `Switch`                   |
-| `admin/Admin-Sessieresultaten`                        | `/admin/sessions/$sessionId` | `routes/admin.sessions.$sessionId` + CSV-exports            |
-| `Componenten`                                         | n.v.t.                       | zie `components.md`                                         |
+## Design to code
 
-## Bewuste afwijkingen van deze snapshot
+| Artboard (`screens/…`)                                | Route                        | Component / screen                                            |
+| ----------------------------------------------------- | ---------------------------- | ------------------------------------------------------------- |
+| `Main`, `player/Speler-Join-fout`                     | `/`, `/join/$code`           | `features/player/JoinScreen` + `CodeInput`                    |
+| `player/Speler-Lobby`                                 | `/play/$sessionId`           | `LobbyScreen`                                                 |
+| `player/Speler-Vraag-enkel`, `-meer`, `-meer-gekozen` | same                         | `QuestionScreen` + `AnswerButton`, `CountdownBar`             |
+| `player/Speler-Ontvangen`, `-Te-laat`                 | same                         | `WaitScreens`                                                 |
+| `player/Speler-Goed`, `-Helaas` (+ `-score`)          | same                         | `RevealScreen`                                                |
+| `player/Speler-Einde` (+ `-score`)                    | same                         | `FinalScreen`                                                 |
+| `player/Speler-Herverbinden`                          | all player routes            | `ConnectionBanner`                                            |
+| `host/Host-Pin`                                       | `/host`                      | `features/host/PinScreen`                                     |
+| `host/Host-Lobby`                                     | `/host/$sessionId`           | `HostLobby` + `JoinCodeDisplay`                               |
+| `host/Host-Vraag`                                     | same                         | `HostQuestion` + `AnswerTile`, `CountdownBar`                 |
+| `host/Host-Uitleg`, `host/Host-Resultaat`             | same                         | `HostReveal` (with / without explanation) + `DistributionBar` |
+| `host/Host-Tussenstand`, `host/Host-Podium`           | same, **scoring only**       | `HostScoring` + `LeaderboardRow`                              |
+| `host/Host-Bedankt`                                   | same                         | `HostThanks`                                                  |
+| `host-dark/*`                                         | same, dark mode              | the same screens with `data-theme="dark"`                     |
+| `admin/Admin-Quizlijst`                               | `/admin`                     | `routes/admin.index`                                          |
+| `admin/Admin-Vraageditor`                             | `/admin/quizzes/$quizId`     | `QuestionForm`, `QuizSettings` + `Switch`                     |
+| `admin/Admin-Sessieresultaten`                        | `/admin/sessions/$sessionId` | `routes/admin.sessions.$sessionId` + CSV exports              |
+| `Componenten`                                         | n/a                          | see `components.md`                                           |
 
-De app is generiek, zodat hij ook voor andere quizzen werkt. Het ontwerp bevat nog voorbeeldcopy van
-de ISO-training:
+## Intentional deviations from this snapshot
 
-- **Joinscherm:**
-  - De ondertitel is generiek. "ISO 27001 awarenesstraining." is weggelaten.
-  - De voetregel noemt "deelname aan deze quiz" in plaats van "de training".
-- **Beamer:**
-  - Het label boven "Doe mee op je telefoon" en op Iedereen bedankt is de titel van de quiz.
-  - De URL is het echte host-adres in plaats van `quiz.rox.nl`.
-  - De QR-code is echt (`qrcode.react`) in plaats van de placeholder.
-- **Spelerschermen:**
-  - Er staat "deelnemers" in plaats van "collega's".
-  - "Om te onthouden" toont de **afsluitende boodschap** uit de quizinstellingen, en verdwijnt als die leeg is.
-- **Host-bedieningsbalk:** er is een licht/donker-knop bijgekomen.
-- **Beheer:**
-  - De Quizlijst heeft geen kolom Host: de app kent geen hostaccounts.
-  - Bij een sessie brengt de knop "Bekijk resultaten en exporteer CSV" je naar de sessieresultaten.
-    Daar staan beide exports (deelname en verdeling).
+The app is generic so it works for other quizzes too. The design still contains sample copy from
+the ISO training:
 
-## Snapshot verversen
+- **Join screen:**
+  - The subtitle is generic; "ISO 27001 awarenesstraining." is dropped.
+  - The footer mentions "deelname aan deze quiz" instead of "de training".
+- **Projector:**
+  - The label above "Doe mee op je telefoon" and on "Iedereen bedankt" is the quiz title.
+  - The URL is the real host address instead of `quiz.rox.nl`.
+  - The QR code is real (`qrcode.react`) instead of the placeholder.
+- **Player screens:**
+  - They say "deelnemers" instead of "collega's".
+  - "Om te onthouden" shows the **closing message** from the quiz settings, and is hidden when it is
+    empty.
+  - "Antwoord ontvangen" shows waiting dots instead of the live "9 / 15" counter. A live count on
+    every phone re-runs every phone's query on each answer; the host keeps the counter.
+  - The final screen says "Deze sessie is verlopen" when a session expired.
+- **Host control bar:** adds a light/dark toggle.
+- **Admin:**
+  - The quiz list has no Host column: the app has no host accounts.
+  - The session status can be "Bezig", "Afgerond", "Beëindigd" or "Verlopen", and each session has
+    a "Verwijderen" button.
+  - For a session, "Bekijk resultaten en exporteer CSV" opens the session results, which hold both
+    exports (participation and distribution).
+  - The quiz settings have "Sessie verloopt na" (1 to 4 hours) instead of the "Toelichting na elke
+    vraag" switch.
 
-Als het canvas verandert: lees de gewijzigde artboards opnieuw uit het canvas, vervang ze in `screens/`
-en werk de snapshotregel bovenaan bij. Commit ontwerp en code bij voorkeur samen, zodat de diff laat
-zien wat er aan de UI hoort te veranderen.
+## Refreshing the snapshot
+
+When the canvas changes: read the changed artboards from the canvas again, replace them in
+`screens/`, and update the snapshot line at the top. Preferably commit design and code together, so
+the diff shows what the UI is meant to change.

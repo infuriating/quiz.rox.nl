@@ -1,43 +1,46 @@
-# Componenteninventaris
+# Component inventory
 
-Alle nieuwe bouwstenen van ROX Live Quiz, opgebouwd uit de ROX-tokens. Het visuele overzicht met alle
-states staat in `screens/Componenten.dc.html` (en op het canvas, pagina Componenten).
+All new building blocks of ROX Live Quiz, built from the ROX tokens. The visual overview with every
+state is in `screens/Componenten.dc.html` (and on the canvas, page "Componenten").
 
-## Nieuw voor de quiz
+## New for the quiz
 
-| Component            | Bestand                               | States / varianten                                                                                                                                                                | Notities                                                                                                            |
-| -------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **AnswerMarker**     | `src/components/AnswerMarker.tsx`     | A driehoek, B ruit, C cirkel, D vierkant; `phone` 44, `admin` 40, `column` 56, `beamer` 96 px; tone `ink`, `inverse`, `accent`, `host`                                            | Vorm plus letter, zodat een optie nooit alleen op kleur herkenbaar is. Op telefoon en beamer identiek.              |
-| **AnswerButton**     | `src/components/AnswerButton.tsx`     | `idle`, `selected` (meerkeuze aan), `pressed` (enkel, net getikt), `correct`, `incorrect` ("Jouw keuze", gestippeld), `dimmed`, `disabled`; `multi` voegt een checkbox rechts toe | Minimaal 56 px hoog; de knoppen delen de beschikbare hoogte. Tekst 17 px, 15 px boven 60 tekens, maximaal 4 regels. |
-| **AnswerTile**       | `src/components/AnswerTile.tsx`       | `idle`, `correct` (mint, 3 px lijn, Goed-label), `dimmed` (38% licht / 34% donker); tekst `option`, `long`, `compact`; optioneel `count`/`total` voor de verdeling                | Beamer. Geen enkele hint tijdens de vraag.                                                                          |
-| **CountdownBar**     | `src/components/CountdownBar.tsx`     | loopt (gradient-signal), laatste 5 s (`status-warning`), op; `phone` 10 px, `beamer` 20 px                                                                                        | Cosmetisch; afgeleid van `questionEndsAt` met klokcorrectie.                                                        |
-| **DistributionBar**  | `src/components/DistributionBar.tsx`  | `row` (beamer, onder de optietekst), `column` (resultaat zonder toelichting), `admin` (sessieresultaten); goed = `status-success`, fout = neutraal                                | Altijd zichtbaar vanaf de reveal, ook zonder score.                                                                 |
-| **LeaderboardRow**   | `src/components/LeaderboardRow.tsx`   | omhoog (success-groen), omlaag / gelijk (grijs, nooit rood); nummer 1 op light blue met blauw rangblok                                                                            | **Alleen met score aan.**                                                                                           |
-| **JoinCodeDisplay**  | `src/components/JoinCodeDisplay.tsx`  | `lg` (lobby), `md`                                                                                                                                                                | Zes losse tekens. Codes bevatten nooit 0/O of 1/I.                                                                  |
-| **CodeInput**        | `src/components/CodeInput.tsx`        | standaard, actief vakje, fout (rood, zachte ring, instructie eronder)                                                                                                             | Eén echte input met zes zichtbare cellen.                                                                           |
-| **HostControlBar**   | `src/components/HostControlBar.tsx`   | Vorige, Timer overslaan, Volgende (enige gevulde knop, label wisselt: Tussenstand / Afronden), licht/donker, Sessie beëindigen; lobbyvariant met "Start de quiz" rechts           | Compacte pill aan de onderrand; links de joincode voor laatkomers.                                                  |
-| **ConnectionBanner** | `src/components/ConnectionBanner.tsx` | offline (na 1,5 s), weer verbonden (2 s zichtbaar)                                                                                                                                | Knoppen eronder zijn uitgeschakeld zolang de verbinding weg is.                                                     |
-| **Switch**           | `src/components/Switch.tsx`           | uit, aan, met hint                                                                                                                                                                | Echte checkbox met `role="switch"`, 44 × 24 px.                                                                     |
-| **StatusDisc**       | `src/components/StatusDisc.tsx`       | `success`, `neutral`, `blue`; optionele pop-animatie                                                                                                                              | Ronde illustratie op de resultaatschermen van de speler.                                                            |
+| Component            | File                                  | States / variants                                                                                                                                                                               | Notes                                                                                                            |
+| -------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **AnswerMarker**     | `src/components/AnswerMarker.tsx`     | A triangle, B diamond, C circle, D square; `phone` 44, `admin` 40, `column` 56, `beamer` 96 px; tone `ink`, `inverse`, `accent`, `host`                                                         | Shape plus letter, so an option is never identified by colour alone. Identical on phone and projector.           |
+| **AnswerButton**     | `src/components/AnswerButton.tsx`     | `idle`, `selected` (multi-select on), `pressed` (single, just tapped), `correct`, `incorrect` ("Jouw keuze", dashed), `dimmed`, `disabled`; `multi` adds a checkbox on the right                | At least 56 px high; the buttons share the available height. Text 17 px, 15 px above 60 characters, max 4 lines. |
+| **AnswerTile**       | `src/components/AnswerTile.tsx`       | `idle`, `correct` (mint, 3 px border, "Goed" label), `dimmed` (38% light / 34% dark); text `option`, `long`, `compact`; optional `count`/`total` for the distribution                           | Projector. No hint at all during the question.                                                                   |
+| **CountdownBar**     | `src/components/CountdownBar.tsx`     | running (gradient-signal), last 5 s (`status-warning`), done; `phone` 10 px, `beamer` 20 px                                                                                                     | Cosmetic; derived from `questionEndsAt` with clock-skew correction.                                              |
+| **DistributionBar**  | `src/components/DistributionBar.tsx`  | `row` (projector, under the option text), `column` (result without explanation), `admin` (session results); correct = `status-success`, incorrect = neutral                                     | Always shown from the reveal onward, also without scoring.                                                       |
+| **LeaderboardRow**   | `src/components/LeaderboardRow.tsx`   | up (success green), down / same (grey, never red); #1 on light blue with a blue rank block                                                                                                      | **Scoring only.**                                                                                                |
+| **JoinCodeDisplay**  | `src/components/JoinCodeDisplay.tsx`  | `lg` (lobby), `md`                                                                                                                                                                              | Six separate characters. Codes never contain 0/O or 1/I.                                                         |
+| **CodeInput**        | `src/components/CodeInput.tsx`        | default, active cell, error (red, soft ring, instruction below)                                                                                                                                 | One real input rendered as six cells.                                                                            |
+| **HostControlBar**   | `src/components/HostControlBar.tsx`   | "Vorige", "Timer overslaan", "Volgende" (the only filled button; label changes to "Tussenstand" / "Afronden"), light/dark, "Sessie beëindigen"; lobby variant with "Start de quiz" on the right | Compact pill at the bottom edge; the join code on the left for late joiners.                                     |
+| **ConnectionBanner** | `src/components/ConnectionBanner.tsx` | offline (after 1.5 s), reconnected (visible for 2 s)                                                                                                                                            | Controls underneath are disabled while the connection is down.                                                   |
+| **Switch**           | `src/components/Switch.tsx`           | off, on, with hint                                                                                                                                                                              | Real checkbox with `role="switch"`, 44 × 24 px.                                                                  |
+| **StatusDisc**       | `src/components/StatusDisc.tsx`       | `success`, `neutral`, `blue`; optional pop animation                                                                                                                                            | Round illustration on the player's result screens.                                                               |
 
-## Uit het ROX-systeem (als markup nagebouwd op de tokens)
+## From the ROX system (rebuilt as markup on the tokens)
 
-| Component                 | Bestand                     | Varianten                                                                            |
-| ------------------------- | --------------------------- | ------------------------------------------------------------------------------------ |
-| Button (pill)             | `src/components/Button.tsx` | `primary`, `outline`, `ghost`, `ink`; `sm`, `md`, `lg`, `beamer`                     |
-| Badge                     | `src/components/Badge.tsx`  | `blue`, `neutral`, `success`, `gradient`, `host`                                     |
-| Label (caps)              | `src/components/Label.tsx`  | Space Grotesk 500, 0.08em                                                            |
-| Input / Textarea / Select | `src/components/Field.tsx`  | met `hint`, `error` (vervangt de hint), `hideLabel`                                  |
-| Card                      | `src/components/Card.tsx`   | hairline + `shadow-card`                                                             |
-| Icon                      | `src/components/Icon.tsx`   | lijniconen met Font Awesome-namen, zodat ze 1:1 te vervangen zijn door de ROX FA-kit |
+| Component                 | File                        | Variants                                                                           |
+| ------------------------- | --------------------------- | ---------------------------------------------------------------------------------- |
+| Button (pill)             | `src/components/Button.tsx` | `primary`, `outline`, `ghost`, `ink`; `sm`, `md`, `lg`, `beamer`                   |
+| Badge                     | `src/components/Badge.tsx`  | `blue`, `neutral`, `success`, `gradient`, `host`                                   |
+| Label (caps)              | `src/components/Label.tsx`  | Space Grotesk 500, 0.08em                                                          |
+| Input / Textarea / Select | `src/components/Field.tsx`  | with `hint`, `error` (replaces the hint), `hideLabel`                              |
+| Card                      | `src/components/Card.tsx`   | hairline + `shadow-card`                                                           |
+| Icon                      | `src/components/Icon.tsx`   | line icons named after Font Awesome, so they can be swapped 1:1 for the ROX FA kit |
 
-## Toevoegingen aan het ROX-systeem
+## Additions to the ROX system
 
-Staan in `src/styles/app.css`:
+In `src/styles/app.css`:
 
-- **Beamer-typeschaal:** `--text-beamer-*` (22 tot 168 px).
-- **Telefoon-typeschaal:** `--text-phone-*`.
-- **Host-thema:** `--host-*` (licht en donker), volledig opgebouwd uit ROX-tokens.
-- **Afgeleid, geen ROX-token:**
-  - `--quiz-accent-on-dark` `#7f9bff`, accenttekst op ink.
-  - `--quiz-ok-surface-dark` en `--quiz-ok-text-dark`, groentinten voor goed op de donkere beamer.
+- **Projector type scale:** `--text-beamer-*` (22 to 168 px).
+- **Phone type scale:** `--text-phone-*`.
+- **Host theme:** `--host-*` (light and dark), built entirely from ROX tokens.
+- **Derived, not a ROX token:**
+  - `--quiz-accent-on-dark` `#7f9bff`, accent text on ink.
+  - `--quiz-ok-surface-dark` and `--quiz-ok-text-dark`, green tints for correct on the dark projector.
+
+`src/lib/cn.ts` registers the custom text sizes, radius, shadows, tracking, leading and easing with
+the class merger. Add a new `--text-*`, `--radius-*` etc. token there too.
