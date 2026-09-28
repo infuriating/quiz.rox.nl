@@ -13,7 +13,9 @@ export type AnswerButtonState =
   | 'disabled'
 
 /**
- * Phone answer button. Min 56px high, grows to share the available height.
+ * Phone answer button. Min 56px high. Grows from its content height and never
+ * shrinks below it, so a long option gets more room than a short one and no text is
+ * ever clipped; when four long options do not fit, the parent list scrolls.
  * Single choice: tap submits ("pressed"). Multi: toggles ("selected") with a checkbox on the right.
  */
 export function AnswerButton({
@@ -58,7 +60,7 @@ export function AnswerButton({
       }
       onClick={onClick}
       className={cn(
-        'flex min-h-14 w-full flex-1 basis-0 cursor-pointer items-center gap-3 rounded-md py-3 pr-3.5 pl-3 text-left transition-[background,border-color] duration-150 ease-cut',
+        'flex min-h-14 w-full shrink-0 grow basis-auto cursor-pointer items-center gap-3 rounded-md py-3 pr-3.5 pl-3 text-left transition-[background,border-color] duration-150 ease-cut',
         'disabled:cursor-default',
         surface,
         className,
@@ -70,7 +72,7 @@ export function AnswerButton({
       />
       <span
         className={cn(
-          'line-clamp-4 flex-1 font-medium leading-[1.38]',
+          'flex-1 font-medium leading-[1.38]',
           long ? 'text-phone-option-long' : 'text-phone-option',
         )}
       >

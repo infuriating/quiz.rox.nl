@@ -94,7 +94,7 @@ export function PasswordScreen({
             setError(null)
           }}
           aria-invalid={error ? true : undefined}
-          aria-describedby={`${id}-msg`}
+          aria-describedby={error ? `${id}-msg` : undefined}
           className={cn(
             'box-border w-full bg-host-raised font-body text-host-text focus:outline-none',
             compact
@@ -105,17 +105,18 @@ export function PasswordScreen({
               : 'border-2 border-host-line focus:border-blue',
           )}
         />
-        <p
-          id={`${id}-msg`}
-          className={cn(
-            'm-0 text-center',
-            compact ? 'text-sm' : 'text-beamer-label',
-            error ? 'text-error' : 'text-host-muted',
-          )}
-        >
-          {error ??
-            'Het wachtwoord staat in de Convex-omgeving als HOST_PASSWORD.'}
-        </p>
+        {error && (
+          <p
+            id={`${id}-msg`}
+            role="alert"
+            className={cn(
+              'm-0 text-center text-error',
+              compact ? 'text-sm' : 'text-beamer-label',
+            )}
+          >
+            {error}
+          </p>
+        )}
       </div>
       <Button
         type="submit"

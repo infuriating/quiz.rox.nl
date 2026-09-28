@@ -12,6 +12,9 @@ import { errorCode } from '~/lib/errors'
 import type { PlayerView } from './types'
 import { PhoneFrame } from './PhoneFrame'
 
+/** Questions longer than this use a smaller size on the phone. */
+const LONG_QUESTION = 100
+
 /** A–D or 1–4 → option index; anything else → null. */
 function optionIndexForKey(key: string): number | null {
   const k = key.toLowerCase()
@@ -112,7 +115,15 @@ export function QuestionScreen({
           <div className="hidden w-[360px] md:block">{countdown}</div>
         </div>
         <div className="md:hidden">{countdown}</div>
-        <p className="m-0 font-display text-phone-question leading-[1.25] font-semibold tracking-heading md:max-w-[880px] md:text-[28px] md:leading-[1.22]">
+        <p
+          className={cn(
+            'm-0 font-display leading-[1.25] font-semibold tracking-heading md:max-w-[880px] md:text-[28px] md:leading-[1.22]',
+            // A long question leaves the answers too little room on a phone.
+            q.text.length > LONG_QUESTION
+              ? 'text-[17px]'
+              : 'text-phone-question',
+          )}
+        >
           {q.text}
         </p>
       </div>
@@ -127,8 +138,8 @@ export function QuestionScreen({
         aria-label={multi ? 'Antwoorden' : undefined}
         className={
           multi
-            ? 'flex min-h-0 flex-1 flex-col gap-2.5 px-4 py-3 md:grid md:grid-cols-2 md:grid-rows-2 md:gap-4 md:px-8 md:py-5'
-            : 'flex min-h-0 flex-1 flex-col gap-3 px-4 py-5 md:grid md:grid-cols-2 md:grid-rows-2 md:gap-4 md:px-8'
+            ? 'flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto px-4 py-3 md:grid md:overflow-visible md:grid-cols-2 md:grid-rows-2 md:gap-4 md:px-8 md:py-5'
+            : 'flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 py-5 md:grid md:overflow-visible md:grid-cols-2 md:grid-rows-2 md:gap-4 md:px-8'
         }
       >
         {q.options.map((o, i) => {

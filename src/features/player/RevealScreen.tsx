@@ -119,10 +119,7 @@ export function RevealScreen({
                 <span className="text-[15px] text-ink-55">punten</span>
               </div>
             ) : (
-              <div
-                className="flex w-full flex-col gap-2.5"
-                style={{ height: myOpts.length > 1 ? 170 : 80 }}
-              >
+              <div className="flex w-full flex-col gap-2.5">
                 {myOpts.map((o) => (
                   <AnswerButton
                     key={o.id}
@@ -152,7 +149,6 @@ export function RevealScreen({
 
   // Incorrect: encouraging, never mocking. Show the correct option(s) and your own pick.
   const wrongPicks = myOpts.filter((o) => !r.correctOptionIds.includes(o.id))
-  const rows = correctOpts.length + wrongPicks.length
   return (
     <PhoneFrame banner={banner}>
       <div className="flex flex-1 flex-col gap-6 px-5 pt-8 pb-6 text-center">
@@ -173,10 +169,7 @@ export function RevealScreen({
               ? 'De goede antwoorden'
               : 'Het goede antwoord'}
           </Label>
-          <div
-            className="flex min-h-0 flex-col gap-2.5"
-            style={{ height: Math.min(rows, 4) * 88 }}
-          >
+          <div className="flex min-h-0 flex-col gap-2.5">
             {correctOpts.map((o) => (
               <AnswerButton
                 key={o.id}
