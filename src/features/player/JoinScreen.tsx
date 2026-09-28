@@ -64,7 +64,7 @@ export function JoinScreen({ initialCode = '' }: { initialCode?: string }) {
             Doe mee
           </h1>
           <p className="m-0 text-[17px] leading-[1.5] text-ink-70">
-            Vul de code in en speel mee vanaf je telefoon.
+            Vul de code in en speel mee.
           </p>
         </div>
         <CodeInput

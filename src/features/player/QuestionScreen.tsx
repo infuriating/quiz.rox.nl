@@ -1,5 +1,5 @@
 import { useConvexMutation } from '@convex-dev/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '../../../convex/_generated/api'
 import { AnswerButton } from '~/components/AnswerButton'
 import { Badge } from '~/components/Badge'
@@ -7,9 +7,19 @@ import { Button } from '~/components/Button'
 import { CountdownBar } from '~/components/CountdownBar'
 import { Icon } from '~/components/Icon'
 import { Label } from '~/components/Label'
+import { cn } from '~/lib/cn'
 import { errorCode } from '~/lib/errors'
 import type { PlayerView } from './types'
 import { PhoneFrame } from './PhoneFrame'
+
+/** A–D or 1–4 → option index; anything else → null. */
+function optionIndexForKey(key: string): number | null {
+  const k = key.toLowerCase()
+  const letter = 'abcd'.indexOf(k)
+  if (letter !== -1) return letter
+  const digit = '1234'.indexOf(k)
+  return digit !== -1 ? digit : null
+}
 
 export function QuestionScreen({
   view,
@@ -29,6 +39,7 @@ export function QuestionScreen({
   const [selected, setSelected] = useState<Array<string>>([])
   const [pending, setPending] = useState<string | null>(null)
   const multi = q.type === 'multi'
+  const disabled = offline || pending !== null
 
   async function send(optionIds: Array<string>) {
     setPending(optionIds[0])
@@ -46,39 +57,80 @@ export function QuestionScreen({
     }
   }
 
-  const disabled = offline || pending !== null
+  const toggle = (id: string) =>
+    setSelected((s) =>
+      s.includes(id) ? s.filter((x) => x !== id) : [...s, id],
+    )
+
+  // Keyboard shortcuts for desktop players: A–D / 1–4 pick an option (toggle for
+  // multi), Enter sends a multi-select. Ignored while typing or with modifiers.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (disabled || e.metaKey || e.ctrlKey || e.altKey) return
+      const target = e.target as HTMLElement | null
+      if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
+        return
+      if (multi && e.key === 'Enter' && selected.length > 0) {
+        e.preventDefault()
+        void send(selected)
+        return
+      }
+      const index = optionIndexForKey(e.key)
+      const option = index === null ? undefined : q.options[index]
+      if (!option) return
+      e.preventDefault()
+      if (multi) toggle(option.id)
+      else void send([option.id])
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
+  const counter = (
+    <>
+      Vraag {q.index + 1} / {q.total}
+    </>
+  )
+  const countdown = (
+    <CountdownBar remainingMs={remainingMs} totalMs={q.timeLimitSec * 1000} />
+  )
+
   return (
-    <PhoneFrame banner={banner}>
-      <div className="flex flex-col gap-3.5 px-4 pt-4">
+    <PhoneFrame
+      banner={banner}
+      wide
+      right={
+        <Label className="hidden text-[13px] text-ink md:inline">
+          {counter}
+        </Label>
+      }
+    >
+      <div className="flex flex-col gap-3.5 px-4 pt-4 md:gap-5 md:px-8 md:pt-7">
         <div className="flex items-center justify-between">
-          <Label className="text-[13px] text-ink">
-            Vraag {q.index + 1} / {q.total}
-          </Label>
+          <Label className="text-[13px] text-ink md:hidden">{counter}</Label>
           <Badge>{q.topic}</Badge>
+          <div className="hidden w-[360px] md:block">{countdown}</div>
         </div>
-        <CountdownBar
-          remainingMs={remainingMs}
-          totalMs={q.timeLimitSec * 1000}
-        />
-        <p className="m-0 font-display text-phone-question leading-[1.25] font-semibold tracking-heading">
+        <div className="md:hidden">{countdown}</div>
+        <p className="m-0 font-display text-phone-question leading-[1.25] font-semibold tracking-heading md:max-w-[880px] md:text-[28px] md:leading-[1.22]">
           {q.text}
         </p>
       </div>
+      {multi && (
+        <p className="m-0 flex items-center gap-2 px-4 pt-3 text-sm font-semibold text-blue-600 md:px-8 md:pt-5 md:text-[15px]">
+          <Icon name="check" size={15} strokeWidth={2.4} />
+          Selecteer alles wat van toepassing is
+        </p>
+      )}
       <div
         role={multi ? 'group' : undefined}
         aria-label={multi ? 'Antwoorden' : undefined}
         className={
           multi
-            ? 'flex min-h-0 flex-1 flex-col gap-2.5 px-4 py-3'
-            : 'flex min-h-0 flex-1 flex-col gap-3 px-4 py-5'
+            ? 'flex min-h-0 flex-1 flex-col gap-2.5 px-4 py-3 md:grid md:grid-cols-2 md:grid-rows-2 md:gap-4 md:px-8 md:py-5'
+            : 'flex min-h-0 flex-1 flex-col gap-3 px-4 py-5 md:grid md:grid-cols-2 md:grid-rows-2 md:gap-4 md:px-8'
         }
       >
-        {multi && (
-          <p className="m-0 mb-0.5 flex items-center gap-2 text-sm font-semibold text-blue-600">
-            <Icon name="check" size={15} strokeWidth={2.4} />
-            Selecteer alles wat van toepassing is
-          </p>
-        )}
         {q.options.map((o, i) => {
           if (multi) {
             const on = selected.includes(o.id)
@@ -88,12 +140,9 @@ export function QuestionScreen({
                 index={i}
                 text={o.text}
                 multi
+                className="md:min-h-24"
                 state={disabled ? 'disabled' : on ? 'selected' : 'idle'}
-                onClick={() =>
-                  setSelected((s) =>
-                    on ? s.filter((x) => x !== o.id) : [...s, o.id],
-                  )
-                }
+                onClick={() => toggle(o.id)}
               />
             )
           }
@@ -102,6 +151,7 @@ export function QuestionScreen({
               key={o.id}
               index={i}
               text={o.text}
+              className="md:min-h-24"
               state={
                 pending === o.id ? 'pressed' : disabled ? 'disabled' : 'idle'
               }
@@ -110,18 +160,30 @@ export function QuestionScreen({
           )
         })}
       </div>
-      {multi && (
-        <div className="px-4 pt-1 pb-5">
+      <div
+        className={cn(
+          'items-center justify-between gap-6 px-4 pt-1 pb-5 md:px-8 md:pt-0 md:pb-7',
+          // Single choice has no footer on the phone: the tap submits.
+          multi ? 'flex' : 'hidden md:flex',
+        )}
+      >
+        <span className="hidden text-[13px] text-ink-55 md:inline">
+          {multi
+            ? 'Kies met A–D of 1–4, verstuur met Enter.'
+            : 'Kies met de toetsen A–D of 1–4.'}
+        </span>
+        {multi && (
           <Button
             size="lg"
             full
+            className="md:w-[280px]"
             disabled={selected.length === 0 || disabled}
             onClick={() => void send(selected)}
           >
             {selected.length ? `Verstuur (${selected.length})` : 'Verstuur'}
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </PhoneFrame>
   )
 }

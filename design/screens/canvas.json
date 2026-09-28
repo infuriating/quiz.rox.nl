@@ -307,6 +307,70 @@
    "h": 1400,
    "title": "Admin · Sessieresultaten",
    "page": "admin"
+  },
+  "player-desktop/Desktop-Doe-mee.dc.html": {
+   "x": 0,
+   "y": 3652,
+   "w": 1440,
+   "h": 900,
+   "title": "Speler desktop · Doe mee",
+   "page": "speler"
+  },
+  "player-desktop/Desktop-Lobby.dc.html": {
+   "x": 1520,
+   "y": 3652,
+   "w": 1440,
+   "h": 900,
+   "title": "Speler desktop · Lobby",
+   "page": "speler"
+  },
+  "player-desktop/Desktop-Vraag-enkel.dc.html": {
+   "x": 3040,
+   "y": 3652,
+   "w": 1440,
+   "h": 900,
+   "title": "Speler desktop · Vraag, enkel",
+   "page": "speler"
+  },
+  "player-desktop/Desktop-Vraag-meer.dc.html": {
+   "x": 4560,
+   "y": 3652,
+   "w": 1440,
+   "h": 900,
+   "title": "Speler desktop · Vraag, meerkeuze gekozen",
+   "page": "speler"
+  },
+  "player-desktop/Desktop-Ontvangen.dc.html": {
+   "x": 0,
+   "y": 4672,
+   "w": 1440,
+   "h": 900,
+   "title": "Speler desktop · Antwoord ontvangen",
+   "page": "speler"
+  },
+  "player-desktop/Desktop-Goed.dc.html": {
+   "x": 1520,
+   "y": 4672,
+   "w": 1440,
+   "h": 900,
+   "title": "Speler desktop · Goed",
+   "page": "speler"
+  },
+  "player-desktop/Desktop-Helaas.dc.html": {
+   "x": 3040,
+   "y": 4672,
+   "w": 1440,
+   "h": 900,
+   "title": "Speler desktop · Helaas",
+   "page": "speler"
+  },
+  "player-desktop/Desktop-Einde.dc.html": {
+   "x": 4560,
+   "y": 4672,
+   "w": 1440,
+   "h": 900,
+   "title": "Speler desktop · Einde",
+   "page": "speler"
   }
  },
  "order": [
@@ -326,6 +390,14 @@
   "player/Speler-Helaas-score.dc.html",
   "player/Speler-Te-laat-score.dc.html",
   "player/Speler-Einde-score.dc.html",
+  "player-desktop/Desktop-Doe-mee.dc.html",
+  "player-desktop/Desktop-Lobby.dc.html",
+  "player-desktop/Desktop-Vraag-enkel.dc.html",
+  "player-desktop/Desktop-Vraag-meer.dc.html",
+  "player-desktop/Desktop-Ontvangen.dc.html",
+  "player-desktop/Desktop-Goed.dc.html",
+  "player-desktop/Desktop-Helaas.dc.html",
+  "player-desktop/Desktop-Einde.dc.html",
   "host/Host-Pin.dc.html",
   "host/Host-Lobby.dc.html",
   "host/Host-Vraag.dc.html",
@@ -394,6 +466,14 @@
    "kind": "title1",
    "maxW": 7920,
    "page": "host"
+  },
+  "t-speler-desktop": {
+   "x": 0,
+   "y": 3352,
+   "text": "Speler · desktop 1440 × 900",
+   "kind": "title1",
+   "maxW": 6000,
+   "page": "speler"
   }
  },
  "designSystems": [

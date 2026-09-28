@@ -75,6 +75,8 @@ This starts `convex dev` and the web app on <http://localhost:3000>.
 1. Open `/host` on the laptop connected to the projector and enter the PIN.
 2. Pick a quiz and click **"Open de lobby"**. The join code, URL and a QR code appear.
 3. Players scan the QR code, or go to the URL and enter the code. Their names appear live.
+   Players can join from a phone or a laptop; on a laptop the answers can also be picked with the
+   keys A–D or 1–4 (Enter sends a multi-select).
 4. Click **"Start de quiz"**. For each question:
    - **Result:** shown automatically when time is up or everyone has answered.
      **"Timer overslaan"** jumps there straight away.

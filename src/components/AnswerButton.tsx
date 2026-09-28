@@ -22,12 +22,15 @@ export function AnswerButton({
   state = 'idle',
   multi = false,
   onClick,
+  className,
 }: {
   index: number
   text: string
   state?: AnswerButtonState
   multi?: boolean
   onClick?: () => void
+  /** Layout overrides from the parent, e.g. a taller minimum in the desktop grid. */
+  className?: string
 }) {
   const long = text.length > 60
   const surface = {
@@ -58,6 +61,7 @@ export function AnswerButton({
         'flex min-h-14 w-full flex-1 basis-0 cursor-pointer items-center gap-3 rounded-md py-3 pr-3.5 pl-3 text-left transition-[background,border-color] duration-150 ease-cut',
         'disabled:cursor-default',
         surface,
+        className,
       )}
     >
       <AnswerMarker

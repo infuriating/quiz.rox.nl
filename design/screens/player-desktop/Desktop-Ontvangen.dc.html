@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Speler desktop · Antwoord ontvangen</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:'Instrument Sans', system-ui, sans-serif;color:#0d1220;background:#f2f5ff}
+a{color:#0037ff}a:hover{color:#002bcc}
+button{font:inherit}
+@keyframes rq-ring{0%{transform:scale(.6);opacity:.55}100%{transform:scale(1.9);opacity:0}}
+@keyframes rq-pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes rq-dot{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@keyframes rq-spin{to{transform:rotate(360deg)}}
+.rq-ring{animation:rq-ring 2.4s cubic-bezier(0.16,1,0.3,1) infinite}
+.rq-ring-2{animation-delay:.8s}.rq-ring-3{animation-delay:1.6s}
+.rq-pop{animation:rq-pop .5s cubic-bezier(0.34,1.56,0.64,1) both}
+.rq-dot{animation:rq-dot 1.4s ease-in-out infinite}.rq-dot-2{animation-delay:.2s}.rq-dot-3{animation-delay:.4s}
+.rq-spin{animation:rq-spin 1s linear infinite}
+@media (prefers-reduced-motion: reduce){.rq-ring,.rq-pop,.rq-dot,.rq-spin{animation:none}}
+
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; position: relative; overflow: hidden; background: #f2f5ff; font-family: 'Instrument Sans', system-ui, sans-serif; color: #0d1220">
+<div style="width: 1440px; height: 900px; box-sizing: border-box; background: #f2f5ff; display: flex; align-items: center; justify-content: center"><div style="position: relative; width: 560px; height: 780px; box-sizing: border-box; border-radius: 24px; background: #ffffff; border: 1px solid #e4e8f2; box-shadow: 0 1px 2px rgba(150,158,205,0.1), 0 10px 24px -8px rgba(150,158,205,0.2), 0 32px 64px -24px rgba(140,150,205,0.24); overflow: hidden; display: flex; flex-direction: column"><div style="height: 56px; flex-shrink: 0; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e4e8f2"><span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.2; color: #0d1220; ">ROX Live Quiz</span></div><div style="height: 724px; box-sizing: border-box; padding: 40px 24px 32px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 28px">
+<span aria-hidden="true" style="width: 104px; height: 104px; border-radius: 50%; background: #e9eeff; display: flex; align-items: center; justify-content: center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0037ff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+<div style="display: flex; flex-direction: column; gap: 12px; align-items: center">
+<h1 style="margin: 0; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; font-size: 40px; line-height: 1.08; letter-spacing: -0.03em">Antwoord ontvangen</h1>
+<p style="margin: 0; font-size: 17px; line-height: 1.5; color: #474d5c; max-width: 300px">Zodra iedereen heeft geantwoord zie je hier of je het goed had.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 24px; width: 100%; margin-top: 12px; align-items: center"><div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px 12px 12px; border-radius: 16px; background: #e9eeff; text-align: left; width: 100%; box-sizing: border-box"><span aria-hidden="true" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 10px; background: #0037ff; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 4px"><span style="display: block; width: 12px; height: 12px; background: #ffffff; border-radius: 50%"></span><span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; font-size: 15px; line-height: 1; color: #ffffff">C</span></span><span style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 500; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.2; color: #002bcc; ">Jouw antwoord</span><span style="font-size: 16px; font-weight: 500">aan onze Security Officer</span></span></div><p role="status" style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 14px; color: #5d6575">Wachten op de anderen <span class="rq-dot" style="width: 5px; height: 5px; border-radius: 50%; background: #5d6575"></span><span class="rq-dot rq-dot-2" style="width: 5px; height: 5px; border-radius: 50%; background: #5d6575"></span><span class="rq-dot rq-dot-3" style="width: 5px; height: 5px; border-radius: 50%; background: #5d6575"></span></p></div>
+</div></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

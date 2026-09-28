@@ -1,24 +1,44 @@
 import type { ReactNode } from 'react'
 import { Label } from '~/components/Label'
+import { cn } from '~/lib/cn'
 
-/** Phone layout: fixed top bar, body fills the rest of the viewport without scrolling. */
+/**
+ * Player layout. Phone: full viewport, fixed top bar, body fills the rest without
+ * scrolling. Desktop (md+): the same screen as a card on a light-blue plane;
+ * `wide` for the question screens, which lay the answers out in a 2x2 grid.
+ */
 export function PhoneFrame({
   right,
   banner,
+  wide = false,
   children,
 }: {
   right?: ReactNode
   banner?: ReactNode
+  wide?: boolean
   children: ReactNode
 }) {
   return (
-    <div className="relative mx-auto flex h-dvh max-w-[480px] flex-col overflow-hidden bg-white">
-      {banner}
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-ink-15 px-5">
-        <Label className="text-xs text-ink">ROX Live Quiz</Label>
-        {right}
-      </header>
-      <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+    <div className="flex min-h-dvh md:items-center md:justify-center md:bg-blue-50 md:p-10">
+      <div
+        className={cn(
+          'relative mx-auto flex h-dvh w-full max-w-[480px] flex-col overflow-hidden bg-white',
+          'md:h-[780px] md:max-h-[calc(100dvh-80px)] md:rounded-lg md:border md:border-ink-15 md:shadow-float',
+          wide ? 'md:max-w-[1040px]' : 'md:max-w-[560px]',
+        )}
+      >
+        {banner}
+        <header
+          className={cn(
+            'flex h-14 shrink-0 items-center justify-between border-b border-ink-15 px-5',
+            wide && 'md:px-7',
+          )}
+        >
+          <Label className="text-xs text-ink">ROX Live Quiz</Label>
+          {right}
+        </header>
+        <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+      </div>
     </div>
   )
 }

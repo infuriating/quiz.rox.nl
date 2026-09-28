@@ -6,10 +6,10 @@
 This folder is a point-in-time snapshot, so code review and later changes have the design next to
 the code.
 
-|               |                                                     |
-| ------------- | --------------------------------------------------- |
-| Snapshot      | 28 September 2026, canvas version `1790598711-a34a` |
-| Design system | ROX Design System, version `1790200405-cb2f`        |
+|               |                                              |
+| ------------- | -------------------------------------------- |
+| Snapshot      | 28 September 2026, canvas version 7          |
+| Design system | ROX Design System, version `1790200405-cb2f` |
 
 ## Contents
 
@@ -34,6 +34,7 @@ The copy in the artboards is Dutch, like the app's UI.
 | `player/Speler-Goed`, `-Helaas` (+ `-score`)          | same                         | `RevealScreen`                                                |
 | `player/Speler-Einde` (+ `-score`)                    | same                         | `FinalScreen`                                                 |
 | `player/Speler-Herverbinden`                          | all player routes            | `ConnectionBanner`                                            |
+| `player-desktop/*` (1440 × 900)                       | same, from 768 px wide       | the same player screens: `PhoneFrame` card, 2×2 answer grid   |
 | `host/Host-Pin`                                       | `/host`                      | `features/host/PinScreen`                                     |
 | `host/Host-Lobby`                                     | `/host/$sessionId`           | `HostLobby` + `JoinCodeDisplay`                               |
 | `host/Host-Vraag`                                     | same                         | `HostQuestion` + `AnswerTile`, `CountdownBar`                 |
@@ -65,6 +66,8 @@ the ISO training:
   - "Antwoord ontvangen" shows waiting dots instead of the live "9 / 15" counter. A live count on
     every phone re-runs every phone's query on each answer; the host keeps the counter.
   - The final screen says "Deze sessie is verlopen" when a session expired.
+- **Phone join screen:** the subtitle is "Vul de code in en speel mee." (no "vanaf je telefoon"), as
+  on the desktop join screen, since players can join from a laptop too.
 - **Host control bar:** adds a light/dark toggle.
 - **Admin:**
   - The quiz list has no Host column: the app has no host accounts.
