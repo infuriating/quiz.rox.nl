@@ -1,6 +1,7 @@
 import { useConvexMutation } from '@convex-dev/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { api } from '../../../convex/_generated/api'
 import { Button } from '~/components/Button'
 import { CodeInput } from '~/components/CodeInput'

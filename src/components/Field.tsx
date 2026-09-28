@@ -1,9 +1,9 @@
-import {
-  useId,
-  type InputHTMLAttributes,
-  type ReactNode,
-  type SelectHTMLAttributes,
-  type TextareaHTMLAttributes,
+import { useId } from 'react'
+import type {
+  InputHTMLAttributes,
+  ReactNode,
+  SelectHTMLAttributes,
+  TextareaHTMLAttributes,
 } from 'react'
 import { cn } from '~/lib/cn'
 

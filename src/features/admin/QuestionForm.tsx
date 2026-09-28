@@ -21,7 +21,7 @@ const TYPES: Array<{ value: QType; label: string; hint: string }> = [
 ]
 const TIME_LIMITS = [10, 20, 30, 45, 60, 90]
 
-function nextOptionId(options: Option[]) {
+function nextOptionId(options: Array<Option>) {
   const used = new Set(options.map((o) => o.id))
   return (
     ['a', 'b', 'c', 'd', 'e', 'f'].find((id) => !used.has(id)) ??
@@ -29,7 +29,7 @@ function nextOptionId(options: Option[]) {
   )
 }
 
-const EMPTY: Option[] = [
+const EMPTY: Array<Option> = [
   { id: 'a', text: '', correct: false },
   { id: 'b', text: '', correct: false },
   { id: 'c', text: '', correct: false },
@@ -56,7 +56,9 @@ export function QuestionForm({
   const [topic, setTopic] = useState(question?.topic ?? '')
   const [text, setText] = useState(question?.text ?? '')
   const [type, setType] = useState<QType>(question?.type ?? 'single')
-  const [options, setOptions] = useState<Option[]>(question?.options ?? EMPTY)
+  const [options, setOptions] = useState<Array<Option>>(
+    question?.options ?? EMPTY,
+  )
   const [explanation, setExplanation] = useState(question?.explanation ?? '')
   const [timeLimitSec, setTimeLimitSec] = useState(question?.timeLimitSec ?? 30)
   const [dragFrom, setDragFrom] = useState<number | null>(null)

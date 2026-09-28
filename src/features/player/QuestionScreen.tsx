@@ -26,11 +26,11 @@ export function QuestionScreen({
 }) {
   const q = view.question!
   const submit = useConvexMutation(api.answers.submitAnswer)
-  const [selected, setSelected] = useState<string[]>([])
+  const [selected, setSelected] = useState<Array<string>>([])
   const [pending, setPending] = useState<string | null>(null)
   const multi = q.type === 'multi'
 
-  async function send(optionIds: string[]) {
+  async function send(optionIds: Array<string>) {
     setPending(optionIds[0])
     try {
       await submit({

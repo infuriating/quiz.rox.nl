@@ -55,6 +55,8 @@ export default defineSchema({
     score: v.number(),
     joinedAt: v.number(),
   })
+    // Kept next to by_sessionId_and_email for its join-order (_creationTime) sort: lobby list.
+    // eslint-disable-next-line @convex-dev/no-duplicate-indexes
     .index('by_sessionId', ['sessionId'])
     .index('by_sessionId_and_email', ['sessionId', 'email']),
 

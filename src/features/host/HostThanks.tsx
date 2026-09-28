@@ -14,7 +14,7 @@ function Fact({ value, label }: { value: string; label: string }) {
 
 export function HostThanks({ view }: { view: HostView }) {
   const s = view.session
-  const date = new Date().toLocaleDateString('nl-NL', {
+  const date = new Date(s.createdAt).toLocaleDateString('nl-NL', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',

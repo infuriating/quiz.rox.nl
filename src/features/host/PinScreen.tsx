@@ -1,5 +1,6 @@
 import { useConvexMutation } from '@convex-dev/react-query'
-import { useRef, useState, type FormEvent } from 'react'
+import { useRef, useState } from 'react'
+import type { FormEvent } from 'react'
 import { api } from '../../../convex/_generated/api'
 import { Button } from '~/components/Button'
 import { Label } from '~/components/Label'

@@ -32,14 +32,14 @@ export function errorMessage(e: unknown): string {
       return 'Er is nog geen host-PIN ingesteld. Zet HOST_PIN in Convex (zie README).'
     case 'MISSING_CORRECT': {
       const qs = Array.isArray(data.questions)
-        ? (data.questions as number[]).join(', ')
+        ? (data.questions as Array<number>).join(', ')
         : ''
       return `Vraag ${qs} heeft nog geen goed antwoord. Vul dit in bij het beheer voordat je start.`
     }
     case 'NO_QUESTIONS':
       return 'Deze quiz heeft nog geen vragen. Voeg eerst vragen toe.'
     case 'INVALID_MAX_PLAYERS':
-      return `Vul een aantal tussen 1 en ${String(data.max ?? 500)} in, of laat het veld leeg.`
+      return `Vul een aantal tussen 1 en ${typeof data.max === 'number' ? data.max : 500} in, of laat het veld leeg.`
     case 'OUTRO_TOO_LONG':
       return 'Maak de afsluitende boodschap korter dan 120 tekens.'
     case 'INVALID_QUESTION_TEXT':

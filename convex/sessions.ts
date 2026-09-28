@@ -29,7 +29,7 @@ import { rankBy } from './lib/scoring'
 /** Checks the host PIN. Used by /host and /admin before storing the PIN client-side. */
 export const verifyPin = mutation({
   args: { pin: v.string() },
-  handler: async (_ctx, { pin }) => {
+  handler: (_ctx, { pin }) => {
     requirePin(pin)
     return true
   },
@@ -50,12 +50,7 @@ export const createSession = mutation({
 
     let joinCode = randomJoinCode()
     for (let attempt = 0; attempt < 10; attempt++) {
-      const clash = await ctx.db
-        .query('sessions')
-        .withIndex('by_joinCode', (q) => q.eq('joinCode', joinCode))
-        .filter((q) => q.neq(q.field('phase'), 'finished'))
-        .first()
-      if (!clash) break
+      if (!(await activeSessionByCode(ctx, joinCode))) break
       joinCode = randomJoinCode()
     }
     const hostToken = randomToken()
@@ -81,12 +76,23 @@ async function sessionByCode(
   ctx: QueryCtx,
   code: string,
 ): Promise<Doc<'sessions'> | null> {
-  const joinCode = normalizeJoinCode(code)
-  return await ctx.db
+  return await activeSessionByCode(ctx, normalizeJoinCode(code))
+}
+
+/**
+ * Join codes are reused over time; only one non-finished session holds a code.
+ * Reads the newest few sessions with the code and picks the active one.
+ */
+async function activeSessionByCode(
+  ctx: QueryCtx,
+  joinCode: string,
+): Promise<Doc<'sessions'> | null> {
+  const recent = await ctx.db
     .query('sessions')
     .withIndex('by_joinCode', (q) => q.eq('joinCode', joinCode))
-    .filter((q) => q.neq(q.field('phase'), 'finished'))
-    .first()
+    .order('desc')
+    .take(20)
+  return recent.find((sess) => sess.phase !== 'finished') ?? null
 }
 
 /** Used by the Join screen to validate a code before submitting. */
@@ -147,7 +153,7 @@ export const join = mutation({
 /** Returns server time so clients can correct the cosmetic countdown for clock skew. */
 export const getServerTime = mutation({
   args: {},
-  handler: async () => Date.now(),
+  handler: () => Date.now(),
 })
 
 // ---------------------------------------------------------------------------
@@ -185,6 +191,7 @@ function baseSession(
     scoringEnabled: session.scoringEnabled,
     maxPlayers: session.maxPlayers ?? null,
     quizTitle: quiz.title,
+    createdAt: session.createdAt,
     outroMessage: quiz.outroMessage ?? null,
     currentQuestionIndex: session.currentQuestionIndex,
     totalQuestions: total,
@@ -196,8 +203,8 @@ function baseSession(
 
 /** Rank after the current question and after the one before it (score minus this question's points). */
 function ranksWithMovement(
-  players: Doc<'players'>[],
-  answers: Doc<'answers'>[],
+  players: Array<Doc<'players'>>,
+  answers: Array<Doc<'answers'>>,
 ) {
   const pointsNow = new Map<Id<'players'>, number>(
     answers.map((a) => [a.playerId, a.points]),
@@ -218,7 +225,7 @@ function ranksWithMovement(
 async function finishedStats(
   ctx: QueryCtx,
   session: Doc<'sessions'>,
-  questions: Doc<'questions'>[],
+  questions: Array<Doc<'questions'>>,
 ) {
   let graded = 0
   let correct = 0
@@ -258,9 +265,9 @@ export const getHostView = query({
         : null,
       answeredCount: answers.length,
       reveal: null as null | {
-        correctOptionIds: string[]
+        correctOptionIds: Array<string>
         explanation: string | null
-        distribution: { optionId: string; count: number }[]
+        distribution: Array<{ optionId: string; count: number }>
         correctCount: number | null
         noAnswerCount: number
       },
@@ -326,7 +333,7 @@ export const getPlayerView = query({
       myAnswer: mine ? { optionIds: mine.optionIds } : null,
       answeredCount: answers.length,
       reveal: null as null | {
-        correctOptionIds: string[]
+        correctOptionIds: Array<string>
         correct: boolean | null
         pickedSameCount: number
         correctCount: number | null

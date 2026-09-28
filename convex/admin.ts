@@ -166,7 +166,7 @@ const questionFields = {
 function validateQuestion(q: {
   text: string
   type: 'single' | 'multi' | 'poll'
-  options: { id: string; text: string; correct: boolean }[]
+  options: Array<{ id: string; text: string; correct: boolean }>
   timeLimitSec: number
 }) {
   if (!q.text.trim() || q.text.length > MAX_QUESTION_LENGTH)

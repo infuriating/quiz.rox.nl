@@ -1,7 +1,7 @@
 import { convexQuery } from '@convex-dev/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { Navigate, createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { api } from '../../convex/_generated/api'
 import type { Id } from '../../convex/_generated/dataModel'
 import { useConnectionBanner } from '~/components/ConnectionBanner'
@@ -45,7 +45,6 @@ function Play({
   const remaining = useRemaining(view?.session.questionEndsAt ?? null, offset)
   const questionId = view?.question?.id
   const [lateFor, setLateFor] = useState<string | null>(null)
-  useEffect(() => setLateFor(null), [questionId])
 
   if (isPending) return null
   if (view === null || view === undefined) {

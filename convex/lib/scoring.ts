@@ -6,7 +6,7 @@ const MAX_SPEED_BONUS = 500
 /** Evaluates a submitted option set. Returns undefined for polls (no correct answer). */
 export function evaluate(
   question: Doc<'questions'>,
-  optionIds: string[],
+  optionIds: Array<string>,
 ): boolean | undefined {
   if (question.type === 'poll') return undefined
   const correct = new Set(
@@ -39,13 +39,13 @@ export type RankedPlayer = {
 
 /** Standard competition ranking (1, 2, 2, 4). Ties keep join order for display. */
 export function rankBy(
-  players: Doc<'players'>[],
+  players: Array<Doc<'players'>>,
   scoreOf: (p: Doc<'players'>) => number,
-): RankedPlayer[] {
+): Array<RankedPlayer> {
   const sorted = [...players].sort(
     (a, b) => scoreOf(b) - scoreOf(a) || a.joinedAt - b.joinedAt,
   )
-  const ranked: RankedPlayer[] = []
+  const ranked: Array<RankedPlayer> = []
   sorted.forEach((p, i) => {
     const score = scoreOf(p)
     const prev = ranked[i - 1]

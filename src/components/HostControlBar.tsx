@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import { Icon, type IconName } from './Icon'
+import { Icon } from './Icon'
+import type { IconName } from './Icon'
 
 function Ghost({
   label,

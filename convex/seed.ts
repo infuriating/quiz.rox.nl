@@ -6,15 +6,15 @@ type SeedQuestion = {
   topic: string
   type: 'single' | 'multi' | 'poll'
   text: string
-  options: string[]
-  correct: number[]
+  options: Array<string>
+  correct: Array<number>
   explanation?: string
   _todo?: string
 }
 
 const ISO_TITLE = 'ISO 27001 Training'
 
-const ISO_QUESTIONS: SeedQuestion[] = [
+const ISO_QUESTIONS: Array<SeedQuestion> = [
   {
     order: 1,
     topic: 'De ISO 27001',
@@ -161,7 +161,7 @@ export const seed = internalMutation({
   args: {},
   returns: v.object({ created: v.boolean(), warnings: v.array(v.string()) }),
   handler: async (ctx) => {
-    const warnings: string[] = []
+    const warnings: Array<string> = []
     for (const q of ISO_QUESTIONS) {
       if (q._todo) warnings.push(`Vraag ${q.order} (${q.topic}): ${q._todo}`)
       if (q.type !== 'poll' && q.correct.length === 0) {

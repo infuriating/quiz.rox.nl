@@ -7,7 +7,7 @@ type Ctx = QueryCtx | MutationCtx
 export async function getQuestions(
   ctx: Ctx,
   quizId: Id<'quizzes'>,
-): Promise<Doc<'questions'>[]> {
+): Promise<Array<Doc<'questions'>>> {
   return await ctx.db
     .query('questions')
     .withIndex('by_quizId_and_order', (q) => q.eq('quizId', quizId))
@@ -17,7 +17,7 @@ export async function getQuestions(
 export async function getPlayers(
   ctx: Ctx,
   sessionId: Id<'sessions'>,
-): Promise<Doc<'players'>[]> {
+): Promise<Array<Doc<'players'>>> {
   return await ctx.db
     .query('players')
     .withIndex('by_sessionId', (q) => q.eq('sessionId', sessionId))
@@ -28,7 +28,7 @@ export async function getAnswers(
   ctx: Ctx,
   sessionId: Id<'sessions'>,
   questionId: Id<'questions'>,
-): Promise<Doc<'answers'>[]> {
+): Promise<Array<Doc<'answers'>>> {
   return await ctx.db
     .query('answers')
     .withIndex('by_sessionId_and_questionId', (q) =>
@@ -72,7 +72,7 @@ export type SanitizedQuestion = ReturnType<typeof sanitizeQuestion>
 /** Count per option id, derived from the answers table. Only call from reveal onward. */
 export function distribution(
   question: Doc<'questions'>,
-  answers: Doc<'answers'>[],
+  answers: Array<Doc<'answers'>>,
 ) {
   const counts = new Map<string, number>(question.options.map((o) => [o.id, 0]))
   for (const a of answers) {
@@ -84,7 +84,7 @@ export function distribution(
   }))
 }
 
-export function correctOptionIds(question: Doc<'questions'>): string[] {
+export function correctOptionIds(question: Doc<'questions'>): Array<string> {
   return question.type === 'poll'
     ? []
     : question.options.filter((o) => o.correct).map((o) => o.id)
@@ -92,14 +92,14 @@ export function correctOptionIds(question: Doc<'questions'>): string[] {
 
 /** Non-poll questions without a correct option block a session from starting. */
 export function questionsMissingCorrect(
-  questions: Doc<'questions'>[],
-): number[] {
+  questions: Array<Doc<'questions'>>,
+): Array<number> {
   return questions
     .filter((q) => q.type !== 'poll' && !q.options.some((o) => o.correct))
     .map((q) => q.order)
 }
 
-export function sameSet(a: string[], b: string[]): boolean {
+export function sameSet(a: Array<string>, b: Array<string>): boolean {
   if (a.length !== b.length) return false
   const s = new Set(a)
   return b.every((x) => s.has(x))

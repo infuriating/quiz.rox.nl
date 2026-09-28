@@ -1,7 +1,8 @@
 import { convexQuery, useConvexMutation } from '@convex-dev/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { api } from '../../convex/_generated/api'
 import type { Id } from '../../convex/_generated/dataModel'
 import { Badge } from '~/components/Badge'
@@ -165,7 +166,7 @@ type SessionRow = {
   scoringEnabled: boolean
 }
 
-function Sessions({ sessions }: { sessions: SessionRow[] }) {
+function Sessions({ sessions }: { sessions: Array<SessionRow> }) {
   if (sessions.length === 0)
     return (
       <p className="m-0 px-6 pb-6 pl-[76px] text-sm text-ink-55">

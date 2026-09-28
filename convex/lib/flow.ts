@@ -9,7 +9,7 @@ type Phase = Doc<'sessions'>['phase']
 /** Throws unless the session is in one of the allowed phases. */
 export function assertPhase(
   session: Doc<'sessions'>,
-  ...allowed: Phase[]
+  ...allowed: Array<Phase>
 ): void {
   if (!allowed.includes(session.phase)) {
     throw new ConvexError({ code: 'WRONG_PHASE', phase: session.phase })

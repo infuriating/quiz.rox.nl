@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { cn } from '~/lib/cn'
-import { Icon, type IconName } from './Icon'
+import { Icon } from './Icon'
+import type { IconName } from './Icon'
 
 type Variant = 'primary' | 'outline' | 'ghost' | 'ink'
 type Size = 'sm' | 'md' | 'lg' | 'beamer'
