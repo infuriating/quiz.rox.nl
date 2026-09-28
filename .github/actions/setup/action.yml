@@ -1,0 +1,20 @@
+name: Setup
+description: >
+  Vite+ (Node from .node-version, the npm version pinned in package.json's
+  devEngines, and the npm cache) followed by a frozen-lockfile install. Shared
+  by ci.yml and deploy.yml. The calling workflow must check out the repo first:
+  a local composite action cannot check out the repo that contains itself.
+
+runs:
+  using: composite
+  steps:
+    - uses: voidzero-dev/setup-vp@3754dd7dbdb32bd8f6d28b6043de13ad3a75f21f # v1.21.1
+      with:
+        node-version-file: .node-version
+        cache: true
+        run-install: false
+
+    # Frozen: CI installs exactly what the lockfile says, and fails if
+    # package.json and the lockfile disagree instead of quietly repairing it.
+    - run: vp install --frozen-lockfile
+      shell: bash

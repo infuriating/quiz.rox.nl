@@ -1,0 +1,45 @@
+name: CI
+
+# Pull requests only. Pushes to `main` run the same checks inline in
+# deploy.yml before deploying, so running this workflow there too would pay
+# for the same checks twice.
+on:
+  pull_request:
+    branches: [main]
+    # Agent/editor configuration cannot affect the app: the linter ignores
+    # these paths (vite.config.ts `lint.ignorePatterns`) and the build imports
+    # nothing from them.
+    #
+    # Caveat if branch protection is turned on: a workflow skipped by
+    # `paths-ignore` reports nothing, so a PR touching only these paths would
+    # wait forever on a required "CI / Checks" status. Make the check
+    # required-but-not-strict, or drop this filter.
+    paths-ignore:
+      - '.agents/**'
+      - '.claude/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: ./.github/actions/setup
+
+      - uses: ./.github/actions/checks
+
+      # Proves the SPA still builds (and the shell is prerendered) without
+      # needing a Convex deployment: VITE_CONVEX_URL only has to be present.
+      - name: Build
+        run: npx vp build
+        env:
+          VITE_CONVEX_URL: https://ci-placeholder.convex.cloud

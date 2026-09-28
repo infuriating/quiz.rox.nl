@@ -1,0 +1,28 @@
+name: Checks
+description: >
+  Typecheck, lint and format: the same gates as `npm run check` and the
+  pre-commit hook. Shared by ci.yml (pull requests) and deploy.yml (before a
+  production deploy). Assumes .github/actions/setup has already run.
+
+runs:
+  using: composite
+  steps:
+    - name: Typecheck
+      shell: bash
+      run: npm run typecheck
+
+    # Every step after the first carries `if: !cancelled()`, so one failing
+    # gate still reports the others instead of hiding them behind a re-run.
+    #
+    # `vp lint`, not bare `oxlint`: the lint config lives in vite.config.ts,
+    # which bare oxlint does not read (it would lint with no rules and pass).
+    # `--format=github` turns findings into inline PR annotations.
+    - name: Lint
+      shell: bash
+      if: ${{ !cancelled() }}
+      run: npx vp lint --deny-warnings --format=github .
+
+    - name: Format
+      shell: bash
+      if: ${{ !cancelled() }}
+      run: npm run format:check

@@ -174,6 +174,31 @@ This first deploys the Convex functions and builds the frontend with the product
 Attach a custom domain in the Cloudflare dashboard. The URL and QR code on the projector pick up
 the address automatically.
 
+### CI and automatic deploys (GitHub Actions)
+
+- **`.github/workflows/ci.yml`** runs on every pull request to `main`: typecheck, lint (findings
+  show up as inline PR annotations), format check, and a build of the SPA.
+- **`.github/workflows/deploy.yml`** runs on every push to `main`. The same checks run first,
+  inline. Then `npx convex deploy --cmd 'npm run build'` deploys the Convex functions and builds
+  the frontend against that deployment, and `npx wrangler deploy` uploads it to Cloudflare. The
+  deploy is never cancelled halfway, so the functions and the frontend stay in step.
+- Both share `.github/actions/setup` (Vite+, Node from `.node-version`, frozen-lockfile install)
+  and `.github/actions/checks`.
+- Third-party actions are pinned to a full commit SHA (see `.claude/rules/github-actions-versions.md`).
+  Dependabot (`.github/dependabot.yml`) bumps npm packages and actions weekly, with a 7-day
+  cooldown.
+
+Repository secrets needed by `deploy.yml`:
+
+| Secret                  | Where to get it                                                                               |
+| ----------------------- | --------------------------------------------------------------------------------------------- |
+| `CONVEX_DEPLOY_KEY`     | Convex dashboard → the project's production deployment → Settings → Deploy key                |
+| `CLOUDFLARE_API_TOKEN`  | Cloudflare dashboard → API Tokens → "Edit Cloudflare Workers" template, scoped to one account |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dashboard → Workers & Pages → Account ID                                           |
+
+The first deploy needs `HOST_PIN` and the seed on the production Convex deployment (steps 2 and 3
+above). CI builds do not need any secrets.
+
 To try the production build locally:
 
 ```bash
@@ -215,6 +240,7 @@ npm run tokens
 
 ```
 design/            design snapshot (see design/README.md)
+.github/           CI and deploy workflows, shared setup/checks actions, Dependabot
 scripts/           generate-tokens.mjs
 convex/
   schema.ts        tables and indexes

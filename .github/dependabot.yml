@@ -1,0 +1,35 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+    # Each open PR costs a CI run on every rebase, so cap how many pile up.
+    # Dependabot queues the rest rather than dropping them.
+    open-pull-requests-limit: 5
+    # Waits out the window in which compromised releases are usually caught
+    # and yanked (see the update-dependencies skill's cooldown).
+    cooldown:
+      default-days: 7
+    groups:
+      # Minor/patch bumps batched per group; majors stay ungrouped so a
+      # breaking change arrives as its own reviewable PR.
+      production-dependencies:
+        dependency-type: production
+        update-types: [minor, patch]
+      dev-dependencies:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+    groups:
+      # Actions are SHA pins with release-tag comments
+      # (.claude/rules/github-actions-versions.md); one PR reviews them all.
+      github-actions:
+        patterns: ['*']

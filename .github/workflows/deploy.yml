@@ -1,0 +1,50 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    # Same filter as ci.yml: nothing under these paths reaches the build.
+    paths-ignore:
+      - '.agents/**'
+      - '.claude/**'
+  workflow_dispatch:
+
+# Never cancel a deploy halfway: the Convex functions and the frontend are
+# deployed one after the other and should not be left out of step.
+concurrency:
+  group: deploy-${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: ./.github/actions/setup
+
+      # Production's gate, inline rather than a separate job that `deploy`
+      # needs: a second job means a second runner, checkout and install for
+      # checks that take well under a minute.
+      - uses: ./.github/actions/checks
+
+      # Deploys the Convex functions to the production deployment the deploy
+      # key belongs to, then runs the build with that deployment's
+      # VITE_CONVEX_URL set, so the frontend always points at the backend it
+      # was deployed with.
+      - name: Deploy Convex and build
+        run: npx convex deploy --cmd 'npm run build'
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+
+      # Assets-only Worker (wrangler.jsonc). Uses the wrangler version pinned
+      # in the lockfile rather than a third-party action.
+      - name: Deploy to Cloudflare
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
