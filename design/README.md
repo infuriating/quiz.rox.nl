@@ -8,7 +8,7 @@ the code.
 
 |               |                                              |
 | ------------- | -------------------------------------------- |
-| Snapshot      | 28 September 2026, canvas version 8          |
+| Snapshot      | 28 September 2026, canvas version 10         |
 | Design system | ROX Design System, version `1790200405-cb2f` |
 
 ## Contents

@@ -81,7 +81,8 @@
   --host-ok-text: var(--quiz-ok-text-dark);
   --host-panel: var(--rox-black-soft);
   --host-panel-line: var(--rox-black-line);
-  --host-chip: var(--rox-black-soft);
+  /* One step lighter than the black-soft player panel, so name chips stand out. */
+  --host-chip: var(--rox-black-line);
   --host-code-bg: var(--rox-black-soft);
   --host-ctrl-bg: var(--rox-black-soft);
   --host-ctrl-line: var(--rox-black-line);

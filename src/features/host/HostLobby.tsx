@@ -16,12 +16,12 @@ export function HostLobby({ view }: { view: HostView }) {
   )
   return (
     <>
-      <div className="absolute top-0 bottom-0 left-0 flex w-[1000px] flex-col gap-12 px-20 pt-[88px] pb-[120px]">
+      <div className="absolute top-0 bottom-0 left-0 flex w-[1000px] flex-col gap-10 px-20 pt-[88px] pb-[120px]">
         <Label className="text-beamer-label text-host-muted">
           {s.quizTitle}
         </Label>
         <h1 className="m-0 font-display text-beamer-title leading-[1.02] font-bold tracking-hero text-host-text">
-          Doe mee op je telefoon
+          Doe mee
         </h1>
         <div className="flex flex-col gap-5">
           <Label className="text-[20px] text-host-muted">Ga naar</Label>
@@ -37,10 +37,10 @@ export function HostLobby({ view }: { view: HostView }) {
         </div>
         <div className="flex-1" />
         <div className="flex items-center gap-8">
-          <div className="flex size-[264px] shrink-0 items-center justify-center rounded-[20px] bg-white p-5">
+          <div className="flex size-[232px] shrink-0 items-center justify-center rounded-[20px] bg-white p-5">
             <QRCodeSVG
               value={joinUrl}
-              size={224}
+              size={196}
               level="M"
               bgColor="#ffffff"
               fgColor="#0d1220"
