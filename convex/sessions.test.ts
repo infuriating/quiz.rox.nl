@@ -8,6 +8,7 @@ import {
 } from 'vite-plus/test'
 import { api } from './_generated/api'
 import type { Id } from './_generated/dataModel'
+import { JOIN_BURST } from './lib/limits'
 import {
   PASSWORD,
   createQuiz,
@@ -140,6 +141,26 @@ describe('joining', () => {
       }),
       'SESSION_FULL',
     )
+  })
+
+  test('limits how fast new players can join a session', async () => {
+    const t = setup()
+    const quizId = await createQuiz(t)
+    const { joinCode } = await openSession(t, quizId)
+    const join = (i: number) =>
+      t.mutation(api.sessions.join, {
+        code: joinCode,
+        name: `Speler ${i}`,
+        email: `speler${i}@example.com`,
+      })
+    // A full room at once fits in the burst.
+    for (let i = 0; i < JOIN_BURST; i++) await join(i)
+    await expectCode(join(JOIN_BURST), 'TOO_MANY_JOINS')
+    // A rejoin with a known email does not count.
+    await join(0)
+    // The bucket refills over time.
+    vi.advanceTimersByTime(60 * 1000)
+    await join(JOIN_BURST)
   })
 
   test('the host view needs the host token', async () => {

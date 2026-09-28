@@ -1,3 +1,4 @@
+import rateLimiter from '@convex-dev/rate-limiter/convex.config'
 import { defineApp } from 'convex/server'
 import { v } from 'convex/values'
 
@@ -9,5 +10,8 @@ const app = defineApp({
     HOST_PASSWORD: v.optional(v.string()),
   },
 })
+
+// Limits how fast players can join a session (convex/lib/rateLimits.ts).
+app.use(rateLimiter)
 
 export default app

@@ -10,6 +10,14 @@ export const MAX_OUTRO_LENGTH = 120
 export const MAX_OPTION_LENGTH = 140
 export const MAX_QUESTION_LENGTH = 200
 
+/**
+ * Joining: new players per session. A burst covers a full room scanning the
+ * QR code at once; after that, joins refill at this rate per minute. Stops a
+ * script from filling a public session with fake players in seconds.
+ */
+export const JOIN_BURST = 200
+export const JOINS_PER_MINUTE = 120
+
 /** A session expires after this long without a host action (default, per quiz overridable). */
 export const DEFAULT_IDLE_TIMEOUT_MINUTES = 60
 /** Upper bound for the per-quiz override, e.g. for a quiz with presentations in between. */

@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 // Shared setup for the convex-test suites. Convex does not deploy files with
 // more than one dot in their name, so this and the *.test.ts files stay local.
+import rateLimiter from '@convex-dev/rate-limiter/test'
 import { convexTest } from 'convex-test'
 import { vi } from 'vite-plus/test'
 import { api } from './_generated/api'
@@ -15,7 +16,9 @@ export const PASSWORD = 'test-host-password-0123456789ab'
 /** A fresh in-memory backend with HOST_PASSWORD set. */
 export function setup() {
   vi.stubEnv('HOST_PASSWORD', PASSWORD)
-  return convexTest(schema, modules)
+  const t = convexTest(schema, modules)
+  rateLimiter.register(t)
+  return t
 }
 
 export type Backend = ReturnType<typeof setup>

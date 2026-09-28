@@ -321,5 +321,10 @@ src/
 - **Evaluating answers:** only `submitAnswer` does this, on server time. Late answers, second
   answers and answers in the wrong phase are rejected.
 - **Score and rank:** with scoring off, the queries do not return these fields (`null`), not `0`.
+- **Join rate limit:** new players per session are limited with `@convex-dev/rate-limiter`
+  (`convex/lib/rateLimits.ts`): a burst of 200, then 120 per minute. A full room scanning the QR code
+  at once fits; a script cannot fill a public session with fake players in seconds. Rejoining with
+  a known email does not count. Convex does not expose the client's IP address, so the limit is per
+  session, not per device.
 - **Fan-out:** during a question, a phone's view does not read other players' answers or scores, so
   one answer re-runs only the host view and the answering player's own view.

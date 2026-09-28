@@ -16,6 +16,7 @@ import {
   MAX_SESSIONS_PER_QUIZ,
   PURGE_BATCH_SIZE,
 } from './lib/limits'
+import { rateLimiter } from './lib/rateLimits'
 import { optionValidator, questionTypeValidator } from './lib/validators'
 
 const passwordArg = { password: v.string() }
@@ -416,6 +417,7 @@ export const purgeSession = internalMutation({
         sessionId,
       })
     } else {
+      await rateLimiter.reset(ctx, 'join', { key: sessionId })
       await ctx.db.delete('sessions', sessionId)
     }
     return null

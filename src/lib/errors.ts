@@ -20,6 +20,8 @@ export function errorMessage(e: unknown): string {
   switch (code) {
     case 'INVALID_CODE':
       return 'Deze code hoort niet bij een actieve quiz. Neem de code over van het scherm.'
+    case 'TOO_MANY_JOINS':
+      return 'Er melden zich nu veel mensen tegelijk aan. Probeer het over een paar seconden opnieuw.'
     case 'SESSION_FULL':
       return 'Deze quiz zit vol. Vraag de host of er nog plek is.'
     case 'NAME_REQUIRED':

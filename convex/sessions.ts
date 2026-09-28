@@ -21,6 +21,7 @@ import {
   MAX_PLAYERS_PER_SESSION,
   PODIUM_SIZE,
 } from './lib/limits'
+import { rateLimiter } from './lib/rateLimits'
 import { rankBy } from './lib/scoring'
 
 // ---------------------------------------------------------------------------
@@ -144,6 +145,15 @@ export const join = mutation({
       MAX_PLAYERS_PER_SESSION,
     )
     if (players.length >= cap) throw new ConvexError({ code: 'SESSION_FULL' })
+
+    // Only new players count: a rejoin with the same email returned above.
+    const limit = await rateLimiter.limit(ctx, 'join', { key: session._id })
+    if (!limit.ok) {
+      throw new ConvexError({
+        code: 'TOO_MANY_JOINS',
+        retryAfterMs: limit.retryAfter,
+      })
+    }
 
     const playerId = await ctx.db.insert('players', {
       sessionId: session._id,
