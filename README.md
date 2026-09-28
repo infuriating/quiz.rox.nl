@@ -177,11 +177,12 @@ the address automatically.
 ### CI and automatic deploys (GitHub Actions)
 
 - **`.github/workflows/ci.yml`** runs on every pull request to `main`: typecheck, lint (findings
-  show up as inline PR annotations), format check, and a build of the SPA.
+  show up as inline PR annotations), format check, and a build of the SPA against `VITE_CONVEX_URL`.
 - **`.github/workflows/deploy.yml`** runs on every push to `main`. The same checks run first,
-  inline. Then `npx convex deploy --cmd 'npm run build'` deploys the Convex functions and builds
-  the frontend against that deployment, and `npx wrangler deploy` uploads it to Cloudflare. The
-  deploy is never cancelled halfway, so the functions and the frontend stay in step.
+  inline. Then `npx convex deploy` deploys the Convex functions, `npx vp build` builds the
+  frontend against the `VITE_CONVEX_URL` repository variable, and `npx wrangler deploy` uploads it
+  to Cloudflare. The deploy is never cancelled halfway, so the functions and the frontend stay in
+  step. It warns when the `convex deploy` output does not mention `VITE_CONVEX_URL`.
 - Both share `.github/actions/setup` (Vite+, Node from `.node-version`, frozen-lockfile install)
   and `.github/actions/checks`.
 - Third-party actions are pinned to a full commit SHA (see `.claude/rules/github-actions-versions.md`).
@@ -196,8 +197,17 @@ Repository secrets needed by `deploy.yml`:
 | `CLOUDFLARE_API_TOKEN`  | Cloudflare dashboard → API Tokens → "Edit Cloudflare Workers" template, scoped to one account |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dashboard → Workers & Pages → Account ID                                           |
 
+Repository variable, used by both `ci.yml` and `deploy.yml` (a variable, not a secret: the URL
+ends up in the public JS bundle anyway):
+
+| Variable          | Value                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------ |
+| `VITE_CONVEX_URL` | The production deployment's URL, e.g. `https://<name>.convex.cloud` (dashboard → Settings → URL) |
+
+Both workflows fail with a clear message when it is not set.
+
 The first deploy needs `HOST_PIN` and the seed on the production Convex deployment (steps 2 and 3
-above). CI builds do not need any secrets.
+above). CI builds need no secrets.
 
 To try the production build locally:
 

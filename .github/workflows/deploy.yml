@@ -22,7 +22,18 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    env:
+      # The production Convex URL the frontend is built against. A repository
+      # variable, not a secret: it ends up in the public JS bundle anyway.
+      VITE_CONVEX_URL: ${{ vars.VITE_CONVEX_URL }}
     steps:
+      - name: Require VITE_CONVEX_URL
+        run: |
+          if [ -z "$VITE_CONVEX_URL" ]; then
+            echo "::error::Repository variable VITE_CONVEX_URL is not set (Settings > Secrets and variables > Actions > Variables)."
+            exit 1
+          fi
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: ./.github/actions/setup
@@ -33,13 +44,22 @@ jobs:
       - uses: ./.github/actions/checks
 
       # Deploys the Convex functions to the production deployment the deploy
-      # key belongs to, then runs the build with that deployment's
-      # VITE_CONVEX_URL set, so the frontend always points at the backend it
-      # was deployed with.
-      - name: Deploy Convex and build
-        run: npx convex deploy --cmd 'npm run build'
+      # key belongs to. The frontend is built separately below, against the
+      # VITE_CONVEX_URL variable; this step warns when the two look different.
+      - name: Deploy Convex functions
+        run: |
+          # Without pipefail a failed deploy would be masked by `tee`.
+          set -o pipefail
+          npx convex deploy 2>&1 | tee convex-deploy.log
+          if ! grep -qF "$VITE_CONVEX_URL" convex-deploy.log; then
+            echo "::warning::convex deploy did not mention $VITE_CONVEX_URL. Check that the VITE_CONVEX_URL variable belongs to the deployment of CONVEX_DEPLOY_KEY."
+          fi
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+
+      # Typecheck already ran in the checks above, so the Vite+ build alone.
+      - name: Build
+        run: npx vp build
 
       # Assets-only Worker (wrangler.jsonc). Uses the wrangler version pinned
       # in the lockfile rather than a third-party action.

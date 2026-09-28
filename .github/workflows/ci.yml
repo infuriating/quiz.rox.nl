@@ -37,9 +37,14 @@ jobs:
 
       - uses: ./.github/actions/checks
 
-      # Proves the SPA still builds (and the shell is prerendered) without
-      # needing a Convex deployment: VITE_CONVEX_URL only has to be present.
+      # Proves the SPA still builds and the shell is prerendered. Uses the
+      # same repository variable as deploy.yml; no secrets are needed.
       - name: Build
-        run: npx vp build
+        run: |
+          if [ -z "$VITE_CONVEX_URL" ]; then
+            echo "::error::Repository variable VITE_CONVEX_URL is not set (Settings > Secrets and variables > Actions > Variables)."
+            exit 1
+          fi
+          npx vp build
         env:
-          VITE_CONVEX_URL: https://ci-placeholder.convex.cloud
+          VITE_CONVEX_URL: ${{ vars.VITE_CONVEX_URL }}
