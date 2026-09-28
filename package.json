@@ -7,14 +7,15 @@
     "dev": "convex dev --start 'vp dev'",
     "typecheck": "tsc --noEmit",
     "build": "npm run typecheck && vp build",
-    "start": "node .output/server/index.mjs",
     "format": "vp fmt",
     "lint": "vp lint --deny-warnings",
     "tokens": "node scripts/generate-tokens.mjs",
     "format:check": "vp fmt --check",
     "lint:fix": "vp lint --fix",
     "prepare": "vp config",
-    "check": "vp check"
+    "check": "vp check",
+    "preview": "npm run build && wrangler dev",
+    "deploy": "convex deploy --cmd 'npm run build' && wrangler deploy"
   },
   "dependencies": {
     "@convex-dev/react-query": "0.1.0",
@@ -40,7 +41,8 @@
     "typescript": "npm:@typescript/typescript6@6.0.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0",
     "vite-plus": "1.0.0",
-    "vite-tsconfig-paths": "6.1.1"
+    "vite-tsconfig-paths": "6.1.1",
+    "wrangler": "4.142.0"
   },
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0"

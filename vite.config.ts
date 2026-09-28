@@ -188,7 +188,16 @@ export default defineConfig({
     tsConfigPaths({
       projects: ['./tsconfig.json'],
     }),
-    tanstackStart(),
+    // SPA mode: every route is client-rendered (ssr: false) and all data comes
+    // from Convex over a WebSocket, so the build is static assets plus a shell.
+    // The shell is written as index.html so a static host can use it as the
+    // single-page-application fallback (see wrangler.jsonc).
+    tanstackStart({
+      spa: {
+        enabled: true,
+        prerender: { outputPath: '/index.html' },
+      },
+    }),
     viteReact(),
   ]),
 })

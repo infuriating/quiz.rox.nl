@@ -28,3 +28,9 @@ app.config.timestamp_*.js
 
 # Local scratch scripts
 *.local.mjs
+
+# Wrangler
+.wrangler/
+
+# Cloudflare Wrangler local state
+.wrangler

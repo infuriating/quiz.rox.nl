@@ -107,6 +107,56 @@ Per sessie (`/admin` → **Bekijk resultaten en exporteer CSV**):
 - **Verdeling (CSV):** per vraag en per optie de tekst, of die goed is en hoeveel spelers die kozen,
   plus het aantal spelers zonder antwoord.
 
+## Hosting (Cloudflare Workers + Convex)
+
+De app is gebouwd als SPA: alle routes renderen in de browser, en alle data en realtime-updates lopen
+via een WebSocket rechtstreeks naar Convex. `npm run build` levert daarom alleen statische bestanden op in
+`dist/client`, met `index.html` als shell.
+
+`wrangler.jsonc` beschrijft een Cloudflare Worker die alleen assets serveert. Onbekende paden
+(`/play/…`, `/host/…`, `/admin/…`) krijgen de shell via `not_found_handling: "single-page-application"`.
+Requests naar statische assets tellen bij Cloudflare niet als Worker-invocations.
+
+Eenmalig:
+
+1. Log in bij Convex en maak een productie-deployment (`npx convex login`, daarna `npx convex deploy`).
+2. Zet de host-PIN op productie:
+
+   ```bash
+   npx convex env set HOST_PIN 123456 --prod
+   ```
+
+3. Seed de quiz op productie:
+
+   ```bash
+   npx convex run seed:seed --prod
+   ```
+
+4. Log in bij Cloudflare:
+
+   ```bash
+   npx wrangler login
+   ```
+
+Deployen:
+
+```bash
+npm run deploy
+```
+
+Dit deployt eerst de Convex-functies en bouwt dan de frontend met `VITE_CONVEX_URL` van de
+productie-deployment (`convex deploy --cmd`). Daarna gaan de assets naar Cloudflare (`wrangler deploy`).
+Een eigen domein koppel je in het Cloudflare-dashboard. De URL en QR-code op de beamer nemen het
+adres vanzelf over.
+
+Lokaal de productiebuild bekijken:
+
+```bash
+npm run preview
+```
+
+Dit bouwt de app en serveert `dist/client` met `wrangler dev` op <http://localhost:8787>.
+
 ## Controleren
 
 De tooling loopt via [Vite+](https://viteplus.dev/) (`vp`), met oxlint en oxfmt, en de config

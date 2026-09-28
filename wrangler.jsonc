@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Assets-only Worker: the SPA build is served as static assets, which Cloudflare
+  // does not bill as Worker invocations. All realtime traffic goes to Convex.
+  "name": "rox-live-quiz",
+  "compatibility_date": "2026-09-28",
+  "assets": {
+    "directory": "./dist/client",
+    // Unknown paths (/play/…, /host/…, /admin/…) get index.html, the SPA shell.
+    "not_found_handling": "single-page-application",
+  },
+}
