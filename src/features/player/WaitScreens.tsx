@@ -2,6 +2,7 @@ import { AnswerMarker } from '~/components/AnswerMarker'
 import { Icon } from '~/components/Icon'
 import { Label } from '~/components/Label'
 import { StatusDisc } from '~/components/StatusDisc'
+import { vars } from '~/lib/motion'
 import type { PlayerView } from './types'
 import { CenterMessage, PhoneFrame, WaitingDots } from './PhoneFrame'
 
@@ -20,15 +21,20 @@ export function ReceivedScreen({
     <PhoneFrame banner={banner}>
       <CenterMessage
         icon={
-          <StatusDisc tone="blue">
-            <Icon name="check" size={48} strokeWidth={2.6} />
+          <StatusDisc tone="blue" pop rings="pulse" size={112}>
+            <span
+              className="rq-draw flex"
+              style={vars({ '--rq-delay': '.25s' })}
+            >
+              <Icon name="check" size={48} strokeWidth={2.6} />
+            </span>
           </StatusDisc>
         }
         title="Antwoord ontvangen"
         sub="Zodra iedereen heeft geantwoord zie je hier of je het goed had."
       >
         <div className="mt-3 flex w-full flex-col gap-6">
-          <div className="flex w-full flex-col gap-2 rounded-md bg-blue-100 py-3 pr-4 pl-3 text-left">
+          <div className="rq-rise flex w-full flex-col gap-2 rounded-md bg-blue-100 py-3 pr-4 pl-3 text-left [animation-delay:.4s]">
             <Label className="text-[11px] text-blue-600">
               {picked.length > 1 ? 'Jouw antwoorden' : 'Jouw antwoord'}
             </Label>
@@ -39,7 +45,10 @@ export function ReceivedScreen({
               </div>
             ))}
           </div>
-          <div role="status" className="flex justify-center">
+          <div
+            role="status"
+            className="rq-rise flex justify-center [animation-delay:.5s]"
+          >
             <WaitingDots label="Wachten op de anderen" />
           </div>
         </div>
@@ -60,7 +69,7 @@ export function LateScreen({
     <PhoneFrame banner={banner}>
       <CenterMessage
         icon={
-          <StatusDisc tone="neutral">
+          <StatusDisc tone="neutral" className="rq-settle">
             <Icon name="clock" size={48} strokeWidth={2.2} />
           </StatusDisc>
         }

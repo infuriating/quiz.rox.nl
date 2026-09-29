@@ -234,7 +234,10 @@ function baseSession(
   }
 }
 
-/** Rank after the current question and after the one before it (score minus this question's points). */
+/**
+ * Rank after the current question and after the one before it (score minus this
+ * question's points), plus those points so the beamer can count the scores up.
+ */
 function ranksWithMovement(
   players: Array<Doc<'players'>>,
   answers: Array<Doc<'answers'>>,
@@ -252,6 +255,7 @@ function ranksWithMovement(
   return current.map((r) => ({
     ...r,
     previousRank: before.get(r.playerId) ?? r.rank,
+    points: pointsNow.get(r.playerId) ?? 0,
   }))
 }
 

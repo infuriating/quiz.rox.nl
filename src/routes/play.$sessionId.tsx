@@ -10,6 +10,7 @@ import { LobbyScreen } from '~/features/player/LobbyScreen'
 import { QuestionScreen } from '~/features/player/QuestionScreen'
 import { RevealScreen } from '~/features/player/RevealScreen'
 import { LateScreen, ReceivedScreen } from '~/features/player/WaitScreens'
+import { useHoldAfter } from '~/lib/motion'
 import { playerStore } from '~/lib/storage'
 import { useRemaining, useServerOffset } from '~/lib/time'
 
@@ -45,6 +46,11 @@ function Play({
   const remaining = useRemaining(view?.session.questionEndsAt ?? null, offset)
   const questionId = view?.question?.id
   const [lateFor, setLateFor] = useState<string | null>(null)
+  // Keep the question up briefly after a tap so the lock-in plays before "Antwoord ontvangen".
+  const lockingIn = useHoldAfter(
+    view ? view.session.phase === 'question' && Boolean(view.myAnswer) : null,
+    700,
+  )
 
   if (isPending) return null
   if (view === null || view === undefined) {
@@ -57,7 +63,8 @@ function Play({
     case 'lobby':
       return <LobbyScreen view={view} banner={banner} />
     case 'question': {
-      if (view.myAnswer) return <ReceivedScreen view={view} banner={banner} />
+      if (view.myAnswer && !lockingIn)
+        return <ReceivedScreen view={view} banner={banner} />
       // Cosmetic: the local countdown hit zero or the server rejected the answer as late.
       if (
         lateFor === questionId ||

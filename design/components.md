@@ -18,7 +18,7 @@ state is in `screens/Componenten.dc.html` (and on the canvas, page "Componenten"
 | **HostControlBar**   | `src/components/HostControlBar.tsx`   | "Vorige", "Timer overslaan", "Volgende" (the only filled button; label changes to "Tussenstand" / "Afronden"), light/dark, "Sessie beëindigen"; lobby variant with "Start de quiz" on the right | Compact pill at the bottom edge; the join code on the left for late joiners.                                     |
 | **ConnectionBanner** | `src/components/ConnectionBanner.tsx` | offline (after 1.5 s), reconnected (visible for 2 s)                                                                                                                                            | Controls underneath are disabled while the connection is down.                                                   |
 | **Switch**           | `src/components/Switch.tsx`           | off, on, with hint                                                                                                                                                                              | Real checkbox with `role="switch"`, 44 × 24 px.                                                                  |
-| **StatusDisc**       | `src/components/StatusDisc.tsx`       | `success`, `neutral`, `blue`; optional pop animation                                                                                                                                            | Round illustration on the player's result screens.                                                               |
+| **StatusDisc**       | `src/components/StatusDisc.tsx`       | `success`, `neutral`, `blue`; optional pop, `rings` (pulse / once), `burst` slot                                                                                                                | Round illustration on the player's result screens.                                                               |
 
 ## From the ROX system (rebuilt as markup on the tokens)
 
@@ -38,6 +38,10 @@ In `src/styles/app.css`:
 - **Projector type scale:** `--text-beamer-*` (22 to 168 px).
 - **Phone type scale:** `--text-phone-*`.
 - **Host theme:** `--host-*` (light and dark), built entirely from ROX tokens.
+- **Motion layer:** the `rq-*` entrance, tick, grow, sheen and burst classes, from the
+  "ROX Live Quiz · Motion" canvas. Timing hooks (`useSpring`, `useAfter`, `useHoldAfter`)
+  live in `src/lib/motion.ts`; `Burst` (`src/components/Burst.tsx`) fires the four answer
+  shapes. Everything is skipped under `prefers-reduced-motion`.
 - **Derived, not a ROX token:**
   - `--quiz-accent-on-dark` `#7f9bff`, accent text on ink.
   - `--quiz-ok-surface-dark` and `--quiz-ok-text-dark`, green tints for correct on the dark projector.

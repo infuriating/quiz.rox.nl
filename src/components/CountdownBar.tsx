@@ -2,7 +2,10 @@ import { cn } from '~/lib/cn'
 
 const WARN_SECONDS = 5
 
-/** Gradient-signal fill counting down. Last 5 seconds: status-warning. Purely cosmetic. */
+/**
+ * Gradient-signal fill counting down. Last 5 seconds: status-warning. Purely cosmetic.
+ * The fill charges in from the left on mount and each new second drops in.
+ */
 export function CountdownBar({
   remainingMs,
   totalMs,
@@ -33,7 +36,7 @@ export function CountdownBar({
       >
         <div
           className={cn(
-            'h-full rounded-pill transition-[width] duration-200 ease-linear',
+            'rq-grow-x h-full rounded-pill transition-[width] duration-200 ease-linear [animation-delay:.3s]',
             warn ? 'bg-warning' : 'bg-gradient-signal',
           )}
           style={{ width: `${pct}%` }}
@@ -44,7 +47,9 @@ export function CountdownBar({
           className="tabular min-w-8 text-right font-display text-base font-semibold"
           aria-live="off"
         >
-          {secs} s
+          <span key={secs} className={warn ? 'rq-hurry' : 'rq-tick'}>
+            {secs} s
+          </span>
         </span>
       )}
     </div>
