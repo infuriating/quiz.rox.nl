@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useReducedMotion, vars } from '~/lib/motion'
+import { seededRandom, useReducedMotion, vars } from '~/lib/motion'
 import { cn } from '~/lib/cn'
 
 const SHAPES = [
@@ -15,17 +15,6 @@ const COLORS = [
   'var(--status-success)',
   'var(--rox-blue-300)',
 ]
-
-/** Small deterministic PRNG, so a burst looks the same on every render. */
-function mulberry32(seed: number) {
-  return () => {
-    seed |= 0
-    seed = (seed + 0x6d2b79f5) | 0
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
 
 /**
  * One burst of the four answer shapes out of a point: the celebration on "Goed" and on
@@ -53,7 +42,7 @@ export function Burst({
 }) {
   const reduced = useReducedMotion()
   const pieces = useMemo(() => {
-    const rnd = mulberry32(seed)
+    const rnd = seededRandom(seed)
     return Array.from({ length: count }, (_, i) => {
       const angle = (i / count) * Math.PI * 2 + (rnd() - 0.5) * 0.5
       const dist = radius * (0.6 + rnd() * 0.4)

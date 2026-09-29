@@ -441,3 +441,34 @@ export const getPlayerView = query({
     return view
   },
 })
+
+/**
+ * How many players have answered the current question, for the dots on a phone's
+ * "Antwoord ontvangen" screen. Kept apart from getPlayerView on purpose: this tiny query
+ * re-runs on every answer, the view does not (see loadContext). Only a player who has
+ * answered gets the counts, so only the phones on the waiting screen subscribe to it.
+ */
+export const getAnswerProgress = query({
+  args: { sessionId: v.id('sessions'), playerId: v.id('players') },
+  handler: async (ctx, { sessionId, playerId }) => {
+    const session = await ctx.db.get('sessions', sessionId)
+    const player = await ctx.db.get('players', playerId)
+    if (
+      !session ||
+      session.deletedAt !== undefined ||
+      session.phase !== 'question' ||
+      !player ||
+      player.sessionId !== sessionId
+    )
+      return null
+    const questions = await getQuestions(ctx, session.quizId)
+    const question = questions[session.currentQuestionIndex]
+    if (!question) return null
+    if (!(await getPlayerAnswer(ctx, playerId, question._id))) return null
+    const [answers, players] = await Promise.all([
+      getAnswers(ctx, sessionId, question._id),
+      getPlayers(ctx, sessionId),
+    ])
+    return { answered: answers.length, players: players.length }
+  },
+})

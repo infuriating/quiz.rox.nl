@@ -216,6 +216,41 @@ test('the player view hides the player count during a question', async () => {
   ).toBeNull()
 })
 
+test('answer progress goes only to players who answered', async () => {
+  const t = setup()
+  const quizId = await createQuiz(t)
+  const {
+    host,
+    players: [sanne, daan],
+  } = await openSession(t, quizId, ['Sanne', 'Daan', 'Noor'])
+  const progress = (playerId: typeof sanne) =>
+    t.query(api.sessions.getAnswerProgress, {
+      sessionId: host.sessionId,
+      playerId,
+    })
+  // Lobby: no question, no progress.
+  expect(await progress(sanne)).toBeNull()
+  await t.mutation(api.game.start, host)
+  const hv = await t.query(api.sessions.getHostView, host)
+  const answer = (playerId: typeof sanne) =>
+    t.mutation(api.answers.submitAnswer, {
+      sessionId: host.sessionId,
+      playerId,
+      questionId: hv.question!.id,
+      optionIds: ['c'],
+    })
+  // Still answering: the phone shows the question and does not need the count.
+  expect(await progress(sanne)).toBeNull()
+  await answer(sanne)
+  expect(await progress(sanne)).toEqual({ answered: 1, players: 3 })
+  expect(await progress(daan)).toBeNull()
+  await answer(daan)
+  expect(await progress(sanne)).toEqual({ answered: 2, players: 3 })
+  // After the question the reveal takes over.
+  await t.mutation(api.game.skipTimer, host)
+  expect(await progress(sanne)).toBeNull()
+})
+
 test('ending a session finishes it with endReason "ended"', async () => {
   const t = setup()
   const quizId = await createQuiz(t)

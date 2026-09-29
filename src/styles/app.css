@@ -571,6 +571,79 @@
     translate: 0 -18px;
   }
 }
+/* A dot in the answer orbit lighting up: a player just answered. */
+.rq-arrive {
+  animation: rq-arrive 0.7s var(--ease-out-expo);
+}
+@keyframes rq-arrive {
+  35% {
+    transform: scale(1.8);
+  }
+}
+/* The DotPanel field behind the dark beamer lobby: a still grid of faint blue dots, a
+   brighter patch of the same grid drifting across it, a fade along the top and a veil
+   behind the join code. Dark theme only: the system keeps the dot field for dark panels. */
+.rq-dotfield {
+  display: none;
+}
+[data-theme='dark'] .rq-dotfield {
+  display: block;
+}
+.rq-dotfield > * {
+  position: absolute;
+  inset: 0;
+}
+.rq-dotfield-base {
+  background-image: radial-gradient(
+    circle,
+    rgba(127, 155, 255, 0.22) 2px,
+    transparent 2.6px
+  );
+  background-size: 28px 28px;
+  background-position: 14px 14px;
+  animation: rq-fade 1.6s var(--ease-cut) backwards;
+}
+.rq-dotfield-lit {
+  background-image: radial-gradient(
+    circle,
+    var(--rox-blue-2) 2.4px,
+    transparent 3px
+  );
+  background-size: 28px 28px;
+  background-position: 14px 14px;
+  mask-image: radial-gradient(
+    closest-side,
+    #000 0%,
+    rgba(0, 0, 0, 0.45) 50%,
+    transparent 100%
+  );
+  mask-size: 720px 720px;
+  mask-repeat: no-repeat;
+  animation: rq-dotfield-drift 30s ease-in-out infinite alternate;
+}
+@keyframes rq-dotfield-drift {
+  0% {
+    mask-position: -30% 10%;
+  }
+  35% {
+    mask-position: 110% 30%;
+  }
+  70% {
+    mask-position: 20% 80%;
+  }
+  100% {
+    mask-position: 95% 110%;
+  }
+}
+.rq-dotfield-veil {
+  background:
+    radial-gradient(
+      ellipse 62% 30% at 38% 50%,
+      rgba(13, 18, 32, 0.85) 40%,
+      rgba(13, 18, 32, 0) 100%
+    ),
+    linear-gradient(180deg, var(--rox-ink) 0%, rgba(13, 18, 32, 0) 22%);
+}
 /* Burst of the four answer shapes; each piece carries its path in custom properties. */
 .rq-piece {
   position: absolute;
@@ -608,6 +681,7 @@
   .rq-draw path {
     stroke-dasharray: none;
   }
+  .rq-dotfield-lit,
   .rq-piece,
   .rq-ring-once,
   .rq-sheen,
