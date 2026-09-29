@@ -1,9 +1,13 @@
+import { convexQuery } from '@convex-dev/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { api } from '../../../convex/_generated/api'
 import { AnswerMarker } from '~/components/AnswerMarker'
 import { Icon } from '~/components/Icon'
 import { Label } from '~/components/Label'
 import { StatusDisc } from '~/components/StatusDisc'
 import { vars } from '~/lib/motion'
 import type { PlayerView } from './types'
+import { AnswerOrbit } from './AnswerOrbit'
 import { CenterMessage, PhoneFrame, WaitingDots } from './PhoneFrame'
 
 export function ReceivedScreen({
@@ -17,11 +21,32 @@ export function ReceivedScreen({
   const picked = q.options
     .map((o, i) => ({ ...o, i }))
     .filter((o) => view.myAnswer?.optionIds.includes(o.id))
+  // Its own tiny subscription, so other players' answers never re-run the player view.
+  const { data: progress } = useQuery(
+    convexQuery(api.sessions.getAnswerProgress, {
+      sessionId: view.session.id,
+      playerId: view.player.id,
+    }),
+  )
   return (
     <PhoneFrame banner={banner}>
       <CenterMessage
         icon={
-          <StatusDisc tone="blue" pop rings="pulse" size={112}>
+          <StatusDisc
+            tone="blue"
+            pop
+            size={112}
+            // The room fills in around the disc; until the counts arrive, the disc pulses.
+            rings={progress ? undefined : 'pulse'}
+            burst={
+              progress && (
+                <AnswerOrbit
+                  answered={progress.answered}
+                  players={progress.players}
+                />
+              )
+            }
+          >
             <span
               className="rq-draw flex"
               style={vars({ '--rq-delay': '.25s' })}
@@ -47,9 +72,26 @@ export function ReceivedScreen({
           </div>
           <div
             role="status"
-            className="rq-rise flex justify-center [animation-delay:.5s]"
+            className="rq-rise flex flex-col gap-2.5 [animation-delay:.5s]"
           >
-            <WaitingDots label="Wachten op de anderen" />
+            <div className="flex items-center justify-between">
+              <WaitingDots label="Wachten op de anderen" />
+              {progress && (
+                <span className="tabular font-display text-sm font-semibold text-ink">
+                  {progress.answered} / {progress.players}
+                </span>
+              )}
+            </div>
+            {progress && (
+              <div className="h-2 overflow-hidden rounded-pill bg-ink-15">
+                <div
+                  className="h-full rounded-pill bg-ink transition-[width] duration-700 ease-out-expo"
+                  style={{
+                    width: `${Math.round((progress.answered / Math.max(progress.players, 1)) * 100)}%`,
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </CenterMessage>

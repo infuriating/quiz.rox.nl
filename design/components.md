@@ -42,6 +42,11 @@ In `src/styles/app.css`:
   "ROX Live Quiz · Motion" canvas. Timing hooks (`useSpring`, `useAfter`, `useHoldAfter`)
   live in `src/lib/motion.ts`; `Burst` (`src/components/Burst.tsx`) fires the four answer
   shapes. Everything is skipped under `prefers-reduced-motion`.
+- **Waiting backgrounds** (the "ROX Live Quiz · Wachtscherm" canvas): `AnswerOrbit`
+  (`src/features/player/AnswerOrbit.tsx`) fills the room in around the "Antwoord ontvangen"
+  disc from `sessions.getAnswerProgress`, a separate query so answers never re-run the
+  player view. The dark beamer lobby has the DotPanel dot field (`.rq-dotfield`) behind the
+  join column; the light theme keeps a plain white lobby.
 - **Derived, not a ROX token:**
   - `--quiz-accent-on-dark` `#7f9bff`, accent text on ink.
   - `--quiz-ok-surface-dark` and `--quiz-ok-text-dark`, green tints for correct on the dark projector.

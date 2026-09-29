@@ -16,6 +16,15 @@ export function HostLobby({ view }: { view: HostView }) {
   )
   return (
     <>
+      {/* Behind the join column, dark theme only (see .rq-dotfield). */}
+      <div
+        aria-hidden="true"
+        className="rq-dotfield pointer-events-none absolute top-0 bottom-0 left-0 w-[1000px]"
+      >
+        <div className="rq-dotfield-base" />
+        <div className="rq-dotfield-lit" />
+        <div className="rq-dotfield-veil" />
+      </div>
       <div className="absolute top-0 bottom-0 left-0 flex w-[1000px] flex-col gap-10 px-20 pt-[88px] pb-[120px]">
         <Label className="text-beamer-label text-host-muted">
           {s.quizTitle}
