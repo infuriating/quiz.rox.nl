@@ -11,6 +11,8 @@ ISO-specific lives in the seed data only. The UI is in Dutch.
   and anyone joining after that is told the quiz is full.
 - **Sessions expire** after 1 hour without a host action (configurable per quiz up to 4 hours),
   and can be deleted from `/admin`.
+- **Player data is kept for one year.** A session with its players (names, emails) and answers is
+  deleted automatically a year after it was played.
 - **Quizzes can be set inactive or deleted.** Inactive quizzes keep their results but cannot start
   new sessions.
 
@@ -116,6 +118,16 @@ With scoring on:
 - **Deletion:** **"Verwijderen"** on a session in `/admin` (or on its results page) removes the
   session with all its players and answers. It disappears immediately; the data is purged in the
   background in batches.
+
+## Retention
+
+Every night (03:17 UTC, `convex/crons.ts`) a job deletes sessions created more than 365 days ago
+(`RETENTION_DAYS` in `convex/lib/limits.ts`), with all their players and answers. It uses the same
+purge as **"Verwijderen"**. Quizzes and questions are kept: they hold no personal data.
+
+- The session results page in `/admin` shows the date a session will be deleted.
+- A year covers a yearly ISO 27001 audit. To keep a training record longer, export the
+  participation CSV before that date.
 
 ## Inactive and deleted quizzes
 
@@ -269,7 +281,7 @@ deployment or login is needed. They live next to the code (`convex/*.test.ts`, s
 - a full game, with scoring off and on;
 - that correct answers, explanations and the distribution stay hidden until the reveal;
 - the host password, joining (duplicate email, validation, max players), late answers;
-- session expiry and the per-quiz timeout;
+- session expiry and the per-quiz timeout, and the one-year retention;
 - inactive quizzes, and deleting sessions and quizzes including the purge.
 
 Convex does not deploy files with more than one dot in their name, so the tests never reach a

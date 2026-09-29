@@ -15,6 +15,8 @@ import {
   MAX_QUIZZES,
   MAX_SESSIONS_PER_QUIZ,
   PURGE_BATCH_SIZE,
+  RETENTION_BATCH_SIZE,
+  RETENTION_MS,
 } from './lib/limits'
 import { rateLimiter } from './lib/rateLimits'
 import { optionValidator, questionTypeValidator } from './lib/validators'
@@ -342,6 +344,7 @@ export const sessionResults = query({
       session: {
         id: session._id,
         createdAt: session.createdAt,
+        deleteAt: session.createdAt + RETENTION_MS,
         finishedAt: session.finishedAt ?? null,
         phase: session.phase,
         endReason: session.endReason ?? null,
@@ -419,6 +422,28 @@ export const purgeSession = internalMutation({
     } else {
       await rateLimiter.reset(ctx, 'join', { key: sessionId })
       await ctx.db.delete('sessions', sessionId)
+    }
+    return null
+  },
+})
+
+/**
+ * Retention (daily cron, convex/crons.ts): deletes sessions created more than
+ * RETENTION_DAYS ago, with their players and answers, via the normal purge.
+ */
+export const purgeExpiredSessions = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const cutoff = Date.now() - RETENTION_MS
+    const old = await ctx.db
+      .query('sessions')
+      .withIndex('by_createdAt', (q) => q.lt('createdAt', cutoff))
+      .take(RETENTION_BATCH_SIZE)
+    // Sessions already marked stay in the index until their purge finishes.
+    const due = old.filter((s) => s.deletedAt === undefined)
+    for (const session of due) await markSessionDeleted(ctx, session)
+    if (due.length > 0 && old.length === RETENTION_BATCH_SIZE) {
+      await ctx.scheduler.runAfter(0, internal.admin.purgeExpiredSessions, {})
     }
     return null
   },

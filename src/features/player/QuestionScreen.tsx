@@ -109,7 +109,7 @@ export function QuestionScreen({
       }
     >
       <div className="flex flex-col gap-3.5 px-4 pt-4 md:gap-5 md:px-8 md:pt-7">
-        <div className="flex items-center justify-between">
+        <div className="rq-rise flex items-center justify-between">
           <Label className="text-[13px] text-ink md:hidden">{counter}</Label>
           <Badge>{q.topic}</Badge>
           <div className="hidden w-[360px] md:block">{countdown}</div>
@@ -117,7 +117,7 @@ export function QuestionScreen({
         <div className="md:hidden">{countdown}</div>
         <p
           className={cn(
-            'm-0 font-display leading-[1.25] font-semibold tracking-heading md:max-w-[880px] md:text-[28px] md:leading-[1.22]',
+            'rq-in m-0 font-display leading-[1.25] font-semibold [animation-delay:.2s] tracking-heading md:max-w-[880px] md:text-[28px] md:leading-[1.22]',
             // A long question leaves the answers too little room on a phone.
             q.text.length > LONG_QUESTION
               ? 'text-[17px]'
@@ -128,7 +128,7 @@ export function QuestionScreen({
         </p>
       </div>
       {multi && (
-        <p className="m-0 flex items-center gap-2 px-4 pt-3 text-sm font-semibold text-blue-600 md:px-8 md:pt-5 md:text-[15px]">
+        <p className="rq-fade m-0 flex items-center gap-2 px-4 pt-3 text-sm [animation-delay:.35s] font-semibold text-blue-600 md:px-8 md:pt-5 md:text-[15px]">
           <Icon name="check" size={15} strokeWidth={2.4} />
           Selecteer alles wat van toepassing is
         </p>
@@ -152,6 +152,7 @@ export function QuestionScreen({
                 text={o.text}
                 multi
                 className="md:min-h-24"
+                enterDelay={0.45 + i * 0.07}
                 state={disabled ? 'disabled' : on ? 'selected' : 'idle'}
                 onClick={() => toggle(o.id)}
               />
@@ -163,8 +164,15 @@ export function QuestionScreen({
               index={i}
               text={o.text}
               className="md:min-h-24"
+              enterDelay={0.45 + i * 0.07}
               state={
-                pending === o.id ? 'pressed' : disabled ? 'disabled' : 'idle'
+                pending === o.id
+                  ? 'pressed'
+                  : pending !== null
+                    ? 'dimmed'
+                    : disabled
+                      ? 'disabled'
+                      : 'idle'
               }
               onClick={() => void send([o.id])}
             />

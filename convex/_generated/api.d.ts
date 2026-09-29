@@ -10,6 +10,7 @@
 
 import type * as admin from "../admin.js";
 import type * as answers from "../answers.js";
+import type * as crons from "../crons.js";
 import type * as game from "../game.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_codes from "../lib/codes.js";
@@ -31,6 +32,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   answers: typeof answers;
+  crons: typeof crons;
   game: typeof game;
   "lib/auth": typeof lib_auth;
   "lib/codes": typeof lib_codes;

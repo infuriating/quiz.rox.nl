@@ -6,7 +6,8 @@ import {
   test,
   vi,
 } from 'vite-plus/test'
-import { api } from './_generated/api'
+import { api, internal } from './_generated/api'
+import { RETENTION_MS } from './lib/limits'
 import {
   PASSWORD,
   createQuiz,
@@ -205,5 +206,46 @@ describe('deleting', () => {
       players: 0,
       answers: 0,
     })
+  })
+})
+
+describe('retention', () => {
+  const DAY = 24 * 60 * 60 * 1000
+
+  test('deletes sessions a year after they were created', async () => {
+    const t = setup()
+    const { quizId, host: old } = await playedSession(t)
+    await t.mutation(api.game.end, old)
+    vi.advanceTimersByTime(200 * DAY)
+    const { host: recent } = await openSession(t, quizId, ['Noor'])
+    await t.mutation(api.game.end, recent)
+
+    const results = await t.query(api.admin.sessionResults, {
+      password,
+      sessionId: old.sessionId,
+    })
+    expect(results!.session.deleteAt).toBe(
+      results!.session.createdAt + RETENTION_MS,
+    )
+
+    // Day 364 for the old session: nothing is due yet.
+    vi.advanceTimersByTime(164 * DAY)
+    await t.mutation(internal.admin.purgeExpiredSessions, {})
+    await purge(t)
+    expect(await counts(t)).toMatchObject({ sessions: 2, players: 3 })
+
+    // Day 366: the old session goes, with its players and answers.
+    vi.advanceTimersByTime(2 * DAY)
+    await t.mutation(internal.admin.purgeExpiredSessions, {})
+    await purge(t)
+    expect(await counts(t)).toMatchObject({
+      quizzes: 1,
+      questions: 3,
+      sessions: 1,
+      players: 1,
+      answers: 0,
+    })
+    const [quiz] = await t.query(api.admin.listQuizzes, { password })
+    expect(quiz.sessions.map((s) => s.id)).toEqual([recent.sessionId])
   })
 })

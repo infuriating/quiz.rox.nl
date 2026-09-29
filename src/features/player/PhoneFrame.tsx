@@ -73,10 +73,10 @@ export function CenterMessage({
     <div className="flex flex-1 flex-col items-center justify-center gap-7 px-6 pt-10 pb-8 text-center">
       {icon}
       <div className="flex flex-col items-center gap-3">
-        <h1 className="m-0 font-display text-phone-title leading-[1.08] font-bold tracking-display">
+        <h1 className="rq-in m-0 font-display text-phone-title leading-[1.08] font-bold tracking-display [animation-delay:.15s]">
           {title}
         </h1>
-        <p className="m-0 max-w-[300px] text-[17px] leading-[1.5] text-ink-70">
+        <p className="rq-in m-0 max-w-[300px] text-[17px] leading-[1.5] text-ink-70 [animation-delay:.27s]">
           {sub}
         </p>
       </div>

@@ -24,10 +24,15 @@ export function AnswerMarker({
   index,
   size = 'phone',
   tone = 'ink',
+  className,
+  style,
 }: {
   index: number
   size?: keyof typeof SIZES
   tone?: MarkerTone
+  /** Motion hooks from the parent, e.g. `rq-spin-in` with a delay. */
+  className?: string
+  style?: React.CSSProperties
 }) {
   const s = SIZES[size]
   const tones = {
@@ -43,8 +48,10 @@ export function AnswerMarker({
         'flex shrink-0 items-center justify-center',
         s.radius,
         tones[tone],
+        className,
       )}
       style={{
+        ...style,
         width: s.box,
         height: s.box,
         gap: Math.max(4, Math.floor(s.box / 11)),

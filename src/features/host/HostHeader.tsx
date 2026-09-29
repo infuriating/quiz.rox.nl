@@ -45,7 +45,10 @@ export function AnsweredCounter({
     >
       <Icon name="users" size={32} className="text-host-muted" />
       <span className="tabular text-beamer-h3 font-bold">
-        {answered} / {of}
+        <span key={answered} className="rq-tick">
+          {answered}
+        </span>{' '}
+        / {of}
       </span>
       <span className="font-body text-[24px] text-host-muted">beantwoord</span>
     </div>
