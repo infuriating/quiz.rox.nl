@@ -208,9 +208,10 @@ npm run deploy
 
 This first deploys the Convex functions and builds the frontend (with its headers) against the
 production `VITE_CONVEX_URL` (`convex deploy --cmd`), then uploads the assets to Cloudflare
-(`wrangler deploy`).
-Attach a custom domain in the Cloudflare dashboard. The URL and QR code on the projector pick up
-the address automatically.
+(`wrangler deploy`). The Worker is bound to **quiz.rox.nl** via `wrangler.jsonc` (Cloudflare
+creates the DNS record and certificate when the zone is on the same account). The URL and QR
+code on the projector pick up the address automatically. The site is noindexed (`robots.txt`,
+meta robots, `X-Robots-Tag`).
 
 ### CI and automatic deploys (GitHub Actions)
 

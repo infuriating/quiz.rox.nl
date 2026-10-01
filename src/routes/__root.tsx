@@ -23,6 +23,7 @@ export const Route = createRootRouteWithContext<{
       {
         title: 'ROX Live Quiz',
       },
+      { name: 'robots', content: 'noindex, nofollow' },
       { name: 'theme-color', content: '#ffffff' },
     ],
     links: [
