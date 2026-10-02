@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as BeamerSessionIdRouteImport } from './routes/beamer.$sessionId'
 import { Route as HostIndexRouteImport } from './routes/host.index'
 import { Route as HostSessionIdRouteImport } from './routes/host.$sessionId'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
@@ -33,6 +34,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const BeamerSessionIdRoute = BeamerSessionIdRouteImport.update({
+  id: '/beamer/$sessionId',
+  path: '/beamer/$sessionId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const HostIndexRoute = HostIndexRouteImport.update({
   id: '/host/',
@@ -68,6 +74,7 @@ const AdminSessionsSessionIdRoute = AdminSessionsSessionIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/beamer/$sessionId': typeof BeamerSessionIdRoute
   '/host/$sessionId': typeof HostSessionIdRoute
   '/join/$code': typeof JoinCodeRoute
   '/play/$sessionId': typeof PlaySessionIdRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/beamer/$sessionId': typeof BeamerSessionIdRoute
   '/host/$sessionId': typeof HostSessionIdRoute
   '/join/$code': typeof JoinCodeRoute
   '/play/$sessionId': typeof PlaySessionIdRoute
@@ -90,6 +98,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/beamer/$sessionId': typeof BeamerSessionIdRoute
   '/host/$sessionId': typeof HostSessionIdRoute
   '/join/$code': typeof JoinCodeRoute
   '/play/$sessionId': typeof PlaySessionIdRoute
@@ -103,6 +112,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/beamer/$sessionId'
     | '/host/$sessionId'
     | '/join/$code'
     | '/play/$sessionId'
@@ -113,6 +123,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/beamer/$sessionId'
     | '/host/$sessionId'
     | '/join/$code'
     | '/play/$sessionId'
@@ -124,6 +135,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/beamer/$sessionId'
     | '/host/$sessionId'
     | '/join/$code'
     | '/play/$sessionId'
@@ -136,6 +148,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  BeamerSessionIdRoute: typeof BeamerSessionIdRoute
   HostSessionIdRoute: typeof HostSessionIdRoute
   JoinCodeRoute: typeof JoinCodeRoute
   PlaySessionIdRoute: typeof PlaySessionIdRoute
@@ -164,6 +177,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/beamer/$sessionId': {
+      id: '/beamer/$sessionId'
+      path: '/beamer/$sessionId'
+      fullPath: '/beamer/$sessionId'
+      preLoaderRoute: typeof BeamerSessionIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/host/': {
       id: '/host/'
@@ -227,6 +247,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  BeamerSessionIdRoute: BeamerSessionIdRoute,
   HostSessionIdRoute: HostSessionIdRoute,
   JoinCodeRoute: JoinCodeRoute,
   PlaySessionIdRoute: PlaySessionIdRoute,

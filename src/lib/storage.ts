@@ -33,6 +33,14 @@ export const passwordStore = {
   clear: () => safe(() => sessionStorage.removeItem('rq:password'), undefined),
 }
 
+/** Set by the dashboard when the host moves from the podium to "Iedereen bedankt". */
+export const thanksStore = {
+  get: (sessionId: string) =>
+    safe(() => localStorage.getItem(`rq:thanks:${sessionId}`), null) === '1',
+  set: (sessionId: string) =>
+    safe(() => localStorage.setItem(`rq:thanks:${sessionId}`, '1'), undefined),
+}
+
 export const themeStore = {
   get: (): 'light' | 'dark' =>
     safe(() => localStorage.getItem('rq:host-theme'), null) === 'dark'

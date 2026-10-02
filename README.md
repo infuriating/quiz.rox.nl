@@ -1,6 +1,7 @@
 # ROX Live Quiz
 
-A live quiz for one room. The host screen runs on a projector and players answer on their phones.
+A live quiz for one room. The beamer screen runs on a projector (or is shared in Teams), the host
+runs the quiz from a separate manage screen, and players answer on their phones.
 The first use is ROX's internal ISO 27001 awareness training, but the app is generic: everything
 ISO-specific lives in the seed data only. The UI is in Dutch.
 
@@ -68,30 +69,39 @@ npm run dev
 
 This starts `convex dev` and the web app on <http://localhost:3000>.
 
-| Route               | For                                                       |
-| ------------------- | --------------------------------------------------------- |
-| `/`                 | Players: enter code, name and email                       |
-| `/join/<code>`      | Players via the QR code; the code is prefilled            |
-| `/play/<sessionId>` | Players during the game                                   |
-| `/host`             | Host: password, pick a quiz, open the lobby               |
-| `/host/<sessionId>` | Projector (1920×1080, scales to any screen)               |
-| `/admin`            | Admin: quizzes, questions, settings, results, CSV exports |
+| Route                 | For                                                       |
+| --------------------- | --------------------------------------------------------- |
+| `/`                   | Players: enter code, name and email                       |
+| `/join/<code>`        | Players via the QR code; the code is prefilled            |
+| `/play/<sessionId>`   | Players during the game                                   |
+| `/host`               | Host: password, pick a quiz, open the lobby               |
+| `/host/<sessionId>`   | Host: manage the session (controls, answer key, players)  |
+| `/beamer/<sessionId>` | Beamer screen without controls (1920×1080, scales)        |
+| `/admin`              | Admin: quizzes, questions, settings, results, CSV exports |
 
 ## Running a session
 
-1. Open `/host` on the laptop connected to the projector and enter the host password.
-2. Pick a quiz and click **"Open de lobby"**. The join code, URL and a QR code appear.
-3. Players scan the QR code, or go to the URL and enter the code. Their names appear live.
+1. Open `/host` on the host's laptop and enter the host password.
+2. Pick a quiz and click **"Open de lobby"**. The manage screen ("Sessie beheren") opens.
+3. Click **"Open beamerscherm"**. The beamer screen opens in its own window, with the join code,
+   URL and QR code. Put that window on the projector, or share only that window in Teams.
+   Double-click it to go full screen. It has no controls, so nothing needs to be clicked there.
+   It works in the same browser as the manage screen (the host token is kept in `localStorage`).
+4. Players scan the QR code, or go to the URL and enter the code. Their names appear live.
    Players can join from a phone or a laptop; on a laptop the answers can also be picked with the
    keys A–D or 1–4 (Enter sends a multi-select).
-4. Click **"Start de quiz"**. For each question:
+5. Click **"Start de quiz"** on the manage screen. For each question:
    - **Result:** shown automatically when time is up or everyone has answered.
-     **"Timer overslaan"** jumps there straight away.
-   - **"Volgende"** goes to the next question. With scoring on, the leaderboard comes first.
-   - **"Vorige"** goes back to the previous result.
+     **"Timer overslaan"** (key **S**) jumps there straight away.
+   - **"Volgende vraag"** (key **→**) goes to the next question. With scoring on, the leaderboard
+     comes first.
+   - **"Vorige"** (key **←**) goes back to the previous result.
    - **"Sessie beëindigen"** ends the session immediately.
-5. The moon/sun icon in the control bar switches between light and dark. The choice is remembered
-   per device.
+6. The manage screen shows what only the host should see: a live preview of the beamer, the
+   correct answer and explanation before the reveal, who has or has not answered, who picked what
+   after the reveal, and the next question. The beamer only ever shows counts.
+7. **Licht / Donker** on the manage screen switches the beamer between light and dark. The choice
+   is remembered per device and the beamer window follows it straight away.
 
 Players who refresh their phone or lose wifi rejoin the same session automatically (their player ID
 is kept in `localStorage`). Joining again with the same email in the same session returns the same
@@ -322,15 +332,16 @@ src/
   styles/tokens.css   ROX tokens (generated from the design system)
   styles/app.css      Tailwind theme, projector scale, light/dark for the host
   components/         one component per item in the component inventory
-  features/           screens per surface (player, host, admin)
+  features/           screens per surface (player, host = beamer, manage, admin)
   routes/             file-based routes
 ```
 
 ### Backend rules
 
 - **Before the reveal:** correct answers, the explanation and the distribution only reach a client
-  from the `reveal` phase onward, including the projector. During a question, only the host gets
-  the "X / N beantwoord" count.
+  from the `reveal` phase onward, including the projector. During a question, the beamer only gets
+  the "X / N beantwoord" count. The answer key, per-player picks and the next question come from
+  `getManageView`, which needs the host token and is rendered on the manage screen only.
 - **Evaluating answers:** only `submitAnswer` does this, on server time. Late answers, second
   answers and answers in the wrong phase are rejected.
 - **Score and rank:** with scoring off, the queries do not return these fields (`null`), not `0`.

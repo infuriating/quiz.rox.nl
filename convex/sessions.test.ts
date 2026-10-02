@@ -171,6 +171,59 @@ describe('joining', () => {
       t.query(api.sessions.getHostView, { ...host, hostToken: 'x' }),
       'NOT_HOST',
     )
+    await expectCode(
+      t.query(api.sessions.getManageView, { ...host, hostToken: 'x' }),
+      'NOT_HOST',
+    )
+  })
+})
+
+describe('manage view', () => {
+  test('gives the host the answer key, who answered and what comes next', async () => {
+    const t = setup()
+    const quizId = await createQuiz(t)
+    const {
+      host,
+      players: [sanne],
+    } = await openSession(t, quizId, ['Sanne', 'Daan'])
+
+    // Lobby: no current question, the first one is next.
+    let mv = await t.query(api.sessions.getManageView, host)
+    expect(mv.current).toBeNull()
+    expect(mv.next!.index).toBe(0)
+    expect(mv.players.map((p) => p.answered)).toEqual([false, false])
+
+    // Question: the key is there for the host, picks are not yet.
+    await t.mutation(api.game.start, host)
+    const hv = await t.query(api.sessions.getHostView, host)
+    await t.mutation(api.answers.submitAnswer, {
+      sessionId: host.sessionId,
+      playerId: sanne,
+      questionId: hv.question!.id,
+      optionIds: ['a'],
+    })
+    mv = await t.query(api.sessions.getManageView, host)
+    expect(mv.current).toEqual({
+      correctOptionIds: ['c'],
+      explanation: 'Uitleg',
+    })
+    expect(mv.next!.text).toBe('Meer?')
+    expect(mv.players.map((p) => [p.name, p.answered, p.optionIds])).toEqual([
+      ['Sanne', true, null],
+      ['Daan', false, null],
+    ])
+
+    // Reveal: each player's pick.
+    await t.mutation(api.game.skipTimer, host)
+    mv = await t.query(api.sessions.getManageView, host)
+    expect(mv.players[0].optionIds).toEqual(['a'])
+    expect(mv.players[1].optionIds).toBeNull()
+
+    // Finished: nothing comes next.
+    await t.mutation(api.game.end, host)
+    mv = await t.query(api.sessions.getManageView, host)
+    expect(mv.current).toBeNull()
+    expect(mv.next).toBeNull()
   })
 })
 
