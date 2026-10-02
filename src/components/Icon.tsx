@@ -51,6 +51,18 @@ const PATHS = {
     </>
   ),
   moon: <path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z" />,
+  'arrow-up-right-from-square': (
+    <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5" />
+  ),
+  'eye-slash': (
+    <path d="M3 3l18 18M10.6 5.1A9.8 9.8 0 0112 5c5 0 9 4.5 10 7a12.6 12.6 0 01-3 4.1M6.6 6.6A12.4 12.4 0 002 12c1 2.5 5 7 10 7a9.7 9.7 0 005.4-1.6" />
+  ),
+  display: (
+    <>
+      <rect x="2.5" y="4" width="19" height="12.5" rx="1.5" />
+      <path d="M8 20.5h8M12 16.5v4" />
+    </>
+  ),
 } as const
 
 export type IconName = keyof typeof PATHS

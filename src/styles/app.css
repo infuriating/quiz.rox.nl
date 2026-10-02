@@ -51,11 +51,6 @@
   --host-panel-line: var(--rox-blue-200);
   --host-chip: var(--rox-ink-10);
   --host-code-bg: var(--rox-blue-100);
-  --host-ctrl-bg: var(--rox-ink-10);
-  --host-ctrl-line: var(--rox-ink-15);
-  --host-ctrl-text: var(--rox-ink-70);
-  --host-ctrl-primary-bg: var(--rox-ink);
-  --host-ctrl-primary-fg: var(--rox-white);
   --host-accent: var(--rox-blue);
   --host-badge-fg: var(--rox-blue-600);
   --host-pod-other: var(--rox-blue-100);
@@ -84,11 +79,6 @@
   /* One step lighter than the black-soft player panel, so name chips stand out. */
   --host-chip: var(--rox-black-line);
   --host-code-bg: var(--rox-black-soft);
-  --host-ctrl-bg: var(--rox-black-soft);
-  --host-ctrl-line: var(--rox-black-line);
-  --host-ctrl-text: var(--text-inverse-muted);
-  --host-ctrl-primary-bg: var(--rox-white);
-  --host-ctrl-primary-fg: var(--rox-ink);
   --host-accent: var(--quiz-accent-on-dark);
   --host-badge-fg: var(--quiz-accent-on-dark);
   --host-pod-other: var(--rox-black-soft);
@@ -153,11 +143,6 @@
   --color-host-panel-line: var(--host-panel-line);
   --color-host-chip: var(--host-chip);
   --color-host-code-bg: var(--host-code-bg);
-  --color-host-ctrl-bg: var(--host-ctrl-bg);
-  --color-host-ctrl-line: var(--host-ctrl-line);
-  --color-host-ctrl-text: var(--host-ctrl-text);
-  --color-host-ctrl-primary-bg: var(--host-ctrl-primary-bg);
-  --color-host-ctrl-primary-fg: var(--host-ctrl-primary-fg);
   --color-host-accent: var(--host-accent);
   --color-host-badge-fg: var(--host-badge-fg);
   --color-host-pod-other: var(--host-pod-other);

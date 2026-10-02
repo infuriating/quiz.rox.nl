@@ -346,6 +346,49 @@ export const getHostView = query({
   },
 })
 
+/**
+ * What only the host sees on the manage dashboard, never on the shared beamer screen:
+ * the answer key of the current question, who has answered, what each player picked
+ * (from reveal onward) and the question that comes next. Rendered next to getHostView,
+ * which stays the single source for the beamer itself.
+ */
+export const getManageView = query({
+  args: { sessionId: v.id('sessions'), hostToken: v.string() },
+  handler: async (ctx, { sessionId, hostToken }) => {
+    const session = await requireHost(ctx, sessionId, hostToken)
+    const { questions, players, question, answers } = await loadContext(
+      ctx,
+      session,
+      { live: true },
+    )
+    const revealed =
+      session.phase === 'reveal' || session.phase === 'leaderboard'
+    const byPlayer = new Map(answers.map((a) => [a.playerId, a]))
+    const nextIndex =
+      session.phase === 'lobby' ? 0 : session.currentQuestionIndex + 1
+    const next = session.phase === 'finished' ? undefined : questions[nextIndex]
+    return {
+      players: players.map((p) => {
+        const a = byPlayer.get(p._id)
+        return {
+          id: p._id,
+          name: p.name,
+          joinedAt: p.joinedAt,
+          answered: a !== undefined,
+          optionIds: revealed && a ? a.optionIds : null,
+        }
+      }),
+      current: question
+        ? {
+            correctOptionIds: correctOptionIds(question),
+            explanation: question.explanation?.trim() || null,
+          }
+        : null,
+      next: next ? sanitizeQuestion(next, nextIndex, questions.length) : null,
+    }
+  },
+})
+
 export const getPlayerView = query({
   args: { sessionId: v.id('sessions'), playerId: v.id('players') },
   handler: async (ctx, { sessionId, playerId }) => {

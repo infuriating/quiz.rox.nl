@@ -36,11 +36,12 @@ The copy in the artboards is Dutch, like the app's UI.
 | `player/Speler-Herverbinden`                          | all player routes            | `ConnectionBanner`                                            |
 | `player-desktop/*` (1440 × 900)                       | same, from 768 px wide       | the same player screens: `PhoneFrame` card, 2×2 answer grid   |
 | `host/Host-Pin` (host password)                       | `/host`                      | `features/host/PasswordScreen`                                |
-| `host/Host-Lobby`                                     | `/host/$sessionId`           | `HostLobby` + `JoinCodeDisplay`                               |
+| `host/Host-Lobby`                                     | `/beamer/$sessionId`         | `HostLobby` + `JoinCodeDisplay`                               |
 | `host/Host-Vraag`                                     | same                         | `HostQuestion` + `AnswerTile`, `CountdownBar`                 |
 | `host/Host-Uitleg`, `host/Host-Resultaat`             | same                         | `HostReveal` (with / without explanation) + `DistributionBar` |
 | `host/Host-Tussenstand`, `host/Host-Podium`           | same, **scoring only**       | `HostScoring` + `LeaderboardRow`                              |
 | `host/Host-Bedankt`                                   | same                         | `HostThanks`                                                  |
+| Canvas "Manage Quiz Session" (`Beheer-*`)             | `/host/$sessionId`           | `features/manage/ManageDashboard` + `cards`                   |
 | `host-dark/*`                                         | same, dark mode              | the same screens with `data-theme="dark"`                     |
 | `admin/Admin-Quizlijst`                               | `/admin`                     | `routes/admin.index`                                          |
 | `admin/Admin-Vraageditor`                             | `/admin/quizzes/$quizId`     | `QuestionForm`, `QuizSettings` + `Switch`                     |
@@ -68,7 +69,9 @@ the ISO training:
   - The final screen says "Deze sessie is verlopen" when a session expired.
 - **Phone join screen:** the subtitle is "Vul de code in en speel mee." (no "vanaf je telefoon"), as
   on the desktop join screen, since players can join from a laptop too.
-- **Host control bar:** adds a light/dark toggle.
+- **Host controls:** the control bar on the projector screens is gone. All controls, including the
+  light/dark toggle, live on the separate manage screen (`/host/$sessionId`, the "Manage Quiz
+  Session" canvas), so the shared beamer screen (`/beamer/$sessionId`) has none.
 - **Admin:**
   - The quiz list has no Host column: the app has no host accounts.
   - The session status can be "Bezig", "Afgerond", "Beëindigd" or "Verlopen", and each session has
